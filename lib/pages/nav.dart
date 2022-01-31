@@ -62,10 +62,10 @@ class _NavState extends State<Nav> {
         content: SearchPage(),
         color: Palette.green,
       ),
-      const _PageInfos(
+      _PageInfos(
         num: 4,
         icon: Icons.person,
-        content: ProfilePage(),
+        content: ProfilePage.dummy(),
         color: Palette.blue,
       ),
     ];

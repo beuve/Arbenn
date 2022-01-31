@@ -44,10 +44,10 @@ class _NavState extends State<Nav> {
         content: HomePage.dummy(),
         color: Palette.red,
       ),
-      const _PageInfos(
+      _PageInfos(
         num: 1,
         icon: Icons.calendar_today,
-        content: CalendarPage(),
+        content: CalendarPage.dummy(),
         color: Palette.orange,
       ),
       _PageInfos(

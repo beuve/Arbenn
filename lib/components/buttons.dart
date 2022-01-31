@@ -86,3 +86,60 @@ class BackButton extends StatelessWidget {
     );
   }
 }
+
+class NavButton extends StatelessWidget {
+  final BorderRadius borderRadius;
+  final Function()? onPressed;
+  final Widget icon;
+  final bool isActive;
+  final Nuance color;
+  final bool isFirst;
+  final bool isLast;
+
+  const NavButton({
+    Key? key,
+    required this.icon,
+    required this.isActive,
+    required this.color,
+    this.onPressed,
+    this.borderRadius = BorderRadius.zero,
+    this.isFirst = false,
+    this.isLast = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: TextButton(
+        onPressed: onPressed,
+        child: Container(
+          height: 50,
+          alignment: Alignment.bottomCenter,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: isFirst ? const Radius.circular(25) : Radius.zero,
+              topRight: isLast ? const Radius.circular(25) : Radius.zero,
+            ),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(color: color.darker, spreadRadius: 0),
+                    BoxShadow(
+                      color: color.main,
+                      spreadRadius: 0,
+                      offset: Offset(
+                          isFirst
+                              ? 2
+                              : isLast
+                                  ? -2
+                                  : 0,
+                          3),
+                    ),
+                  ]
+                : [],
+          ),
+          child: icon,
+        ),
+      ),
+    );
+  }
+}

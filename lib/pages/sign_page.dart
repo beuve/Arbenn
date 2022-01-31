@@ -6,6 +6,8 @@ import '../utils/colors.dart';
 import 'nav.dart';
 import 'user_form.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 class _Conditions extends StatelessWidget {
   const _Conditions({Key? key}) : super(key: key);
 
@@ -54,12 +56,37 @@ class _SignUpState extends State<_SignUp> {
     _isChecked = false;
   }
 
+  Future<UserCredential?> _signUp() async {
+    if (passController.text != confirmPassController.text) {
+      return null;
+    } else if (!_isChecked) {
+      return null;
+    }
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text, password: passController.text);
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-        height: widget.height,
-        child: Column(children: [
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+      height: widget.height,
+      child: Column(
+        children: [
           FormInput(
             label: "email",
             controller: emailController,
@@ -93,15 +120,21 @@ class _SignUpState extends State<_SignUp> {
           ),
           SizedBox(height: widget.height * 0.05),
           Button(
-              color: Palette.purple,
-              label: "VALIDER",
-              onPressed: () {
+            color: Palette.purple,
+            label: "VALIDER",
+            onPressed: () async {
+              UserCredential? userCredential = await _signUp();
+              if (userCredential != null) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const UserFormPage()),
                 );
-              })
-        ]));
+              }
+            },
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -112,12 +145,29 @@ class _SignIn extends StatelessWidget {
 
   _SignIn({Key? key, required this.height}) : super(key: key);
 
+  Future<UserCredential?> _signIn() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: emailController.text, password: passController.text);
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-        height: height,
-        child: Column(children: [
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+      height: height,
+      child: Column(
+        children: [
           SizedBox(height: height * 0.07),
           FormInput(
             label: "email",
@@ -142,15 +192,21 @@ class _SignIn extends StatelessWidget {
                   ))),
           SizedBox(height: height * 0.12),
           Button(
-              color: Palette.red,
-              label: "VALIDER",
-              onPressed: () {
+            color: Palette.red,
+            label: "VALIDER",
+            onPressed: () async {
+              UserCredential? userCredential = await _signIn();
+              if (userCredential != null) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const Nav()),
                 );
-              })
-        ]));
+              }
+            },
+          )
+        ],
+      ),
+    );
   }
 }
 

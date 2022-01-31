@@ -195,7 +195,13 @@ class _FormStepperState extends State<FormStepper> {
                   Expanded(
                       flex: 3,
                       child: Button(
-                        onPressed: next,
+                        onPressed: () {
+                          if (widget.onFinish != null) {
+                            widget.onFinish!();
+                          } else {
+                            Navigator.pop(context);
+                          }
+                        },
                         color: widget.color,
                         label: "FINIR",
                       ))

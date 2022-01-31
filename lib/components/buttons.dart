@@ -143,3 +143,49 @@ class NavButton extends StatelessWidget {
     );
   }
 }
+
+class SettingButton extends StatelessWidget {
+  final Nuance color;
+  final String label;
+  final Function() onPressed;
+
+  const SettingButton(
+      {Key? key,
+      required this.color,
+      required this.label,
+      required this.onPressed})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Stack(
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              height: 30,
+              child: Text(
+                label,
+                style: TextStyle(color: color.dark, fontSize: 15),
+              ),
+            ),
+            Container(
+              alignment: Alignment.centerRight,
+              child: Icon(
+                Icons.arrow_forward,
+                size: 30,
+                color: color.dark,
+              ),
+            )
+          ],
+        ),
+        decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: color.dark))),
+      ),
+    );
+  }
+}

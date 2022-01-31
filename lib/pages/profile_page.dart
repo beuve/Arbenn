@@ -6,6 +6,7 @@ import '../data/user_data.dart';
 import '../components/scroller.dart';
 import '../components/event_summary.dart';
 import '../components/tags.dart';
+import 'user_settings.dart';
 
 class ProfilePage extends StatelessWidget {
   final UserData user;
@@ -139,7 +140,13 @@ class ProfilePage extends StatelessWidget {
                   Container(
                     alignment: Alignment.topRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserSettings(
+                                  userId: user.userId,
+                                )),
+                      ),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 18),

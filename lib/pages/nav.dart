@@ -6,6 +6,7 @@ import 'search_page.dart';
 import 'calendar_page.dart';
 import 'profile_page.dart';
 import '../components/app_bar.dart';
+import 'event_form.dart';
 
 class _PageInfos {
   final int num;
@@ -76,7 +77,8 @@ class _NavState extends State<Nav> {
     final List<Widget> buttons = _pagesInfos.map(
       (pageInfos) {
         Function() onPressed = pageInfos.num == 2
-            ? () => {}
+            ? () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const EventFormPage()))
             : () =>
                 setState(() => _currentPageInfos = _pagesInfos[pageInfos.num]);
         Widget icon = Icon(pageInfos.icon,

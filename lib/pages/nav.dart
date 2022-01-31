@@ -38,10 +38,10 @@ class _NavState extends State<Nav> {
   void initState() {
     super.initState();
     _pagesInfos = [
-      const _PageInfos(
+      _PageInfos(
         num: 0,
         icon: Icons.home,
-        content: HomePage(),
+        content: HomePage.dummy(),
         color: Palette.red,
       ),
       const _PageInfos(

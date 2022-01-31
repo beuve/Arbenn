@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide IconButton, BackButton;
 import '../utils/colors.dart';
 import '../data/event_data.dart';
 import 'tags.dart';
+import '../pages/event_page.dart';
 
 class EventSummary extends StatelessWidget {
   final EventSumarryData data;
@@ -29,20 +30,16 @@ class EventSummary extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 5),
-        Container(
-          child: Text(
-            data.admin.firstName,
-            style: TextStyle(color: color.lighter),
-          ),
+        Text(
+          data.admin.firstName,
+          style: TextStyle(color: color.lighter),
         ),
         const SizedBox(width: 15),
         Icon(Icons.people_alt, size: 12, color: color.lighter),
         const SizedBox(width: 5),
-        Container(
-          child: Text(
-            '${data.numAttendes} / ${data.maxAttendes}',
-            style: TextStyle(color: color.lighter),
-          ),
+        Text(
+          '${data.numAttendes} / ${data.maxAttendes}',
+          style: TextStyle(color: color.lighter),
         ),
       ],
     );
@@ -149,7 +146,12 @@ class EventSummary extends StatelessWidget {
           _buildDataSummary(),
         ]),
       ),
-      onPressed: () {},
+      onPressed: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EventPage(eventId: data.eventId),
+        ),
+      ),
     );
   }
 }

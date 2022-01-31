@@ -31,3 +31,58 @@ class Button extends StatelessWidget {
     );
   }
 }
+
+class IconButton extends StatelessWidget {
+  final Nuance color;
+  final IconData icon;
+  final Function() onPressed;
+
+  const IconButton(
+      {Key? key,
+      required this.color,
+      required this.icon,
+      required this.onPressed})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Icon(
+          icon,
+          size: 20,
+          color: color.lighter,
+        ),
+        decoration: BoxDecoration(
+          color: color.darker,
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
+        ),
+      ),
+    );
+  }
+}
+
+class BackButton extends StatelessWidget {
+  final Nuance color;
+  final Function()? onPressed;
+
+  const BackButton({Key? key, required this.color, this.onPressed})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed ?? () => Navigator.pop(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Icon(
+          Icons.arrow_back,
+          size: 30,
+          color: color.darker,
+        ),
+      ),
+    );
+  }
+}

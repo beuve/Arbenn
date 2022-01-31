@@ -3,6 +3,7 @@ import '../components/up_expension.dart';
 import '../components/inputs.dart';
 import '../components/buttons.dart';
 import '../utils/colors.dart';
+import 'nav.dart';
 import 'user_form.dart';
 
 class _Conditions extends StatelessWidget {
@@ -140,7 +141,15 @@ class _SignIn extends StatelessWidget {
                     style: TextStyle(color: Palette.red.flash),
                   ))),
           SizedBox(height: height * 0.12),
-          Button(color: Palette.red, label: "VALIDER", onPressed: () {})
+          Button(
+              color: Palette.red,
+              label: "VALIDER",
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Nav()),
+                );
+              })
         ]));
   }
 }

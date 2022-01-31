@@ -4,6 +4,7 @@ import '../components/stepper.dart';
 import '../components/inputs.dart';
 import '../components/scroller.dart';
 import '../components/tags.dart';
+import 'nav.dart';
 
 class UserFormPage extends StatelessWidget {
   final Nuance color;
@@ -145,6 +146,12 @@ class UserFormPage extends StatelessWidget {
     return FormStepper(
       color: color,
       resizeOnKeyboard: const [true, true, false],
+      onFinish: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Nav()),
+        );
+      },
       steps: <Step>[
         firstStep(),
         secondStep(),

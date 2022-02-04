@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum ColorTheme { light, dark }
+
 class Nuance {
   final Color lighter;
   final Color light;

@@ -3,8 +3,7 @@ import '../components/up_expension.dart';
 import '../components/inputs.dart';
 import '../components/buttons.dart';
 import '../utils/colors.dart';
-import 'nav.dart';
-import 'user_form.dart';
+import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -124,11 +123,8 @@ class _SignUpState extends State<_SignUp> {
             label: "VALIDER",
             onPressed: () async {
               UserCredential? userCredential = await _signUp();
-              if (userCredential != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const UserFormPage()),
-                );
+              if (userCredential != null && userCredential.user != null) {
+                userCredential.user!.sendEmailVerification();
               }
             },
           )
@@ -195,13 +191,7 @@ class _SignIn extends StatelessWidget {
             color: Palette.red,
             label: "VALIDER",
             onPressed: () async {
-              UserCredential? userCredential = await _signIn();
-              if (userCredential != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Nav()),
-                );
-              }
+              UserCredential? _ = await _signIn();
             },
           )
         ],
@@ -252,5 +242,91 @@ class SignPage extends StatelessWidget {
         ),
       );
     });
+  }
+}
+
+class EmailValidationPage extends StatefulWidget {
+  final Widget nextPage;
+  final Nuance color;
+
+  const EmailValidationPage(
+      {Key? key, required this.nextPage, this.color = Palette.red})
+      : super(key: key);
+
+  @override
+  State<EmailValidationPage> createState() => _EmailValidationPageState();
+}
+
+class _EmailValidationPageState extends State<EmailValidationPage> {
+  late bool _emailSent;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailSent = false;
+    _timer = Timer.periodic(const Duration(seconds: 3), _checkUserEmail);
+  }
+
+  void _checkUserEmail(Timer _) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.reload();
+      if (user.emailVerified) {
+        _timer.cancel();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => widget.nextPage),
+        );
+      }
+    }
+  }
+
+  void sendAgain() {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      user.sendEmailVerification();
+      setState(() => _emailSent = true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      type: MaterialType.transparency,
+      child: Container(
+        color: widget.color.darker,
+        padding: const EdgeInsets.all(20),
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.email,
+                size: 150,
+                color: widget.color.lighter,
+              ),
+              Text(
+                "Verifiez vos emails, nous vous en avons envoyé un pour activer votre compte.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: widget.color.lighter,
+                  fontSize: 15,
+                  decoration: null,
+                ),
+              ),
+              const SizedBox(height: 80),
+              if (!_emailSent)
+                Button(
+                  color: widget.color,
+                  theme: ColorTheme.dark,
+                  label: "Envoyer à nouveau",
+                  onPressed: () => sendAgain(),
+                )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

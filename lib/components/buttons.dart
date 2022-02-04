@@ -4,13 +4,15 @@ import '../utils/colors.dart';
 class Button extends StatelessWidget {
   final Nuance color;
   final String label;
+  final ColorTheme theme;
   final Function() onPressed;
 
   const Button(
       {Key? key,
       required this.color,
       required this.label,
-      required this.onPressed})
+      required this.onPressed,
+      this.theme = ColorTheme.light})
       : super(key: key);
 
   @override
@@ -21,10 +23,12 @@ class Button extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
         child: Text(
           label,
-          style: TextStyle(color: color.lighter, fontSize: 19),
+          style: TextStyle(
+              color: theme == ColorTheme.light ? color.lighter : color.darker,
+              fontSize: 19),
         ),
         decoration: BoxDecoration(
-          color: color.darker,
+          color: theme == ColorTheme.light ? color.darker : color.lighter,
           borderRadius: const BorderRadius.all(Radius.circular(25)),
         ),
       ),

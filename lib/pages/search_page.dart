@@ -99,10 +99,10 @@ class _SearchPageState extends State<SearchPage> {
                   fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            tags(
+            Tags.static(
               ["sport", "handball"],
-              foregroundColor: widget.color.lighter,
-              backgroundColor: widget.color.darker,
+              active: true,
+              color: widget.color,
             ),
             const SizedBox(height: 30),
             Text(

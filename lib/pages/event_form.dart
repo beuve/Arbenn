@@ -141,7 +141,7 @@ class EventFormPage extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: tags(tagList, foregroundColor: color.darker),
+            child: Tags.static(tagList, color: color),
           ),
         ])));
   }

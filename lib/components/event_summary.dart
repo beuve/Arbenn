@@ -93,7 +93,7 @@ class EventSummary extends StatelessWidget {
           softWrap: false,
         ),
         const SizedBox(height: 12),
-        tags(data.tags, foregroundColor: color.lighter, fontSize: 10),
+        Tags.static(data.tags, color: color, fontSize: 10),
         const SizedBox(height: 2),
         _adminAttendesNumRow(),
         const SizedBox(height: 7),

@@ -181,8 +181,7 @@ class _EventPageState extends State<EventPage> {
                   color: widget.color.lighter,
                 ),
                 const SizedBox(width: 3),
-                tags(_eventInfos.tags,
-                    foregroundColor: widget.color.lighter, fontSize: 10)
+                Tags.static(_eventInfos.tags, color: widget.color, fontSize: 10)
               ],
             ),
           ),

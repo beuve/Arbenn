@@ -25,10 +25,34 @@ class _UserFormPageState extends State<UserFormPage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  late List<TagInfos> _tags;
 
   @override
   void initState() {
     super.initState();
+    _tags = [
+      TagInfos(label: "Handball"),
+      TagInfos(label: "Sport"),
+      TagInfos(label: "Lecture"),
+      TagInfos(label: "Musée"),
+      TagInfos(label: "Promenade"),
+      TagInfos(label: "Course à pied"),
+      TagInfos(label: "Cinéma"),
+      TagInfos(label: "Hockey"),
+      TagInfos(label: "Randonnée"),
+      TagInfos(label: "Musculation"),
+      TagInfos(label: "Dessin"),
+      TagInfos(label: "Photo"),
+      TagInfos(label: "Boire un coup"),
+      TagInfos(label: "Musique"),
+      TagInfos(label: "Discussion"),
+      TagInfos(label: "Soutien scolaire"),
+    ];
+  }
+
+  void _changeTagState(String label) {
+    int i = _tags.indexWhere((t) => t.label == label);
+    setState(() => _tags[i].isActive = !_tags[i].isActive);
   }
 
   Step firstStep() {
@@ -93,7 +117,6 @@ class _UserFormPageState extends State<UserFormPage> {
   }
 
   Step secondStep() {
-    final controller = TextEditingController();
     return Step(
         title: Text(
           'INFOS',
@@ -153,39 +176,11 @@ class _UserFormPageState extends State<UserFormPage> {
   }
 
   Step thirdStep() {
-    List<String> tagList = [
-      "haha",
-      "test",
-      "dummy",
-      "haha",
-      "test",
-      "dummy",
-      "test",
-      "dummy",
-      "haha",
-      "test",
-      "dummy",
-      "test",
-      "dummy",
-      "haha",
-      "test",
-      "dummy",
-      "test",
-      "dummy",
-      "haha",
-      "test",
-      "dummy",
-      "test",
-      "dummy",
-      "haha",
-      "test",
-      "dummy",
-      "test",
-      "dummy",
-      "haha",
-      "test",
-      "dummy",
-    ];
+    setState(() {
+      for (var i = 0; i < _tags.length; i++) {
+        _tags[i].onTap = () => _changeTagState(_tags[i].label);
+      }
+    });
     return Step(
         title: Text(
           'TAGS',
@@ -206,7 +201,7 @@ class _UserFormPageState extends State<UserFormPage> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: tags(tagList, foregroundColor: widget.color.darker),
+            child: Tags(tags: _tags, color: widget.color),
           ),
         ])));
   }

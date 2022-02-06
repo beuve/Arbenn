@@ -49,10 +49,10 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 10),
           Container(
             alignment: Alignment.centerLeft,
-            child: tags(
+            child: Tags.static(
               user.tags,
-              foregroundColor: color.lighter,
-              backgroundColor: color.darker,
+              color: color,
+              active: true,
               fontSize: 13,
             ),
           ),

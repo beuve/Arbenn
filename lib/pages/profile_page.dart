@@ -100,7 +100,9 @@ class ProfilePage extends StatelessWidget {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: user.picture,
+                          image: user.picture ??
+                              const AssetImage(
+                                  'assets/images/user_placeholder.png'),
                         ),
                       ),
                     ),

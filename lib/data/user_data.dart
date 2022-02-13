@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'event_data.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserSumarryData {
   final String userId;
   final String firstName;
@@ -26,7 +28,7 @@ class UserData {
   final String location;
   final String description;
   List<EventSumarryData> events;
-  final ImageProvider<Object> picture;
+  ImageProvider<Object>? picture;
 
   UserData({
     required this.userId,
@@ -36,8 +38,8 @@ class UserData {
     required this.birth,
     required this.location,
     required this.description,
-    required this.events,
-    required this.picture,
+    this.events = const [],
+    this.picture,
   });
 
   static UserData dummy({
@@ -48,7 +50,7 @@ class UserData {
     DateTime? birth,
     String location = "Saint Sauveur Lendelin",
     String description =
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     List<EventSumarryData>? events,
   }) {
     return UserData(
@@ -84,5 +86,49 @@ class UserData {
       }
     }
     return age;
+  }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "firstName": firstName,
+      "lastName": lastName,
+      "birth": birth,
+      "description": description,
+      "tags": tags,
+      "location": location
+    };
+  }
+
+  static Future<UserData?> loadFromEventId(String userId) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    Map<String, dynamic>? infos = await users
+        .doc(userId)
+        .get()
+        .then((doc) => doc.data() as Map<String, dynamic>?);
+    if (infos == null) {
+      return null;
+    } else {
+      return UserData(
+          userId: userId,
+          firstName: infos["firstName"],
+          lastName: infos["lastName"],
+          tags: infos["tags"].cast<String>() as List<String>,
+          birth: DateTime.fromMillisecondsSinceEpoch(
+              infos["birth"].millisecondsSinceEpoch),
+          location: infos["location"],
+          description: infos["description"]);
+    }
+  }
+
+  Future<void> save() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    await users.doc(userId).set(toJson(), SetOptions(merge: true));
   }
 }

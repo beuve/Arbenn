@@ -26,6 +26,7 @@ class UserData {
   final List<String> tags;
   final DateTime birth;
   final String location;
+  final String? phone;
   final String description;
   List<EventSumarryData> events;
   ImageProvider<Object>? picture;
@@ -38,6 +39,7 @@ class UserData {
     required this.birth,
     required this.location,
     required this.description,
+    this.phone,
     this.events = const [],
     this.picture,
   });
@@ -49,6 +51,7 @@ class UserData {
     List<String> tags = const ["Sport", "Handball"],
     DateTime? birth,
     String location = "Saint Sauveur Lendelin",
+    String phone = "0203040506",
     String description =
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     List<EventSumarryData>? events,
@@ -61,6 +64,7 @@ class UserData {
         birth: DateTime.parse("19951124"),
         location: "Saint Sauveur Lendelin",
         description: description,
+        phone: phone,
         events: events ??
             [
               EventSumarryData.dummy(),
@@ -100,7 +104,8 @@ class UserData {
       "birth": birth,
       "description": description,
       "tags": tags,
-      "location": location
+      "location": location,
+      "phone": phone,
     };
   }
 
@@ -122,6 +127,7 @@ class UserData {
           birth: DateTime.fromMillisecondsSinceEpoch(
               infos["birth"].millisecondsSinceEpoch),
           location: infos["location"],
+          phone: infos["phone"],
           description: infos["description"]);
     }
   }

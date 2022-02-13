@@ -29,6 +29,15 @@ class TagSearch {
     }
   }
 
+  setSelectedTags(List<String> newTags, Function(String) onTap) {
+    for (var i = 0; i < newTags.length; i++) {
+      if (!tags.any((element) => element.label == newTags[i])) {
+        tags.add(TagInfos(
+            label: newTags[i], onTap: onTap(newTags[i]), isActive: true));
+      }
+    }
+  }
+
   toggle(String label) {
     if (tags.firstWhere((tag) => tag.label == label).isActive) {
       deactivate(label);

@@ -34,10 +34,27 @@ class _UserFormPageState extends State<UserFormPage> {
   @override
   void initState() {
     super.initState();
+    initInfos();
+  }
+
+  initInfos() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final UserData? infos = await UserData.loadFromEventId(user!.uid);
+    if (infos != null) {
+      _firstNameController.text = infos.firstName;
+      _lastNameController.text = infos.lastName;
+      _birthDateController.date = infos.birth;
+      _cityController.text = infos.location;
+      _bioController.text = infos.description;
+      _phoneController.text = infos.phone ?? "";
+      _tagSearch.setSelectedTags(infos.tags,
+          (label) => () => setState(() => _tagSearch.toggle(label)));
+    }
   }
 
   UserData toUserData() {
-    User? user = FirebaseAuth.instance.currentUser; // this shouldn't be null
+    final User? user =
+        FirebaseAuth.instance.currentUser; // this shouldn't be null
     return UserData(
         userId: user!.uid,
         firstName: _firstNameController.text,
@@ -48,6 +65,7 @@ class _UserFormPageState extends State<UserFormPage> {
             .toList(),
         birth: _birthDateController.date!,
         location: _cityController.text,
+        phone: _phoneController.text,
         description: _bioController.text);
   }
 
@@ -208,7 +226,8 @@ class _UserFormPageState extends State<UserFormPage> {
     return FormStepper(
       color: widget.color,
       resizeOnKeyboard: const [true, true, false],
-      onFinish: () {
+      onFinish: () async {
+        await toUserData().save();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Nav()),

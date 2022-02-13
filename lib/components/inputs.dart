@@ -131,7 +131,7 @@ class DatePickingController extends ValueNotifier<DateTime?> {
   DatePickingController({DateTime? date}) : super(date);
 
   TextEditingController get textController {
-    final TextEditingController controller = TextEditingController();
+    final TextEditingController controller = TextEditingController(text: text);
     addListener(() {
       if (value != null) {
         controller.text = "${value!.day} / ${value!.month} / ${value!.year}";
@@ -150,6 +150,10 @@ class DatePickingController extends ValueNotifier<DateTime?> {
   }
 
   DateTime? get date => value;
+
+  set date(DateTime? newDate) {
+    value = newDate;
+  }
 
   Future<void> pickDate(BuildContext context) async {
     value = await showDatePicker(

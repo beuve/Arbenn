@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'event_data.dart';
 
 class UserSumarryData {
-  final int userId;
+  final String userId;
   final String firstName;
   final ImageProvider<Object> picture;
 
@@ -13,12 +13,12 @@ class UserSumarryData {
     const ImageProvider<Object> image =
         AssetImage('assets/images/user_placeholder.png');
     const String name = "john";
-    return UserSumarryData(userId: 1, firstName: name, picture: image);
+    return UserSumarryData(userId: "1", firstName: name, picture: image);
   }
 }
 
 class UserData {
-  final int userId;
+  final String userId;
   final String firstName;
   final String lastName;
   final List<String> tags;
@@ -41,7 +41,7 @@ class UserData {
   });
 
   static UserData dummy({
-    int userId = 1,
+    String userId = "1",
     String firstName = "John",
     String lastName = "Doe",
     List<String> tags = const ["Sport", "Handball"],

@@ -4,7 +4,7 @@ import '../components/overlay.dart';
 import '../components/buttons.dart';
 
 class UserSettings extends StatelessWidget {
-  final int userId;
+  final String userId;
   final Nuance color;
 
   const UserSettings(

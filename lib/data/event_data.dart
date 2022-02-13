@@ -3,7 +3,7 @@ import 'user_data.dart';
 
 class EventSumarryData {
   final String title;
-  final int eventId;
+  final String eventId;
   final List<String> tags;
   final DateTime date;
   final String location;
@@ -25,7 +25,7 @@ class EventSumarryData {
   });
 
   static EventSumarryData dummy({
-    int eventid = 1,
+    String eventid = "1",
     String title = "Sport",
     List<String> tags = const ["sport", "running"],
     String location = "Saint Sauveur Lendelin",

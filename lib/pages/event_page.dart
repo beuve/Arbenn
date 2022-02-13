@@ -10,7 +10,7 @@ import '../components/tags.dart';
 import '../components/scroller.dart';
 
 class EventPage extends StatefulWidget {
-  final int eventId;
+  final String eventId;
   final Nuance color;
 
   const EventPage({

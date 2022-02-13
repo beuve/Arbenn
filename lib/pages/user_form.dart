@@ -8,6 +8,9 @@ import '../data/tags_data.dart';
 import 'nav.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import '../data/user_data.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserFormPage extends StatefulWidget {
   final Nuance color;
@@ -22,7 +25,7 @@ class _UserFormPageState extends State<UserFormPage> {
   File? _profilePicture;
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _birthDateController = TextEditingController();
+  final DatePickingController _birthDateController = DatePickingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
@@ -31,6 +34,21 @@ class _UserFormPageState extends State<UserFormPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  UserData toUserData() {
+    User? user = FirebaseAuth.instance.currentUser; // this shouldn't be null
+    return UserData(
+        userId: user!.uid,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        tags: _tagSearch.tags
+            .where((t) => t.isActive)
+            .map((t) => t.label)
+            .toList(),
+        birth: _birthDateController.date!,
+        location: _cityController.text,
+        description: _bioController.text);
   }
 
   Step firstStep() {
@@ -123,6 +141,7 @@ class _UserFormPageState extends State<UserFormPage> {
               ),
               const SizedBox(height: 30),
               DatePicker(
+                context,
                 label: "Date de naissance",
                 color: widget.color.darker,
                 controller: _birthDateController,

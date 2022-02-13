@@ -10,6 +10,8 @@ class FormInput extends StatelessWidget {
   final TextInputType keyboardType;
   final bool isSmallDevice;
   final TextEditingController? controller;
+  final Function()? onTap;
+  final bool readOnly;
 
   const FormInput({
     required this.label,
@@ -20,6 +22,8 @@ class FormInput extends StatelessWidget {
     this.maxLines = 1,
     this.isSmallDevice = false,
     this.keyboardType = TextInputType.text,
+    this.readOnly = false,
+    this.onTap,
     Key? key,
   }) : super(key: key);
 
@@ -29,9 +33,11 @@ class FormInput extends StatelessWidget {
       autocorrect: false,
       controller: controller,
       keyboardType: keyboardType,
+      readOnly: readOnly,
       maxLines: minLines != null && maxLines < minLines! ? minLines : maxLines,
       minLines: minLines,
       autofocus: autoFocus,
+      onTap: onTap,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: color, width: 2),
@@ -97,50 +103,61 @@ class SearchInput extends StatelessWidget {
 }
 
 class DatePicker extends StatelessWidget {
-  final Color color;
   final String label;
-  final TextEditingController controller;
+  final Color color;
+  final DatePickingController controller;
+  final BuildContext context;
 
-  const DatePicker({
+  const DatePicker(
+    this.context, {
     Key? key,
-    required this.color,
     required this.label,
     required this.controller,
+    required this.color,
   }) : super(key: key);
-
-  void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-    if (picked != null) {
-      controller.text = "${picked.day} / ${picked.month} / ${picked.year}";
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      autocorrect: false,
-      onTap: () => _selectDate(context),
-      readOnly: true,
-      controller: controller,
-      decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: color, width: 2),
-            borderRadius: const BorderRadius.all(Radius.circular(30.0))),
-        focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: color, width: 2),
-            borderRadius: const BorderRadius.all(Radius.circular(30.0))),
-        disabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: color, width: 2),
-            borderRadius: const BorderRadius.all(Radius.circular(30.0))),
-        labelText: label,
-        labelStyle: TextStyle(color: color, fontSize: 20),
-        contentPadding: const EdgeInsets.all(25),
-      ),
-      style: TextStyle(color: color, fontSize: 20),
-    );
+    return FormInput(
+        label: label,
+        color: color,
+        readOnly: true,
+        controller: controller.textController,
+        onTap: () => controller.pickDate(context));
+  }
+}
+
+class DatePickingController extends ValueNotifier<DateTime?> {
+  DatePickingController({DateTime? date}) : super(date);
+
+  TextEditingController get textController {
+    final TextEditingController controller = TextEditingController();
+    addListener(() {
+      if (value != null) {
+        controller.text = "${value!.day} / ${value!.month} / ${value!.year}";
+      } else {
+        controller.text = "";
+      }
+    });
+    return controller;
+  }
+
+  String? get text {
+    if (value != null && value != null) {
+      return "${value!.day} / ${value!.month} / ${value!.year}";
+    }
+    return null;
+  }
+
+  DateTime? get date => value;
+
+  Future<void> pickDate(BuildContext context) async {
+    value = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(2015, 8),
+          lastDate: DateTime(2101),
+        ) ??
+        value;
   }
 }

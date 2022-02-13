@@ -46,8 +46,8 @@ class EventFormPage extends StatelessWidget {
     );
   }
 
-  Step firstStep() {
-    final controller = TextEditingController();
+  Step firstStep(BuildContext context) {
+    final dateController = DatePickingController();
     return Step(
         title: Text(
           'EVENEMENT',
@@ -66,9 +66,10 @@ class EventFormPage extends StatelessWidget {
               FormInput(label: "Titre", color: color.darker, autoFocus: true),
               const SizedBox(height: 30),
               DatePicker(
+                context,
                 label: "Date",
                 color: color.darker,
-                controller: controller,
+                controller: dateController,
               ),
               const SizedBox(height: 30),
               FormInput(
@@ -152,7 +153,7 @@ class EventFormPage extends StatelessWidget {
       color: color,
       resizeOnKeyboard: const [true, true, false],
       steps: <Step>[
-        firstStep(),
+        firstStep(context),
         secondStep(),
         thirdStep(),
       ],

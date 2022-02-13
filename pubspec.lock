@@ -36,6 +36,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  cloud_firestore:
+    dependency: "direct main"
+    description:
+      name: cloud_firestore
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.8"
+  cloud_firestore_platform_interface:
+    dependency: transitive
+    description:
+      name: cloud_firestore_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.4.13"
+  cloud_firestore_web:
+    dependency: transitive
+    description:
+      name: cloud_firestore_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.6.8"
   collection:
     dependency: transitive
     description:
@@ -65,7 +86,7 @@ packages:
     source: hosted
     version: "1.2.0"
   firebase_auth:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_auth
       url: "https://pub.dartlang.org"
@@ -86,7 +107,7 @@ packages:
     source: hosted
     version: "3.3.7"
   firebase_core:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"
@@ -150,7 +171,7 @@ packages:
     source: hosted
     version: "4.0.0"
   image_picker:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: image_picker
       url: "https://pub.dartlang.org"

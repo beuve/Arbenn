@@ -4,6 +4,7 @@ import '../components/stepper.dart';
 import '../components/inputs.dart';
 import '../components/scroller.dart';
 import '../components/tags.dart';
+import '../data/tags_data.dart';
 import 'nav.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -25,34 +26,11 @@ class _UserFormPageState extends State<UserFormPage> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
-  late List<TagInfos> _tags;
+  final TagSearch _tagSearch = TagSearch();
 
   @override
   void initState() {
     super.initState();
-    _tags = [
-      TagInfos(label: "Handball"),
-      TagInfos(label: "Sport"),
-      TagInfos(label: "Lecture"),
-      TagInfos(label: "Musée"),
-      TagInfos(label: "Promenade"),
-      TagInfos(label: "Course à pied"),
-      TagInfos(label: "Cinéma"),
-      TagInfos(label: "Hockey"),
-      TagInfos(label: "Randonnée"),
-      TagInfos(label: "Musculation"),
-      TagInfos(label: "Dessin"),
-      TagInfos(label: "Photo"),
-      TagInfos(label: "Boire un coup"),
-      TagInfos(label: "Musique"),
-      TagInfos(label: "Discussion"),
-      TagInfos(label: "Soutien scolaire"),
-    ];
-  }
-
-  void _changeTagState(String label) {
-    int i = _tags.indexWhere((t) => t.label == label);
-    setState(() => _tags[i].isActive = !_tags[i].isActive);
   }
 
   Step firstStep() {
@@ -176,11 +154,6 @@ class _UserFormPageState extends State<UserFormPage> {
   }
 
   Step thirdStep() {
-    setState(() {
-      for (var i = 0; i < _tags.length; i++) {
-        _tags[i].onTap = () => _changeTagState(_tags[i].label);
-      }
-    });
     return Step(
         title: Text(
           'TAGS',
@@ -197,11 +170,16 @@ class _UserFormPageState extends State<UserFormPage> {
             child: SearchInput(
               label: "Chercher des tags...",
               color: widget.color,
+              onChanged: (query) async {
+                await _tagSearch.newSearch(query,
+                    (label) => () => setState(() => _tagSearch.toggle(label)));
+                setState(() => {});
+              },
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Tags(tags: _tags, color: widget.color),
+            child: Tags(tags: _tagSearch.tags, color: widget.color),
           ),
         ])));
   }

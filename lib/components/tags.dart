@@ -1,13 +1,6 @@
 import 'package:arbenn/utils/colors.dart';
 import 'package:flutter/material.dart';
-
-class TagInfos {
-  final String label;
-  bool isActive;
-  Function()? onTap;
-
-  TagInfos({required this.label, this.isActive = false, this.onTap});
-}
+import '../data/tags_data.dart';
 
 class Tag extends StatelessWidget {
   final String label;

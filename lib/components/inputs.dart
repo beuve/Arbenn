@@ -59,6 +59,7 @@ class SearchInput extends StatelessWidget {
   final int maxLines;
   final TextInputType keyboardType;
   final bool isSmallDevice;
+  final Function(String)? onChanged;
 
   const SearchInput({
     required this.label,
@@ -68,6 +69,7 @@ class SearchInput extends StatelessWidget {
     this.maxLines = 1,
     this.isSmallDevice = false,
     this.keyboardType = TextInputType.text,
+    this.onChanged,
     Key? key,
   }) : super(key: key);
 
@@ -77,6 +79,7 @@ class SearchInput extends StatelessWidget {
       autocorrect: false,
       autofocus: autoFocus,
       keyboardType: keyboardType,
+      onChanged: onChanged,
       decoration: InputDecoration(
         border: const UnderlineInputBorder(),
         enabledBorder: UnderlineInputBorder(

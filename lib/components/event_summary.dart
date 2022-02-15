@@ -3,6 +3,7 @@ import '../utils/colors.dart';
 import '../data/event_data.dart';
 import 'tags.dart';
 import '../pages/event_page.dart';
+import 'user_elements.dart';
 
 class EventSummary extends StatelessWidget {
   final EventSumarryData data;
@@ -17,18 +18,7 @@ class EventSummary extends StatelessWidget {
   Widget _adminAttendesNumRow() {
     return Row(
       children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            image: DecorationImage(
-              fit: BoxFit.fill,
-              image: data.admin.picture,
-            ),
-          ),
-        ),
+        ProfileMiniature(picture: data.admin.picture, size: 12),
         const SizedBox(width: 5),
         Text(
           data.admin.firstName,

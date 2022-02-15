@@ -1,3 +1,4 @@
+import 'package:arbenn/data/storage.dart';
 import 'package:flutter/material.dart';
 import 'event_data.dart';
 
@@ -6,16 +7,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UserSumarryData {
   final String userId;
   final String firstName;
-  final ImageProvider<Object> picture;
+  ImageProvider<Object>? picture;
 
   UserSumarryData(
-      {required this.userId, required this.firstName, required this.picture});
+      {required this.userId, required this.firstName, this.picture});
 
   static UserSumarryData dummy() {
     const ImageProvider<Object> image =
         AssetImage('assets/images/user_placeholder.png');
     const String name = "john";
     return UserSumarryData(userId: "1", firstName: name, picture: image);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {"userId": userId, "firstName": firstName};
+  }
+
+  static UserSumarryData fromJson(Map<String, dynamic> infos) {
+    return UserSumarryData(
+        firstName: infos["firstName"], userId: infos["userId"]);
+  }
+
+  Future<void> getPicture() async {
+    picture = await loadImage(userId);
   }
 }
 

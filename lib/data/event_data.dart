@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'user_data.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class EventSumarryData {
   final String title;
   final String eventId;
@@ -50,7 +52,7 @@ class EventSumarryData {
 }
 
 class EventData {
-  final int eventId;
+  final String eventId;
   final String title;
   final List<String> tags;
   final DateTime date;
@@ -76,7 +78,7 @@ class EventData {
 
   static EventData dummy() {
     return EventData(
-        eventId: 1,
+        eventId: "1",
         title: "Sport",
         tags: ["sport", "running"],
         date: DateTime.now(),
@@ -91,5 +93,55 @@ class EventData {
           UserSumarryData.dummy(),
           UserSumarryData.dummy(),
         ]);
+  }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "title": title,
+      "date": date,
+      "description": description,
+      "tags": tags,
+      "location": location,
+      "admin": admin.toJson(),
+      "maxAttendes": maxAttendes,
+      "numAttendes": numAttendes,
+    };
+  }
+
+  static Future<EventData?> loadFromEventId(String eventId) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('events');
+
+    Map<String, dynamic>? infos = await users
+        .doc(eventId)
+        .get()
+        .then((doc) => doc.data() as Map<String, dynamic>?);
+    if (infos == null) {
+      return null;
+    } else {
+      UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
+      await admin.getPicture();
+      return EventData(
+          eventId: eventId,
+          admin: admin,
+          title: infos["title"],
+          tags: infos["tags"].cast<String>() as List<String>,
+          date: DateTime.fromMillisecondsSinceEpoch(
+              infos["date"].millisecondsSinceEpoch),
+          location: infos["location"],
+          maxAttendes: infos["maxAttendes"],
+          numAttendes: infos["numAttendes"],
+          description: infos["description"]);
+    }
+  }
+
+  Future<void> save() async {
+    CollectionReference users = FirebaseFirestore.instance.collection('events');
+
+    await users.doc(eventId).set(toJson(), SetOptions(merge: true));
   }
 }

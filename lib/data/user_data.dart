@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'event_data.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserSumarryData {
   final String userId;
@@ -30,6 +31,26 @@ class UserSumarryData {
 
   Future<void> getPicture() async {
     picture = await loadImage(userId);
+  }
+
+  static Future<UserSumarryData?> loadFromUserId(String userId) async {
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    Map<String, dynamic>? infos = await users
+        .doc(userId)
+        .get()
+        .then((doc) => doc.data() as Map<String, dynamic>?);
+    if (infos == null) {
+      return null;
+    } else {
+      return UserSumarryData(userId: userId, firstName: infos["firstName"]);
+    }
+  }
+
+  static Future<UserSumarryData> currentUser() {
+    User? _user = FirebaseAuth.instance.currentUser;
+    return loadFromUserId(_user!.uid)
+        .then((infos) => infos!); // the current user should always exist
   }
 }
 

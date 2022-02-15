@@ -79,7 +79,6 @@ class _UserFormPageState extends State<UserFormPage> {
     final ImageProvider? image = _localProfilePicture != null
         ? FileImage(_localProfilePicture!)
         : _profilePicture;
-    print(image == null);
     return Step(
       title: Text(
         'PHOTO',

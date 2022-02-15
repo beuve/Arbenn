@@ -52,7 +52,7 @@ class EventSumarryData {
 }
 
 class EventData {
-  final String eventId;
+  final String? eventId;
   final String title;
   final List<String> tags;
   final DateTime date;
@@ -64,7 +64,7 @@ class EventData {
   List<UserSumarryData> attendes;
 
   EventData({
-    required this.eventId,
+    this.eventId,
     required this.title,
     required this.tags,
     required this.date,

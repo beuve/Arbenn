@@ -9,6 +9,7 @@ import 'nav.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../data/user_data.dart';
+import '../data/storage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -22,7 +23,8 @@ class UserFormPage extends StatefulWidget {
 }
 
 class _UserFormPageState extends State<UserFormPage> {
-  File? _profilePicture;
+  File? _localProfilePicture;
+  ImageProvider? _profilePicture;
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final DatePickingController _birthDateController = DatePickingController();
@@ -38,7 +40,9 @@ class _UserFormPageState extends State<UserFormPage> {
   }
 
   initInfos() async {
-    final User? user = FirebaseAuth.instance.currentUser;
+    final User? user =
+        FirebaseAuth.instance.currentUser; // this shouldn't be null
+
     final UserData? infos = await UserData.loadFromEventId(user!.uid);
     if (infos != null) {
       _firstNameController.text = infos.firstName;
@@ -49,14 +53,16 @@ class _UserFormPageState extends State<UserFormPage> {
       _phoneController.text = infos.phone ?? "";
       _tagSearch.setSelectedTags(infos.tags,
           (label) => () => setState(() => _tagSearch.toggle(label)));
+      ImageProvider? image = await loadImage(user.uid);
+      if (image != null) {
+        setState(() => _profilePicture = image);
+      }
     }
   }
 
-  UserData toUserData() {
-    final User? user =
-        FirebaseAuth.instance.currentUser; // this shouldn't be null
+  UserData toUserData(userId) {
     return UserData(
-        userId: user!.uid,
+        userId: userId,
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         tags: _tagSearch.tags
@@ -70,6 +76,10 @@ class _UserFormPageState extends State<UserFormPage> {
   }
 
   Step firstStep() {
+    final ImageProvider? image = _localProfilePicture != null
+        ? FileImage(_localProfilePicture!)
+        : _profilePicture;
+    print(image == null);
     return Step(
       title: Text(
         'PHOTO',
@@ -83,7 +93,7 @@ class _UserFormPageState extends State<UserFormPage> {
           XFile? file =
               await ImagePicker().pickImage(source: ImageSource.gallery);
           if (file != null) {
-            setState(() => _profilePicture = File(file.path));
+            setState(() => _localProfilePicture = File(file.path));
           }
         },
         child: Container(
@@ -94,13 +104,13 @@ class _UserFormPageState extends State<UserFormPage> {
             width: 230.0,
             height: 230.0,
             child: Stack(children: [
-              if (_profilePicture != null)
+              if (image != null)
                 CircleAvatar(
-                  backgroundImage: FileImage(_profilePicture!),
+                  backgroundImage: image,
                   radius: 230,
                 ),
               Opacity(
-                opacity: _profilePicture == null ? 1 : 0.25,
+                opacity: image == null ? 1 : 0.25,
                 child: Container(
                   width: 230,
                   height: 230,
@@ -110,7 +120,7 @@ class _UserFormPageState extends State<UserFormPage> {
                           const BorderRadius.all(Radius.circular(115)),
                       border: Border.all(
                         color: widget.color.lighter,
-                        width: _profilePicture == null ? 0 : 10,
+                        width: image == null ? 0 : 10,
                       )),
                   child: Icon(
                     Icons.add_a_photo,
@@ -227,7 +237,11 @@ class _UserFormPageState extends State<UserFormPage> {
       color: widget.color,
       resizeOnKeyboard: const [true, true, false],
       onFinish: () async {
-        await toUserData().save();
+        final String userId = FirebaseAuth.instance.currentUser!.uid;
+        await toUserData(userId).save();
+        if (_localProfilePicture != null) {
+          await saveImage(userId, _localProfilePicture!.path);
+        }
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Nav()),

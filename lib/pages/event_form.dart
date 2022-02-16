@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/user_data.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
@@ -8,6 +11,7 @@ import '../components/tags.dart';
 import '../data/tags_data.dart';
 import '../data/event_data.dart';
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -23,8 +27,9 @@ class EventFormPage extends StatefulWidget {
 }
 
 class _EventFormPageState extends State<EventFormPage> {
-  List<File> _localProfilePicture = [];
-  List<ImageProvider> _profilePicture = [];
+  List<File> _localImages = [];
+  List<CloudImage> _cloudImages = [];
+  int _minImageIndex = 0;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final DatePickingController _dateController = DatePickingController();
@@ -45,6 +50,9 @@ class _EventFormPageState extends State<EventFormPage> {
       _locationController.text = widget.event!.location;
       _tagSearch.setSelectedTags(widget.event!.tags,
           (label) => () => setState(() => _tagSearch.toggle(label)));
+      _cloudImages = await widget.event!.getImages();
+      _minImageIndex =
+          _cloudImages.map((i) => int.parse(i.ref.name)).reduce(max) + 1;
     }
   }
 
@@ -145,7 +153,26 @@ class _EventFormPageState extends State<EventFormPage> {
         ])));
   }
 
+  Widget imageMiniature(ImageProvider image, [double size = 20]) {
+    return Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: image,
+          ),
+        ),
+        margin: const EdgeInsets.all(10),
+        child: SizedBox(
+          width: size,
+          height: size,
+        ));
+  }
+
   Step thirdStep() {
+    List<Widget> photos =
+        _cloudImages.map((i) => imageMiniature(i.image)).toList() +
+            _localImages.map((p) => imageMiniature(FileImage(p))).toList();
     return Step(
       title: Text(
         'PHOTO(S)',
@@ -160,19 +187,29 @@ class _EventFormPageState extends State<EventFormPage> {
         child: GridView.count(
           crossAxisCount: 3,
           children: [
-            Container(
-              alignment: Alignment.center,
+            ...photos,
+            InkWell(
+              onTap: () async {
+                List<XFile>? files = await ImagePicker().pickMultiImage();
+                if (files != null) {
+                  setState(() => _localImages =
+                      _localImages + files.map((f) => File(f.path)).toList());
+                }
+              },
               child: Container(
                 alignment: Alignment.center,
-                margin: const EdgeInsets.all(10),
-                child: Icon(
-                  Icons.add_rounded,
-                  size: 60,
-                  color: widget.color.lighter,
-                ),
-                decoration: BoxDecoration(
-                  color: widget.color.main,
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.all(10),
+                  child: Icon(
+                    Icons.add_rounded,
+                    size: 60,
+                    color: widget.color.lighter,
+                  ),
+                  decoration: BoxDecoration(
+                    color: widget.color.main,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
                 ),
               ),
             ),
@@ -190,6 +227,10 @@ class _EventFormPageState extends State<EventFormPage> {
       onFinish: () async {
         EventData event = await toEventData();
         await event.save();
+        for (var i = 0; i < _localImages.length; i++) {
+          saveImage("eventImages/${event.eventId}/${_minImageIndex + i}",
+              _localImages[i].path);
+        }
         Navigator.pop(context);
       },
       steps: <Step>[

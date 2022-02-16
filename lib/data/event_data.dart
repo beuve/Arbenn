@@ -1,7 +1,9 @@
+import 'package:arbenn/data/storage.dart';
 import 'package:flutter/material.dart';
 import 'user_data.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class EventSumarryData {
   final String title;
@@ -52,7 +54,7 @@ class EventSumarryData {
 }
 
 class EventData {
-  final String? eventId;
+  String? eventId;
   final String title;
   final List<String> tags;
   final DateTime date;
@@ -141,7 +143,25 @@ class EventData {
 
   Future<void> save() async {
     CollectionReference users = FirebaseFirestore.instance.collection('events');
+    DocumentReference event = users.doc(eventId);
+    await event.set(toJson(), SetOptions(merge: true));
+    eventId ??= event.id;
+  }
 
-    await users.doc(eventId).set(toJson(), SetOptions(merge: true));
+  Future<List<CloudImage>> getImages() async {
+    if (eventId == null) {
+      return [];
+    } else {
+      firebase_storage.ListResult result = await firebase_storage
+          .FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child('eventImages')
+          .child(eventId!)
+          .listAll();
+      List<CloudImage> cloudImage = await Future.wait(
+          result.items.map((ref) => CloudImage.loadImage(ref)).toList());
+      return cloudImage;
+    }
   }
 }

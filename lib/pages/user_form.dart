@@ -239,7 +239,7 @@ class _UserFormPageState extends State<UserFormPage> {
         final String userId = FirebaseAuth.instance.currentUser!.uid;
         await toUserData(userId).save();
         if (_localProfilePicture != null) {
-          await saveImage(userId, _localProfilePicture!.path);
+          await saveProfileImage(userId, _localProfilePicture!.path);
         }
         Navigator.push(
           context,

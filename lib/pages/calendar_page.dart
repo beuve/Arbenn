@@ -6,7 +6,7 @@ import '../utils/colors.dart';
 import '../components/tabs.dart';
 
 class CalendarPage extends StatelessWidget {
-  final List<EventSumarryData> eventsData;
+  final List<EventData> eventsData;
   final Nuance color;
 
   const CalendarPage(
@@ -16,16 +16,16 @@ class CalendarPage extends StatelessWidget {
   static CalendarPage dummy() {
     return CalendarPage(
       eventsData: [
-        EventSumarryData.dummy(date: DateTime.parse("19700101")),
-        EventSumarryData.dummy(date: DateTime.parse("19700101")),
-        EventSumarryData.dummy(date: DateTime.parse("19700101")),
-        EventSumarryData.dummy(date: DateTime.parse("19700101")),
-        EventSumarryData.dummy(date: DateTime.parse("19700101")),
-        EventSumarryData.dummy(date: DateTime.parse("20221211")),
-        EventSumarryData.dummy(date: DateTime.parse("20221212")),
-        EventSumarryData.dummy(date: DateTime.parse("20221212")),
-        EventSumarryData.dummy(date: DateTime.parse("20221213")),
-        EventSumarryData.dummy(date: DateTime.parse("20221214")),
+        EventData.dummy(date: DateTime.parse("19700101")),
+        EventData.dummy(date: DateTime.parse("19700101")),
+        EventData.dummy(date: DateTime.parse("19700101")),
+        EventData.dummy(date: DateTime.parse("19700101")),
+        EventData.dummy(date: DateTime.parse("19700101")),
+        EventData.dummy(date: DateTime.parse("20221211")),
+        EventData.dummy(date: DateTime.parse("20221212")),
+        EventData.dummy(date: DateTime.parse("20221212")),
+        EventData.dummy(date: DateTime.parse("20221213")),
+        EventData.dummy(date: DateTime.parse("20221214")),
       ],
     );
   }
@@ -98,7 +98,7 @@ class CalendarPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildFuturWidgetList(List<EventSumarryData> events) {
+  List<Widget> _buildFuturWidgetList(List<EventData> events) {
     DateTime? prev;
     List<Widget> res = [];
     for (var i = 0; i < events.length; i++) {
@@ -124,9 +124,9 @@ class CalendarPage extends StatelessWidget {
   }
 
   List<TabInfos> _buildTabs() {
-    final List<EventSumarryData> past =
+    final List<EventData> past =
         eventsData.where((e) => e.date.isBefore(DateTime.now())).toList();
-    final List<EventSumarryData> future =
+    final List<EventData> future =
         eventsData.where((e) => e.date.isAfter(DateTime.now())).toList();
     return [
       _buildSingleTab("Passé(s)",

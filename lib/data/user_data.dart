@@ -63,7 +63,7 @@ class UserData {
   final String location;
   final String? phone;
   final String description;
-  List<EventSumarryData> events;
+  List<EventData> events;
   ImageProvider<Object>? picture;
 
   UserData({
@@ -89,7 +89,7 @@ class UserData {
     String phone = "0203040506",
     String description =
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    List<EventSumarryData>? events,
+    List<EventData>? events,
   }) {
     return UserData(
         userId: userId,
@@ -102,10 +102,10 @@ class UserData {
         phone: phone,
         events: events ??
             [
-              EventSumarryData.dummy(),
-              EventSumarryData.dummy(),
-              EventSumarryData.dummy(),
-              EventSumarryData.dummy(),
+              EventData.dummy(),
+              EventData.dummy(),
+              EventData.dummy(),
+              EventData.dummy(),
             ],
         picture: const AssetImage('assets/images/user_placeholder.png'));
   }

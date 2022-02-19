@@ -6,7 +6,7 @@ import '../pages/event_page.dart';
 import 'user_elements.dart';
 
 class EventSummary extends StatelessWidget {
-  final EventSumarryData data;
+  final EventData data;
   final Nuance color;
 
   const EventSummary({

@@ -21,7 +21,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late bool _showSettings;
-  late List<EventSumarryData> _events;
+  late List<EventData> _events;
   final _settingsKey = GlobalKey();
   final _eventsListKey = GlobalKey();
 
@@ -29,12 +29,12 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     _showSettings = false;
     _events = [
-      EventSumarryData.dummy(),
-      EventSumarryData.dummy(),
-      EventSumarryData.dummy(),
-      EventSumarryData.dummy(),
-      EventSumarryData.dummy(),
-      EventSumarryData.dummy(),
+      EventData.dummy(),
+      EventData.dummy(),
+      EventData.dummy(),
+      EventData.dummy(),
+      EventData.dummy(),
+      EventData.dummy(),
     ];
     super.initState();
   }

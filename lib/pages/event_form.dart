@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/user_data.dart';
 import 'package:flutter/material.dart';
@@ -56,12 +55,12 @@ class _EventFormPageState extends State<EventFormPage> {
     }
   }
 
-  Future<EventData> toEventData() async {
+  Future<EventCreationData> toEventCreationData() async {
     UserSumarryData admin = widget.event != null
         ? widget.event!.admin
         : await UserSumarryData.currentUser();
 
-    return EventData(
+    return EventCreationData(
       eventId: widget.event != null ? widget.event!.eventId : null,
       title: _titleController.text,
       tags:
@@ -69,6 +68,7 @@ class _EventFormPageState extends State<EventFormPage> {
       date: _dateController.date!,
       location: _locationController.text,
       admin: admin,
+      icon: Icons.sports_handball,
       description: _descriptionController.text,
       numAttendes: widget.event != null ? widget.event!.numAttendes : 0,
     );
@@ -225,8 +225,8 @@ class _EventFormPageState extends State<EventFormPage> {
       color: widget.color,
       resizeOnKeyboard: const [true, true, false],
       onFinish: () async {
-        EventData event = await toEventData();
-        await event.save();
+        EventCreationData event = await toEventCreationData();
+        await event.save(); //  this should add an id to the EventCreationData
         for (var i = 0; i < _localImages.length; i++) {
           saveImage("eventImages/${event.eventId}/${_minImageIndex + i}",
               _localImages[i].path);

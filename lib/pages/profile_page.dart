@@ -154,7 +154,7 @@ class ProfilePage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 18),
                         child: Icon(
-                          ArbennIcons.pencil,
+                          ArbennIcons.vdots,
                           size: 24,
                           color: color.darker,
                         ),

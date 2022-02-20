@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/icons.dart';
@@ -9,6 +10,7 @@ import 'profile_page.dart';
 import '../components/app_bar.dart';
 import 'event_form.dart';
 import '../data/user_data.dart';
+import '../data/event_data.dart';
 
 class _PageInfos {
   final int num;
@@ -39,10 +41,16 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> {
   late _PageInfos _currentPageInfos;
   late List<_PageInfos> _pagesInfos;
+  late Future<List<EventData>> adminEvents;
+
+  void reloadAdminEventsList() {
+    adminEvents = widget.currentUser.loadAdminEvents();
+  }
 
   @override
   void initState() {
     super.initState();
+    adminEvents = widget.currentUser.loadAdminEvents();
     _pagesInfos = [
       _PageInfos(
         num: 0,
@@ -71,7 +79,10 @@ class _NavState extends State<Nav> {
       _PageInfos(
         num: 4,
         icon: ArbennIcons.user,
-        content: ProfilePage(user: widget.currentUser),
+        content: ProfilePage(
+          user: widget.currentUser,
+          adminEvents: adminEvents,
+        ),
         color: Palette.blue,
       ),
     ];
@@ -82,8 +93,11 @@ class _NavState extends State<Nav> {
     final List<Widget> buttons = _pagesInfos.map(
       (pageInfos) {
         Function() onPressed = pageInfos.num == 2
-            ? () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const EventFormPage()))
+            ? () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EventFormPage(),
+                ))
             : () =>
                 setState(() => _currentPageInfos = _pagesInfos[pageInfos.num]);
         Widget icon = Container(

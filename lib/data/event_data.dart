@@ -68,6 +68,22 @@ class EventData {
     return toJson().toString();
   }
 
+  static EventData ofJson(eventId, infos) {
+    UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
+    return EventData(
+        eventId: eventId,
+        icon: Icons.sports_handball,
+        admin: admin,
+        title: infos["title"],
+        tags: infos["tags"].cast<String>() as List<String>,
+        date: DateTime.fromMillisecondsSinceEpoch(
+            infos["date"].millisecondsSinceEpoch),
+        location: infos["location"],
+        maxAttendes: infos["maxAttendes"],
+        numAttendes: infos["numAttendes"],
+        description: infos["description"]);
+  }
+
   Map<String, dynamic> toJson() {
     return {
       "title": title,
@@ -211,6 +227,8 @@ class EventCreationData {
       "tags": tags,
       "location": location,
       "admin": admin.toJson(),
+      "adminId":
+          admin.userId, // needed for filtering several events of the same user
       "maxAttendes": maxAttendes,
       "numAttendes": numAttendes,
     };

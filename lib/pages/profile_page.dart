@@ -8,30 +8,51 @@ import '../components/scroller.dart';
 import '../components/event_summary.dart';
 import '../components/tags.dart';
 import 'user_settings.dart';
+import '../data/event_data.dart';
 
 class ProfilePage extends StatelessWidget {
   final UserData user;
   final Nuance color;
   final bool backButton;
   final bool editButton;
+  final Future<List<EventData>> adminEvents;
 
   const ProfilePage({
     Key? key,
     required this.user,
+    required this.adminEvents,
     this.color = Palette.blue,
     this.backButton = false,
     this.editButton = true,
   }) : super(key: key);
 
   static ProfilePage dummy() {
-    return ProfilePage(user: UserData.dummy());
+    return ProfilePage(
+      user: UserData.dummy(),
+      adminEvents: (() async => [
+            EventData.dummy(),
+            EventData.dummy(),
+            EventData.dummy(),
+          ])(),
+    );
   }
 
   Widget _buildEvents(BuildContext context) {
-    return ScrollList(
-      shadowColor: color.darker,
-      children:
-          user.events.map((e) => EventSummary(data: e, color: color)).toList(),
+    return FutureBuilder(
+      future: adminEvents,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          return ScrollList(
+            shadowColor: color.darker,
+            children: (snapshot.data! as List<EventData>)
+                .map((e) => EventSummary(data: e, color: color))
+                .toList(),
+            onRefresh: () async => print("test"),
+          );
+        } else {
+          return Text("breath waiting");
+        }
+      },
     );
   }
 

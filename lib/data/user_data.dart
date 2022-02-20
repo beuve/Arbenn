@@ -63,7 +63,6 @@ class UserData {
   final String location;
   final String? phone;
   final String description;
-  List<EventData> events;
   ImageProvider<Object>? picture;
 
   UserData({
@@ -75,7 +74,6 @@ class UserData {
     required this.location,
     required this.description,
     this.phone,
-    this.events = const [],
     this.picture,
   });
 
@@ -100,13 +98,6 @@ class UserData {
         location: "Saint Sauveur Lendelin",
         description: description,
         phone: phone,
-        events: events ??
-            [
-              EventData.dummy(),
-              EventData.dummy(),
-              EventData.dummy(),
-              EventData.dummy(),
-            ],
         picture: const AssetImage('assets/images/user_placeholder.png'));
   }
 
@@ -171,5 +162,19 @@ class UserData {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     await users.doc(userId).set(toJson(), SetOptions(merge: true));
+  }
+
+  Future<List<EventData>> loadAdminEvents() async {
+    CollectionReference events =
+        FirebaseFirestore.instance.collection('events');
+
+    return events
+        .where("adminId", isEqualTo: userId)
+        .get()
+        .then((querySnapshot) {
+      return querySnapshot.docs
+          .map((i) => EventData.ofJson(i.id, i.data()))
+          .toList();
+    });
   }
 }

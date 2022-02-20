@@ -144,7 +144,7 @@ class UserData {
     };
   }
 
-  static Future<UserData?> loadFromEventId(String userId) async {
+  static Future<UserData?> loadFromUserId(String userId) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     Map<String, dynamic>? infos = await users

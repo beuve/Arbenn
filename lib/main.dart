@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_user == null) {
       return null;
     }
-    return UserData.loadFromEventId(_user!.uid);
+    return UserData.loadFromUserId(_user!.uid);
   }
 
   @override

@@ -44,7 +44,7 @@ class _UserFormPageState extends State<UserFormPage> {
     final User? user =
         FirebaseAuth.instance.currentUser; // this shouldn't be null
 
-    final UserData? infos = await UserData.loadFromEventId(user!.uid);
+    final UserData? infos = await UserData.loadFromUserId(user!.uid);
     if (infos != null) {
       _firstNameController.text = infos.firstName;
       _lastNameController.text = infos.lastName;

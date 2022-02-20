@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/user_data.dart';
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../components/stepper.dart';
@@ -202,7 +203,7 @@ class _EventFormPageState extends State<EventFormPage> {
                   alignment: Alignment.center,
                   margin: const EdgeInsets.all(10),
                   child: Icon(
-                    Icons.add_rounded,
+                    ArbennIcons.plus,
                     size: 60,
                     color: widget.color.lighter,
                   ),

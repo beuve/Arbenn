@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide IconButton, BackButton;
 import '../utils/colors.dart';
 import '../data/event_data.dart';
@@ -25,7 +26,7 @@ class EventSummary extends StatelessWidget {
           style: TextStyle(color: color.lighter),
         ),
         const SizedBox(width: 15),
-        Icon(Icons.people_alt, size: 12, color: color.lighter),
+        Icon(ArbennIcons.userGroup, size: 12, color: color.lighter),
         const SizedBox(width: 5),
         Text(
           '${data.numAttendes} / ${data.maxAttendes}',
@@ -38,7 +39,7 @@ class EventSummary extends StatelessWidget {
   Widget _dateTimeRow() {
     return Row(
       children: [
-        Icon(Icons.calendar_today, size: 12, color: color.lighter),
+        Icon(ArbennIcons.calendar, size: 12, color: color.lighter),
         const SizedBox(width: 5),
         SizedBox(
           width: 89,
@@ -48,7 +49,7 @@ class EventSummary extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 15),
-        Icon(Icons.timer, size: 12, color: color.lighter),
+        Icon(ArbennIcons.clock, size: 12, color: color.lighter),
         const SizedBox(width: 5),
         Text(
           '${data.date.hour.toString().padLeft(2, '0')}:${data.date.minute.toString().padLeft(2, '0')}',
@@ -61,7 +62,7 @@ class EventSummary extends StatelessWidget {
   Widget _locationRow() {
     return Row(
       children: [
-        Icon(Icons.location_city, size: 12, color: color.lighter),
+        Icon(ArbennIcons.location, size: 12, color: color.lighter),
         const SizedBox(width: 5),
         Text(
           data.location,

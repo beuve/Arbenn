@@ -1,6 +1,7 @@
 import 'package:arbenn/components/event_summary.dart';
 import 'package:arbenn/components/tags.dart';
 import 'package:arbenn/data/event_data.dart';
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../data/event_data.dart';
@@ -69,7 +70,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Container(
             padding: const EdgeInsets.only(right: 15),
             child: Icon(
-              Icons.settings,
+              ArbennIcons.sliders,
               size: 30,
               color: widget.color.darker,
             ),

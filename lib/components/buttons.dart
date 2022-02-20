@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 
@@ -82,8 +83,8 @@ class BackButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Icon(
-          Icons.arrow_back,
-          size: 30,
+          ArbennIcons.back,
+          size: 25,
           color: color.darker,
         ),
       ),
@@ -180,7 +181,7 @@ class SettingButton extends StatelessWidget {
             Container(
               alignment: Alignment.centerRight,
               child: Icon(
-                Icons.arrow_forward,
+                ArbennIcons.chevronRight,
                 size: 30,
                 color: color.dark,
               ),

@@ -67,7 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   initState() {
     super.initState();
-    FirebaseAuth.instance.signOut();
     _user = FirebaseAuth.instance.currentUser;
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState(() => _user = user);

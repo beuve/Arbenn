@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../components/up_expension.dart';
 import '../components/inputs.dart';
@@ -302,7 +303,7 @@ class _EmailValidationPageState extends State<EmailValidationPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.email,
+                ArbennIcons.email,
                 size: 150,
                 color: widget.color.lighter,
               ),

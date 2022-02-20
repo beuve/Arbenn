@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide IconButton, BackButton;
 import '../utils/colors.dart';
 import 'buttons.dart';
@@ -188,7 +189,7 @@ class _FormStepperState extends State<FormStepper> {
                 : IconButton(
                     onPressed: back,
                     color: widget.color,
-                    icon: Icons.arrow_back),
+                    icon: ArbennIcons.chevronLeft),
           ),
           ...isLast()
               ? [
@@ -213,7 +214,7 @@ class _FormStepperState extends State<FormStepper> {
                     child: IconButton(
                       onPressed: next,
                       color: widget.color,
-                      icon: Icons.arrow_forward,
+                      icon: ArbennIcons.chevronRight,
                     ),
                   )
                 ]

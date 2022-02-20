@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 
@@ -14,6 +15,7 @@ class _AppBarContent extends StatelessWidget {
         children: [
           Container(
             margin: const EdgeInsets.only(left: 20),
+            alignment: Alignment.centerLeft,
             child: Text(
               "ARBENN",
               style: TextStyle(
@@ -24,10 +26,10 @@ class _AppBarContent extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.only(right: 30),
-            alignment: Alignment.topRight,
+            alignment: Alignment.centerRight,
             child: Icon(
-              Icons.notifications,
-              size: 30,
+              ArbennIcons.bell,
+              size: 25,
               color: color.lighter,
             ),
           )

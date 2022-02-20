@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import '../utils/colors.dart';
 import '../components/buttons.dart';
@@ -122,7 +123,7 @@ class ProfilePage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.location_city,
+                          ArbennIcons.location,
                           color: color.darker,
                         ),
                         const SizedBox(width: 10),
@@ -153,7 +154,7 @@ class ProfilePage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 18),
                         child: Icon(
-                          Icons.edit,
+                          ArbennIcons.pencil,
                           size: 24,
                           color: color.darker,
                         ),

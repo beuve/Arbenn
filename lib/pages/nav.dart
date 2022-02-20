@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../utils/icons.dart';
 import '../components/buttons.dart';
 import 'home_page.dart';
 import 'search_page.dart';
@@ -41,31 +42,31 @@ class _NavState extends State<Nav> {
     _pagesInfos = [
       _PageInfos(
         num: 0,
-        icon: Icons.home,
+        icon: ArbennIcons.home,
         content: HomePage.dummy(),
         color: Palette.red,
       ),
       _PageInfos(
         num: 1,
-        icon: Icons.calendar_today,
+        icon: ArbennIcons.calendar,
         content: CalendarPage.dummy(),
         color: Palette.orange,
       ),
       _PageInfos(
         num: 2,
-        icon: Icons.add_circle,
+        icon: ArbennIcons.plus,
         content: Container(),
         color: Palette.yellow,
       ),
       const _PageInfos(
         num: 3,
-        icon: Icons.search,
+        icon: ArbennIcons.search,
         content: SearchPage(),
         color: Palette.green,
       ),
       _PageInfos(
         num: 4,
-        icon: Icons.person,
+        icon: ArbennIcons.user,
         content: ProfilePage.dummy(),
         color: Palette.blue,
       ),
@@ -81,11 +82,15 @@ class _NavState extends State<Nav> {
                 MaterialPageRoute(builder: (context) => const EventFormPage()))
             : () =>
                 setState(() => _currentPageInfos = _pagesInfos[pageInfos.num]);
-        Widget icon = Icon(pageInfos.icon,
-            size: pageInfos.num == 2 ? 50 : 35,
-            color: pageInfos.num == _currentPageInfos.num
-                ? _currentPageInfos.color.darker
-                : _currentPageInfos.color.lighter);
+        Widget icon = Container(
+            margin: EdgeInsets.only(
+              bottom: pageInfos.num == 2 ? 2 : 5,
+            ),
+            child: Icon(pageInfos.icon,
+                size: pageInfos.num == 2 ? 45 : 30,
+                color: pageInfos.num == _currentPageInfos.num
+                    ? _currentPageInfos.color.darker
+                    : _currentPageInfos.color.lighter));
         return NavButton(
           color: _currentPageInfos.color,
           icon: icon,

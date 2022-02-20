@@ -1,5 +1,6 @@
 import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/pages/event_form.dart';
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import '../utils/colors.dart';
 import '../data/event_data.dart';
@@ -63,7 +64,7 @@ class _EventPageState extends State<EventPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.close_outlined,
+                ArbennIcons.xmark,
                 color: widget.color.darker,
               ),
               Text(
@@ -137,7 +138,7 @@ class _EventPageState extends State<EventPage> {
             height: 35,
             child: _iconLabel(
                 Icon(
-                  Icons.place,
+                  ArbennIcons.location,
                   size: 20,
                   color: widget.color.lighter,
                 ),
@@ -150,7 +151,7 @@ class _EventPageState extends State<EventPage> {
                 Expanded(
                   child: _iconLabel(
                     Icon(
-                      Icons.calendar_today,
+                      ArbennIcons.calendar,
                       size: 20,
                       color: widget.color.lighter,
                     ),
@@ -161,8 +162,8 @@ class _EventPageState extends State<EventPage> {
                 Expanded(
                   child: _iconLabel(
                     Icon(
-                      Icons.timer,
-                      size: 20,
+                      ArbennIcons.clock,
+                      size: 15,
                       color: widget.color.lighter,
                     ),
                     '${_eventInfos.date.hour.toString().padLeft(2, '0')}:${_eventInfos.date.minute.toString().padLeft(2, '0')}',
@@ -176,7 +177,7 @@ class _EventPageState extends State<EventPage> {
             child: Row(
               children: [
                 Icon(
-                  Icons.tag,
+                  ArbennIcons.hashtag,
                   size: 20,
                   color: widget.color.lighter,
                 ),
@@ -190,11 +191,11 @@ class _EventPageState extends State<EventPage> {
             child: Row(
               children: [
                 Icon(
-                  Icons.people,
-                  size: 20,
+                  ArbennIcons.userGroup,
+                  size: 15,
                   color: widget.color.lighter,
                 ),
-                const SizedBox(width: 5),
+                const SizedBox(width: 10),
                 ProfileMiniatures(
                   pictures: _eventInfos.attendes.map((a) => a.picture).toList(),
                   size: 15,
@@ -297,8 +298,8 @@ class _EventPageState extends State<EventPage> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 18),
                       child: Icon(
-                        Icons.edit,
-                        size: 24,
+                        ArbennIcons.pencil,
+                        size: 20,
                         color: widget.color.darker,
                       ),
                     ),

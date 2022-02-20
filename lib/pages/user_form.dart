@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../components/stepper.dart';
@@ -122,7 +123,7 @@ class _UserFormPageState extends State<UserFormPage> {
                         width: image == null ? 0 : 10,
                       )),
                   child: Icon(
-                    Icons.add_a_photo,
+                    ArbennIcons.addPhoto,
                     size: 100,
                     color: widget.color.lighter,
                   ),

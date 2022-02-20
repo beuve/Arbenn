@@ -9,12 +9,14 @@ enum ScrollState {
 class ScrollList extends StatefulWidget {
   final List<Widget> children;
   final Color shadowColor;
+  final Future<void> Function()? onRefresh;
 
-  const ScrollList({
-    Key? key,
-    required this.children,
-    required this.shadowColor,
-  }) : super(key: key);
+  const ScrollList(
+      {Key? key,
+      required this.children,
+      required this.shadowColor,
+      this.onRefresh})
+      : super(key: key);
 
   @override
   State<ScrollList> createState() => _ScrollListState();
@@ -44,16 +46,19 @@ class _ScrollListState extends State<ScrollList> {
 
   @override
   Widget build(BuildContext context) {
+    Widget list = ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemBuilder: (BuildContext context, int index) {
+        return widget.children[index];
+      },
+      itemCount: widget.children.length,
+      controller: _scrollControl,
+    );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemBuilder: (BuildContext context, int index) {
-          return widget.children[index];
-        },
-        itemCount: widget.children.length,
-        controller: _scrollControl,
-      ),
+      child: widget.onRefresh != null
+          ? RefreshIndicator(child: list, onRefresh: widget.onRefresh!)
+          : list,
       decoration: BoxDecoration(
         border: Border(
           top: _scrollState != ScrollState.top

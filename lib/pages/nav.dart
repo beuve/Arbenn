@@ -8,6 +8,7 @@ import 'calendar_page.dart';
 import 'profile_page.dart';
 import '../components/app_bar.dart';
 import 'event_form.dart';
+import '../data/user_data.dart';
 
 class _PageInfos {
   final int num;
@@ -24,8 +25,11 @@ class _PageInfos {
 }
 
 class Nav extends StatefulWidget {
+  final UserData currentUser;
+
   const Nav({
     Key? key,
+    required this.currentUser,
   }) : super(key: key);
 
   @override
@@ -67,7 +71,7 @@ class _NavState extends State<Nav> {
       _PageInfos(
         num: 4,
         icon: ArbennIcons.user,
-        content: ProfilePage.dummy(),
+        content: ProfilePage(user: widget.currentUser),
         color: Palette.blue,
       ),
     ];

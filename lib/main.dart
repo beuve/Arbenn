@@ -7,6 +7,7 @@
 // | $$  | $$| $$  | $$| $$$$$$$/| $$$$$$$$| $$ \  $$| $$ \  $$
 // |__/  |__/|__/  |__/|_______/ |________/|__/  \__/|__/  \__/
 
+import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/pages/nav.dart';
 import 'package:arbenn/pages/sign_page.dart';
 import 'package:arbenn/pages/user_form.dart';
@@ -50,19 +51,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-enum UserState { signedOut, signedIn, emailVerified, onboardingDone }
-
 class _MyHomePageState extends State<MyHomePage> {
   late User? _user;
-
-  UserState getUserState() {
-    if (_user == null) {
-      return UserState.signedOut;
-    } else if (_user!.emailVerified) {
-      return UserState.emailVerified;
-    }
-    return UserState.signedIn;
-  }
 
   @override
   initState() {
@@ -73,17 +63,35 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<UserData?> getUserData() async {
+    if (_user == null) {
+      return null;
+    }
+    return UserData.loadFromEventId(_user!.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final UserState userState = getUserState();
+    return FutureBuilder<UserData?>(
+      future: getUserData(),
+      builder: (context, snapshot) {
+        if (_user == null) {
+          return SignPage();
+        } else if (_user!.emailVerified == false) {
+          return const EmailValidationPage(nextPage: UserFormPage());
+        }
 
-    if (userState == UserState.signedOut) {
-      return SignPage();
-    } else if (userState == UserState.signedIn) {
-      return const EmailValidationPage(nextPage: UserFormPage());
-    } else if (userState == UserState.emailVerified) {
-      return const UserFormPage();
-    }
-    return const Nav();
+        if (snapshot.hasData) {
+          if (snapshot.data == null) {
+            return const UserFormPage();
+          }
+          return Nav(currentUser: snapshot.data!);
+        } else if (snapshot.hasError) {
+          return const Text("error");
+        } else {
+          return const Text("Waiting");
+        }
+      },
+    );
   }
 }

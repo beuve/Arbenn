@@ -238,13 +238,14 @@ class _UserFormPageState extends State<UserFormPage> {
       resizeOnKeyboard: const [true, true, false],
       onFinish: () async {
         final String userId = FirebaseAuth.instance.currentUser!.uid;
-        await toUserData(userId).save();
+        UserData userData = toUserData(userId);
+        await userData.save();
         if (_localProfilePicture != null) {
           await saveProfileImage(userId, _localProfilePicture!.path);
         }
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Nav()),
+          MaterialPageRoute(builder: (context) => Nav(currentUser: userData)),
         );
       },
       steps: <Step>[

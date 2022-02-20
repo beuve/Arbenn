@@ -177,4 +177,18 @@ class UserData {
           .toList();
     });
   }
+
+  Future<List<EventData>> loadAttendesEvents() async {
+    CollectionReference events =
+        FirebaseFirestore.instance.collection('events');
+
+    return events
+        .where("attendesId", arrayContains: userId)
+        .get()
+        .then((querySnapshot) {
+      return querySnapshot.docs
+          .map((i) => EventData.ofJson(i.id, i.data()))
+          .toList();
+    });
+  }
 }

@@ -49,6 +49,8 @@ class ProfilePage extends StatelessWidget {
                 .toList(),
             onRefresh: () async => print("test"),
           );
+        } else if (snapshot.hasData && snapshot.data == null) {
+          return Text("No Data");
         } else {
           return Text("breath waiting");
         }

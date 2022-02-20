@@ -71,7 +71,8 @@ class _EventFormPageState extends State<EventFormPage> {
       admin: admin,
       icon: Icons.sports_handball,
       description: _descriptionController.text,
-      numAttendes: widget.event != null ? widget.event!.numAttendes : 0,
+      numAttendes: widget.event != null ? widget.event!.numAttendes : 1,
+      attendes: widget.event != null ? widget.event!.attendes : [admin],
     );
   }
 

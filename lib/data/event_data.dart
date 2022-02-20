@@ -70,18 +70,23 @@ class EventData {
 
   static EventData ofJson(eventId, infos) {
     UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
+    List<UserSumarryData> attendes = (infos["attendes"] as List<dynamic>)
+        .map((i) => UserSumarryData.fromJson(i))
+        .toList();
     return EventData(
-        eventId: eventId,
-        icon: Icons.sports_handball,
-        admin: admin,
-        title: infos["title"],
-        tags: infos["tags"].cast<String>() as List<String>,
-        date: DateTime.fromMillisecondsSinceEpoch(
-            infos["date"].millisecondsSinceEpoch),
-        location: infos["location"],
-        maxAttendes: infos["maxAttendes"],
-        numAttendes: infos["numAttendes"],
-        description: infos["description"]);
+      eventId: eventId,
+      icon: Icons.sports_handball,
+      admin: admin,
+      title: infos["title"],
+      tags: infos["tags"].cast<String>() as List<String>,
+      date: DateTime.fromMillisecondsSinceEpoch(
+          infos["date"].millisecondsSinceEpoch),
+      location: infos["location"],
+      maxAttendes: infos["maxAttendes"],
+      numAttendes: infos["numAttendes"],
+      description: infos["description"],
+      attendes: attendes,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +113,10 @@ class EventData {
       return null;
     } else {
       UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
+      List<UserSumarryData> attendes =
+          (infos["admin"] as List<Map<String, dynamic>>)
+              .map((e) => UserSumarryData.fromJson(infos["admin"]))
+              .toList();
       await admin.getPicture();
       return EventData(
           eventId: eventId,
@@ -120,7 +129,8 @@ class EventData {
           location: infos["location"],
           maxAttendes: infos["maxAttendes"],
           numAttendes: infos["numAttendes"],
-          description: infos["description"]);
+          description: infos["description"],
+          attendes: attendes);
     }
   }
 
@@ -155,6 +165,7 @@ class EventCreationData {
   final int numAttendes;
   final int? maxAttendes;
   final IconData icon;
+  final List<UserSumarryData> attendes;
 
   EventCreationData({
     this.eventId,
@@ -166,6 +177,7 @@ class EventCreationData {
     required this.description,
     required this.numAttendes,
     required this.icon,
+    required this.attendes,
     this.maxAttendes,
   });
 
@@ -180,6 +192,10 @@ class EventCreationData {
       return null;
     } else {
       UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
+      List<UserSumarryData> attendes =
+          (infos["admin"] as List<Map<String, dynamic>>)
+              .map((e) => UserSumarryData.fromJson(infos["admin"]))
+              .toList();
       await admin.getPicture();
       return EventCreationData(
           eventId: eventId,
@@ -192,6 +208,7 @@ class EventCreationData {
           location: infos["location"],
           maxAttendes: infos["maxAttendes"],
           numAttendes: infos["numAttendes"],
+          attendes: attendes,
           description: infos["description"]);
     }
   }
@@ -231,6 +248,8 @@ class EventCreationData {
           admin.userId, // needed for filtering several events of the same user
       "maxAttendes": maxAttendes,
       "numAttendes": numAttendes,
+      "attendes": attendes.map((a) => a.toJson()).toList(),
+      "attendesId": attendes.map((a) => a.userId).toList(),
     };
   }
 
@@ -246,6 +265,7 @@ class EventCreationData {
       maxAttendes: event.maxAttendes,
       description: event.description,
       icon: event.icon,
+      attendes: event.attendes,
     );
   }
 

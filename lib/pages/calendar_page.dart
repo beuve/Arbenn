@@ -6,7 +6,7 @@ import '../utils/colors.dart';
 import '../components/tabs.dart';
 
 class CalendarPage extends StatelessWidget {
-  final List<EventData> eventsData;
+  final Future<List<EventData>> eventsData;
   final Nuance color;
 
   const CalendarPage(
@@ -15,18 +15,18 @@ class CalendarPage extends StatelessWidget {
 
   static CalendarPage dummy() {
     return CalendarPage(
-      eventsData: [
-        EventData.dummy(date: DateTime.parse("19700101")),
-        EventData.dummy(date: DateTime.parse("19700101")),
-        EventData.dummy(date: DateTime.parse("19700101")),
-        EventData.dummy(date: DateTime.parse("19700101")),
-        EventData.dummy(date: DateTime.parse("19700101")),
-        EventData.dummy(date: DateTime.parse("20221211")),
-        EventData.dummy(date: DateTime.parse("20221212")),
-        EventData.dummy(date: DateTime.parse("20221212")),
-        EventData.dummy(date: DateTime.parse("20221213")),
-        EventData.dummy(date: DateTime.parse("20221214")),
-      ],
+      eventsData: (() async => [
+            EventData.dummy(date: DateTime.parse("19700101")),
+            EventData.dummy(date: DateTime.parse("19700101")),
+            EventData.dummy(date: DateTime.parse("19700101")),
+            EventData.dummy(date: DateTime.parse("19700101")),
+            EventData.dummy(date: DateTime.parse("19700101")),
+            EventData.dummy(date: DateTime.parse("20221211")),
+            EventData.dummy(date: DateTime.parse("20221212")),
+            EventData.dummy(date: DateTime.parse("20221212")),
+            EventData.dummy(date: DateTime.parse("20221213")),
+            EventData.dummy(date: DateTime.parse("20221214")),
+          ])(),
     );
   }
 
@@ -123,11 +123,11 @@ class CalendarPage extends StatelessWidget {
         title: title);
   }
 
-  List<TabInfos> _buildTabs() {
+  List<TabInfos> _buildTabs(List<EventData> events) {
     final List<EventData> past =
-        eventsData.where((e) => e.date.isBefore(DateTime.now())).toList();
+        events.where((e) => e.date.isBefore(DateTime.now())).toList();
     final List<EventData> future =
-        eventsData.where((e) => e.date.isAfter(DateTime.now())).toList();
+        events.where((e) => e.date.isAfter(DateTime.now())).toList();
     return [
       _buildSingleTab("Passé(s)",
           past.map((e) => EventSummary(data: e, color: color)).toList()),
@@ -139,11 +139,26 @@ class CalendarPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: color.main,
-      child: Tabs(
-        tabs: _buildTabs(),
-        color: color,
-        startingTab: 1,
-      ),
+      child: FutureBuilder(
+          future: eventsData,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Tabs(
+                tabs: _buildTabs(snapshot.data as List<EventData>),
+                color: color,
+                startingTab: 1,
+              );
+            } else {
+              return Tabs(
+                tabs: [
+                  _buildSingleTab("Passé(s)", []),
+                  _buildSingleTab("Futur(s)", [])
+                ],
+                color: color,
+                startingTab: 1,
+              );
+            }
+          }),
     );
   }
 }

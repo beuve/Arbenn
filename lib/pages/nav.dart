@@ -42,15 +42,21 @@ class _NavState extends State<Nav> {
   late _PageInfos _currentPageInfos;
   late List<_PageInfos> _pagesInfos;
   late Future<List<EventData>> adminEvents;
+  late Future<List<EventData>> attendedEvents;
 
   void reloadAdminEventsList() {
     adminEvents = widget.currentUser.loadAdminEvents();
   }
 
+  void reloadAttendedEventsList() {
+    attendedEvents = widget.currentUser.loadAttendesEvents();
+  }
+
   @override
   void initState() {
     super.initState();
-    adminEvents = widget.currentUser.loadAdminEvents();
+    reloadAdminEventsList();
+    reloadAttendedEventsList();
     _pagesInfos = [
       _PageInfos(
         num: 0,
@@ -61,7 +67,7 @@ class _NavState extends State<Nav> {
       _PageInfos(
         num: 1,
         icon: ArbennIcons.calendar,
-        content: CalendarPage.dummy(),
+        content: CalendarPage(eventsData: attendedEvents),
         color: Palette.orange,
       ),
       _PageInfos(

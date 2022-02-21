@@ -11,12 +11,12 @@ import '../components/tags.dart';
 import '../components/scroller.dart';
 
 class EventPage extends StatefulWidget {
-  final String eventId;
+  final EventData event;
   final Nuance color;
 
   const EventPage({
     Key? key,
-    required this.eventId,
+    required this.event,
     this.color = Palette.yellow,
   }) : super(key: key);
 
@@ -25,13 +25,11 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  late EventData _eventInfos;
   late bool _isAttende;
 
   @override
   void initState() {
     super.initState();
-    _eventInfos = EventData.dummy();
     _isAttende = false;
   }
 
@@ -79,8 +77,8 @@ class _EventPageState extends State<EventPage> {
   }
 
   Widget _participateManage() {
-    final int? remainingPlaces = _eventInfos.maxAttendes != null
-        ? _eventInfos.maxAttendes! - _eventInfos.numAttendes
+    final int? remainingPlaces = widget.event.maxAttendes != null
+        ? widget.event.maxAttendes! - widget.event.numAttendes
         : null;
     return Container(
       padding: const EdgeInsets.all(10),
@@ -90,7 +88,8 @@ class _EventPageState extends State<EventPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("$remainingPlaces / ${_eventInfos.maxAttendes} places restantes",
+          Text(
+              "$remainingPlaces / ${widget.event.maxAttendes} places restantes",
               style: TextStyle(
                 color: widget.color.darker,
               )),
@@ -131,8 +130,8 @@ class _EventPageState extends State<EventPage> {
           SizedBox(
             height: 35,
             child: _iconLabel(
-                ProfileMiniature(picture: _eventInfos.admin.picture),
-                "${_eventInfos.admin.firstName} "),
+                ProfileMiniature(picture: widget.event.admin.picture),
+                "${widget.event.admin.firstName} "),
           ),
           SizedBox(
             height: 35,
@@ -142,7 +141,7 @@ class _EventPageState extends State<EventPage> {
                   size: 20,
                   color: widget.color.lighter,
                 ),
-                _eventInfos.location),
+                widget.event.location),
           ),
           SizedBox(
             height: 35,
@@ -155,7 +154,7 @@ class _EventPageState extends State<EventPage> {
                       size: 20,
                       color: widget.color.lighter,
                     ),
-                    '${_eventInfos.date.day.toString().padLeft(2, '0')} / ${_eventInfos.date.month.toString().padLeft(2, '0')} / ${_eventInfos.date.year}',
+                    '${widget.event.date.day.toString().padLeft(2, '0')} / ${widget.event.date.month.toString().padLeft(2, '0')} / ${widget.event.date.year}',
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -166,7 +165,7 @@ class _EventPageState extends State<EventPage> {
                       size: 15,
                       color: widget.color.lighter,
                     ),
-                    '${_eventInfos.date.hour.toString().padLeft(2, '0')}:${_eventInfos.date.minute.toString().padLeft(2, '0')}',
+                    '${widget.event.date.hour.toString().padLeft(2, '0')}:${widget.event.date.minute.toString().padLeft(2, '0')}',
                   ),
                 ),
               ],
@@ -182,7 +181,8 @@ class _EventPageState extends State<EventPage> {
                   color: widget.color.lighter,
                 ),
                 const SizedBox(width: 3),
-                Tags.static(_eventInfos.tags, color: widget.color, fontSize: 10)
+                Tags.static(widget.event.tags,
+                    color: widget.color, fontSize: 10)
               ],
             ),
           ),
@@ -197,14 +197,15 @@ class _EventPageState extends State<EventPage> {
                 ),
                 const SizedBox(width: 10),
                 ProfileMiniatures(
-                  pictures: _eventInfos.attendes.map((a) => a.picture).toList(),
+                  pictures:
+                      widget.event.attendes.map((a) => a.picture).toList(),
                   size: 15,
                 ),
                 const SizedBox(width: 5),
                 TextButton(
                   onPressed: () => {},
                   child: Text(
-                    "Participants (${_eventInfos.numAttendes})",
+                    "Participants (${widget.event.numAttendes})",
                     style: TextStyle(
                         decoration: TextDecoration.underline,
                         fontSize: 12,
@@ -232,7 +233,7 @@ class _EventPageState extends State<EventPage> {
           const TextSpan(
               text: "Description. ",
               style: TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: _eventInfos.description)
+          TextSpan(text: widget.event.description)
         ]),
       ),
     );
@@ -245,10 +246,12 @@ class _EventPageState extends State<EventPage> {
         shadowColor: widget.color.darker,
         children: [
           _participateManage(),
-          const SizedBox(height: 45),
+          const SizedBox(height: 15),
           _eventInfosWidget(),
-          const SizedBox(height: 45),
-          _description()
+          if (widget.event.description != "") ...[
+            const SizedBox(height: 15),
+            _description()
+          ]
         ],
       ),
     );
@@ -279,7 +282,7 @@ class _EventPageState extends State<EventPage> {
                     margin: const EdgeInsets.only(top: 4),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: Text(
-                      _eventInfos.title,
+                      widget.event.title,
                       style: TextStyle(
                           color: widget.color.darker,
                           fontSize: 20,
@@ -291,7 +294,9 @@ class _EventPageState extends State<EventPage> {
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const EventFormPage(),
+                        builder: (context) => EventFormPage(
+                          event: widget.event,
+                        ),
                       ),
                     ),
                     child: Container(

@@ -140,7 +140,7 @@ class EventSummary extends StatelessWidget {
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => EventPage(eventId: data.eventId),
+          builder: (context) => EventPage(event: data),
         ),
       ),
     );

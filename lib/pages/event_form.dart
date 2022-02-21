@@ -51,8 +51,14 @@ class _EventFormPageState extends State<EventFormPage> {
       _tagSearch.setSelectedTags(widget.event!.tags,
           (label) => () => setState(() => _tagSearch.toggle(label)));
       _cloudImages = await widget.event!.getImages();
-      _minImageIndex =
-          _cloudImages.map((i) => int.parse(i.ref.name)).reduce(max) + 1;
+      _minImageIndex = (_cloudImages.isEmpty
+                  ? [-1]
+                  : (_cloudImages.length == 1
+                          ? [..._cloudImages, ..._cloudImages]
+                          : _cloudImages)
+                      .map((i) => int.parse(i.ref.name)))
+              .reduce(max) +
+          1;
     }
   }
 

@@ -123,18 +123,23 @@ class DatePicker extends StatelessWidget {
         color: color,
         readOnly: true,
         controller: controller.textController,
-        onTap: () => controller.pickDate(context));
+        onTap: () {
+          controller.pickDate(context);
+        });
   }
 }
 
 class DatePickingController extends ValueNotifier<DateTime?> {
-  DatePickingController({DateTime? date}) : super(date);
+  final bool needTime;
+  DatePickingController({DateTime? date, this.needTime = false}) : super(date);
 
   TextEditingController get textController {
     final TextEditingController controller = TextEditingController(text: text);
     addListener(() {
       if (value != null) {
-        controller.text = "${value!.day} / ${value!.month} / ${value!.year}";
+        String time = needTime ? "  ${value!.hour}:${value!.minute}" : "";
+        controller.text =
+            "${value!.day} / ${value!.month} / ${value!.year}$time";
       } else {
         controller.text = "";
       }
@@ -144,7 +149,8 @@ class DatePickingController extends ValueNotifier<DateTime?> {
 
   String? get text {
     if (value != null && value != null) {
-      return "${value!.day} / ${value!.month} / ${value!.year}";
+      String time = needTime ? "  ${value!.hour}:${value!.minute}" : "";
+      return "${value!.day} / ${value!.month} / ${value!.year}$time";
     }
     return null;
   }
@@ -155,13 +161,29 @@ class DatePickingController extends ValueNotifier<DateTime?> {
     value = newDate;
   }
 
+  Future<void> picTime(BuildContext context) async {
+    if (value != null) {
+      TimeOfDay? t = await showTimePicker(
+        context: context,
+        initialTime: const TimeOfDay(hour: 0, minute: 0),
+      );
+      if (t != null) {
+        value =
+            DateTime(value!.year, value!.month, value!.day, t.hour, t.minute);
+      }
+    }
+  }
+
   Future<void> pickDate(BuildContext context) async {
-    value = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(2015, 8),
-          lastDate: DateTime(2101),
-        ) ??
-        value;
+    DateTime? newDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (needTime && newDate != null) {
+      value = newDate;
+      await picTime(context);
+    }
   }
 }

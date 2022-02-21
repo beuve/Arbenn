@@ -32,7 +32,8 @@ class _EventFormPageState extends State<EventFormPage> {
   int _minImageIndex = 0;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final DatePickingController _dateController = DatePickingController();
+  final DatePickingController _dateController =
+      DatePickingController(needTime: true);
   final TextEditingController _locationController = TextEditingController();
   final TagSearch _tagSearch = TagSearch();
 

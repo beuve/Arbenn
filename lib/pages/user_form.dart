@@ -16,8 +16,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserFormPage extends StatefulWidget {
   final Nuance color;
+  final UserData? user;
 
-  const UserFormPage({Key? key, this.color = Palette.blue}) : super(key: key);
+  const UserFormPage({Key? key, this.color = Palette.blue, this.user})
+      : super(key: key);
 
   @override
   State<UserFormPage> createState() => _UserFormPageState();

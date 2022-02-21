@@ -169,9 +169,10 @@ class ProfilePage extends StatelessWidget {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => UserSettings(
-                                  userId: user.userId,
-                                )),
+                          builder: (context) => UserSettings(
+                            user: user,
+                          ),
+                        ),
                       ),
                       child: Container(
                         padding: const EdgeInsets.symmetric(

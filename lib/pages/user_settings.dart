@@ -1,20 +1,21 @@
+import 'package:arbenn/pages/user_form.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../components/overlay.dart';
 import '../components/buttons.dart';
+import '../data/user_data.dart';
 
 class UserSettings extends StatelessWidget {
-  final String userId;
+  final UserData user;
   final Nuance color;
 
-  const UserSettings(
-      {Key? key, required this.userId, this.color = Palette.blue})
+  const UserSettings({Key? key, required this.user, this.color = Palette.blue})
       : super(key: key);
 
   Widget _buildBody(BuildContext context) {
     User? _user = FirebaseAuth.instance.currentUser;
-    if (_user != null && _user.uid == userId) {
+    if (_user != null && _user.uid == user.userId) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
@@ -23,7 +24,14 @@ class UserSettings extends StatelessWidget {
             SettingButton(
               color: color,
               label: "Modifier mon profile",
-              onPressed: () => {},
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserFormPage(user: user),
+                  ),
+                ),
+              },
             ),
             const SizedBox(height: 15),
             SettingButton(

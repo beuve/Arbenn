@@ -28,10 +28,12 @@ class _PageInfos {
 
 class Nav extends StatefulWidget {
   final UserData currentUser;
+  final int startingPage;
 
   const Nav({
     Key? key,
     required this.currentUser,
+    this.startingPage = 0,
   }) : super(key: key);
 
   @override
@@ -92,7 +94,7 @@ class _NavState extends State<Nav> {
         color: Palette.blue,
       ),
     ];
-    _currentPageInfos = _pagesInfos[0];
+    _currentPageInfos = _pagesInfos[widget.startingPage];
   }
 
   Widget _buildNavBar(BuildContext context) {

@@ -247,7 +247,11 @@ class _UserFormPageState extends State<UserFormPage> {
         }
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Nav(currentUser: userData)),
+          MaterialPageRoute(
+              builder: (context) => Nav(
+                    currentUser: userData,
+                    startingPage: widget.user == null ? 0 : 4,
+                  )),
         );
       },
       steps: <Step>[

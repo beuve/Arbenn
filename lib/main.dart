@@ -72,15 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_user == null) {
+      return SignPage();
+    } else if (_user!.emailVerified == false) {
+      return const EmailValidationPage(nextPage: UserFormPage());
+    }
     return FutureBuilder<UserData?>(
       future: getUserData(),
       builder: (context, snapshot) {
-        if (_user == null) {
-          return SignPage();
-        } else if (_user!.emailVerified == false) {
-          return const EmailValidationPage(nextPage: UserFormPage());
-        }
-
         if (snapshot.hasData) {
           if (snapshot.data == null) {
             return const UserFormPage();

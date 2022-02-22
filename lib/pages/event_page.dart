@@ -1,6 +1,9 @@
+import 'package:arbenn/components/chat.dart';
 import 'package:arbenn/components/user_elements.dart';
+import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/pages/event_form.dart';
 import 'package:arbenn/utils/icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import '../utils/colors.dart';
 import '../data/event_data.dart';
@@ -258,7 +261,16 @@ class _EventPageState extends State<EventPage> {
   }
 
   Widget _chatTab() {
-    return const Text("");
+    User? _user = FirebaseAuth.instance.currentUser;
+    if (_user != null) {
+      return Chat(
+        chatId: widget.event.eventId,
+        eventId: widget.event.eventId,
+        sender: widget.event.admin,
+      );
+    } else {
+      return Text("Error");
+    }
   }
 
   Widget _buildContent(BuildContext context) {

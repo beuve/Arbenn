@@ -56,10 +56,12 @@ class ArbennIcons {
   static const IconData hashtag = IconData(0xe916, fontFamily: fontName);
   static const IconData home = IconData(0xe917, fontFamily: fontName);
   static const IconData back = IconData(0xe918, fontFamily: fontName);
+  static const IconData next = IconData(0xe91f, fontFamily: fontName);
   static const IconData location = IconData(0xe919, fontFamily: fontName);
   static const IconData search = IconData(0xe91a, fontFamily: fontName);
   static const IconData pencil = IconData(0xe91b, fontFamily: fontName);
   static const IconData userGroup = IconData(0xe91c, fontFamily: fontName);
   static const IconData user = IconData(0xe91d, fontFamily: fontName);
   static const IconData addPhoto = IconData(0xe91e, fontFamily: fontName);
+  static const IconData send = IconData(0xe920, fontFamily: fontName);
 }

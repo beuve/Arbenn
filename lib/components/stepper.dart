@@ -189,7 +189,7 @@ class _FormStepperState extends State<FormStepper> {
                 : IconButton(
                     onPressed: back,
                     color: widget.color,
-                    icon: ArbennIcons.chevronLeft),
+                    icon: ArbennIcons.back),
           ),
           ...isLast()
               ? [
@@ -214,7 +214,7 @@ class _FormStepperState extends State<FormStepper> {
                     child: IconButton(
                       onPressed: next,
                       color: widget.color,
-                      icon: ArbennIcons.chevronRight,
+                      icon: ArbennIcons.next,
                     ),
                   )
                 ]

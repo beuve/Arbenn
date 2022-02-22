@@ -41,6 +41,7 @@ dependencies:
   firebase_storage: ^10.2.7
 
   image_picker: ^0.8.4+6
+  flutter_keyboard_visibility: ^5.2.0
 
 dev_dependencies:
   flutter_test:

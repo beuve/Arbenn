@@ -181,8 +181,8 @@ class DatePickingController extends ValueNotifier<DateTime?> {
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );
+    value = newDate;
     if (needTime && newDate != null) {
-      value = newDate;
       await picTime(context);
     }
   }

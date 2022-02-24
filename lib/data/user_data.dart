@@ -172,9 +172,8 @@ class UserData {
         .where("adminId", isEqualTo: userId)
         .get()
         .then((querySnapshot) {
-      return querySnapshot.docs
-          .map((i) => EventData.ofJson(i.id, i.data()))
-          .toList();
+      return Future.wait(
+          querySnapshot.docs.map((i) => EventData.ofJson(i.id, i.data())));
     });
   }
 
@@ -186,9 +185,8 @@ class UserData {
         .where("attendesId", arrayContains: userId)
         .get()
         .then((querySnapshot) {
-      return querySnapshot.docs
-          .map((i) => EventData.ofJson(i.id, i.data()))
-          .toList();
+      return Future.wait(
+          querySnapshot.docs.map((i) => EventData.ofJson(i.id, i.data())));
     });
   }
 }

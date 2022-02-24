@@ -68,8 +68,9 @@ class EventData {
     return toJson().toString();
   }
 
-  static EventData ofJson(eventId, infos) {
+  static Future<EventData> ofJson(eventId, infos) async {
     UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
+    await admin.getPicture();
     List<UserSumarryData> attendes = (infos["attendes"] as List<dynamic>)
         .map((i) => UserSumarryData.fromJson(i))
         .toList();
@@ -112,25 +113,7 @@ class EventData {
     if (infos == null) {
       return null;
     } else {
-      UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
-      List<UserSumarryData> attendes =
-          (infos["admin"] as List<Map<String, dynamic>>)
-              .map((e) => UserSumarryData.fromJson(infos["admin"]))
-              .toList();
-      await admin.getPicture();
-      return EventData(
-          eventId: eventId,
-          icon: Icons.sports_handball,
-          admin: admin,
-          title: infos["title"],
-          tags: infos["tags"].cast<String>() as List<String>,
-          date: DateTime.fromMillisecondsSinceEpoch(
-              infos["date"].millisecondsSinceEpoch),
-          location: infos["location"],
-          maxAttendes: infos["maxAttendes"],
-          numAttendes: infos["numAttendes"],
-          description: infos["description"],
-          attendes: attendes);
+      return ofJson(eventId, infos);
     }
   }
 

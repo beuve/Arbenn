@@ -103,6 +103,12 @@ class EventData {
     };
   }
 
+  static Future<List<EventData>> loadAllEvents() async {
+    return FirebaseFirestore.instance.collection('events').get().then(
+        (value) async =>
+            Future.wait(value.docs.map((doc) => ofJson(doc.id, doc.data()))));
+  }
+
   static Future<EventData?> loadFromEventId(String eventId) async {
     CollectionReference users = FirebaseFirestore.instance.collection('events');
 

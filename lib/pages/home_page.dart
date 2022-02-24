@@ -4,32 +4,38 @@ import '../components/event_summary.dart';
 import '../utils/colors.dart';
 import '../components/scroller.dart';
 
-class HomePage extends StatelessWidget {
-  final List<EventData> eventsData;
+class HomePage extends StatefulWidget {
   final Nuance color;
 
-  const HomePage({Key? key, required this.eventsData, this.color = Palette.red})
-      : super(key: key);
+  const HomePage({Key? key, this.color = Palette.red}) : super(key: key);
 
-  static HomePage dummy() {
-    return HomePage(
-      eventsData: [
-        EventData.dummy(),
-        EventData.dummy(),
-        EventData.dummy(),
-        EventData.dummy(),
-        EventData.dummy(),
-        EventData.dummy(),
-      ],
-    );
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<EventData> _events = [];
+
+  @override
+  void initState() {
+    super.initState();
+    initInfos();
+  }
+
+  void initInfos() async {
+    List<EventData> allEvents = await EventData.loadAllEvents();
+    setState(() {
+      _events = allEvents;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return ScrollList(
-      shadowColor: color.darker,
-      children:
-          eventsData.map((e) => EventSummary(data: e, color: color)).toList(),
+      shadowColor: widget.color.darker,
+      children: _events
+          .map((e) => EventSummary(data: e, color: widget.color))
+          .toList(),
     );
   }
 }

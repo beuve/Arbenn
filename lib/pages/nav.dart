@@ -60,10 +60,10 @@ class _NavState extends State<Nav> {
     reloadAdminEventsList();
     reloadAttendedEventsList();
     _pagesInfos = [
-      _PageInfos(
+      const _PageInfos(
         num: 0,
         icon: ArbennIcons.home,
-        content: HomePage.dummy(),
+        content: HomePage(),
         color: Palette.red,
       ),
       _PageInfos(

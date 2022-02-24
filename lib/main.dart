@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return FutureBuilder<UserData?>(
       future: getUserData(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.data == null) {
             return const UserFormPage();
           }
@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
         } else if (snapshot.hasError) {
           return const Text("error");
         } else {
-          return const Text("Waiting");
+          return const Text("Waiting main");
         }
       },
     );

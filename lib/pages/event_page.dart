@@ -36,8 +36,12 @@ class _EventPageState extends State<EventPage> {
     _eventDataStream = EventDataStream(eventId: widget.eventId);
   }
 
-  void participate() async {
+  void subscribe() {
     EventData.addAttende(widget.eventId);
+  }
+
+  void unsubscribe() {
+    EventData.removeAttende(widget.eventId);
   }
 
   bool isAttende(EventData event) {
@@ -51,7 +55,7 @@ class _EventPageState extends State<EventPage> {
 
   Widget _participateButton() {
     return TextButton(
-      onPressed: participate,
+      onPressed: subscribe,
       child: Container(
           child: Text("PARTICIPER",
               style: TextStyle(
@@ -67,7 +71,7 @@ class _EventPageState extends State<EventPage> {
 
   Widget _cancelParticipation() {
     return TextButton(
-        onPressed: () => {setState(() => {})},
+        onPressed: unsubscribe,
         child: SizedBox(
           height: 32,
           child: Row(

@@ -248,6 +248,37 @@ class EventData {
       }
     });
   }
+
+  static Future<void> removeAttende(String eventId) async {
+    UserSumarryData attende = await UserSumarryData.currentUser();
+
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('events').doc(eventId);
+
+    return FirebaseFirestore.instance.runTransaction<void>((transaction) async {
+      // Get the document
+      DocumentSnapshot snapshot = await transaction.get(documentReference);
+
+      if (!snapshot.exists) {
+        throw Exception("Event does not exist!");
+      }
+
+      Map<String, dynamic> infos = snapshot.data()! as Map<String, dynamic>;
+      List<String> attendesId = infos['attendesId'].cast<String>();
+      List<dynamic> attendes = infos['attendes'] as List<dynamic>;
+      int numAttendes = infos['numAttendes'];
+
+      if (attendesId.any((id) => id == attende.userId)) {
+        attendes.removeWhere((a) => a["userId"] == attende.userId);
+        attendesId.removeWhere((id) => id == attende.userId);
+        transaction.update(documentReference, {
+          'numAttendes': numAttendes - 1,
+          'attendes': attendes,
+          'attendesId': attendesId,
+        });
+      }
+    });
+  }
 }
 
 class EventDataStream {

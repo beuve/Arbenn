@@ -4,8 +4,9 @@ import '../utils/colors.dart';
 class TabInfos {
   final String title;
   final Widget content;
+  final Future<void> Function()? onTap;
 
-  const TabInfos({required this.content, required this.title});
+  const TabInfos({required this.content, required this.title, this.onTap});
 }
 
 class Tabs extends StatefulWidget {
@@ -45,7 +46,12 @@ class _TabsState extends State<Tabs> {
       tabsWidgets.add(
         Expanded(
           child: TextButton(
-            onPressed: () => _setTab(i),
+            onPressed: () async {
+              if (widget.tabs[i].onTap != null) {
+                await widget.tabs[i].onTap!();
+              }
+              _setTab(i);
+            },
             child: Container(
               alignment: Alignment.center,
               width: double.infinity,

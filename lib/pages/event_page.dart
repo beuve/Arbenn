@@ -1,5 +1,6 @@
 import 'package:arbenn/components/chat.dart';
 import 'package:arbenn/components/user_elements.dart';
+import 'package:arbenn/data/chat_data.dart';
 import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/pages/event_form.dart';
 import 'package:arbenn/utils/icons.dart';
@@ -29,6 +30,7 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   late EventDataStream _eventDataStream;
+  ChatData? _currentChatData;
 
   @override
   void initState() {
@@ -50,6 +52,15 @@ class _EventPageState extends State<EventPage> {
       return false;
     } else {
       return event.attendes.any((attende) => attende.userId == user.uid);
+    }
+  }
+
+  bool isAdmin(EventData event) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return false;
+    } else {
+      return event.admin.userId == user.uid;
     }
   }
 
@@ -273,16 +284,124 @@ class _EventPageState extends State<EventPage> {
   }
 
   Widget _chatTab(EventData event) {
-    User? _user = FirebaseAuth.instance.currentUser;
-    if (_user != null) {
+    if (_currentChatData == null) {
+      User? user = FirebaseAuth.instance.currentUser;
       return Chat(
-        chatId: event.eventId,
-        eventId: event.eventId,
-        sender: event.admin,
+        chatData: ChatData(
+          chatId: isAdmin(event) ? event.eventId : user!.uid,
+          eventId: event.eventId,
+        ),
+        sender: UserSumarryData.currentUser(),
       );
     } else {
-      return Text("Error");
+      return Chat(
+        chatData: _currentChatData!,
+        sender: UserSumarryData.currentUser(),
+      );
     }
+  }
+
+  Future<void> showChatSelector(List<ChatSummary> chats) {
+    return showModalBottomSheet<void>(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+        ),
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: chats.length < 5 ? chats.length * 50 + 25 : 270,
+            decoration: BoxDecoration(
+                color: widget.color.light,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
+                )),
+            padding: const EdgeInsets.all(10),
+            child: Center(
+              child: ScrollList(
+                shadowColor: widget.color.darker,
+                children: chats
+                    .map(
+                      (chatSummary) => SizedBox(
+                        height: 50,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            setState(() => _currentChatData = ChatData(
+                                chatId: chatSummary.chatId,
+                                eventId: widget.eventId));
+                          },
+                          child: Row(
+                            children: [
+                              chatSummary.image,
+                              const SizedBox(width: 10),
+                              Text(chatSummary.name,
+                                  style: TextStyle(
+                                      color: widget.color.darker,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold))
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget _buildTabs(EventData event) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception("User is null and shouldn't be");
+    }
+    final ChatSummary eventChatSummary = ChatSummary(
+        chatId: event.eventId,
+        eventId: event.eventId,
+        name: "tout le monde",
+        image: Icon(
+          ArbennIcons.userGroup,
+          color: widget.color.darker,
+          size: 25,
+        ));
+    final ChatSummary adminChatSummary = ChatSummary(
+        chatId: user.uid,
+        eventId: event.eventId,
+        name: event.admin.firstName,
+        image: ProfileMiniature(picture: event.admin.picture, size: 30));
+    late Stream<List<ChatSummary>> chats;
+    if (isAdmin(event)) {
+      chats = ChatData.listEventChats(event.eventId);
+    } else if (isAttende(event)) {
+      chats = Stream.value([eventChatSummary, adminChatSummary]);
+    } else {
+      chats = Stream.value([adminChatSummary]);
+    }
+    return StreamBuilder<List<ChatSummary>>(
+        stream: chats,
+        builder: (context, snapshot) {
+          late Future<void> Function() selectChat;
+          if (snapshot.hasData) {
+            selectChat = () async {
+              if (snapshot.data!.length > 1) {
+                return showChatSelector(snapshot.data!);
+              }
+            };
+          } else {
+            selectChat = () async => {};
+          }
+          return Expanded(
+            child: Tabs(tabs: [
+              TabInfos(content: _descriptionTab(event), title: "Description"),
+              TabInfos(
+                  content: _chatTab(event),
+                  title: "Discussions",
+                  onTap: selectChat),
+            ], color: widget.color),
+          );
+        });
   }
 
   Widget _buildContent(BuildContext context, EventData event) {
@@ -336,12 +455,7 @@ class _EventPageState extends State<EventPage> {
                 )
               ],
             ),
-            Expanded(
-              child: Tabs(tabs: [
-                TabInfos(content: _descriptionTab(event), title: "Description"),
-                TabInfos(content: _chatTab(event), title: "Discussions"),
-              ], color: widget.color),
-            ),
+            _buildTabs(event)
           ],
         ),
       ),

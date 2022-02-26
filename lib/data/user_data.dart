@@ -33,6 +33,18 @@ class UserSumarryData {
     picture = await loadImage(userId);
   }
 
+  Future<String?> getPictureUrl() async {
+    return getImageUrl(userId);
+  }
+
+  static UserSumarryData currentUser() {
+    final User user = FirebaseAuth.instance.currentUser!;
+    return UserSumarryData(
+        userId: user.uid,
+        firstName: user.displayName!,
+        picture: user.photoURL == null ? null : NetworkImage(user.photoURL!));
+  }
+
   static Future<UserSumarryData?> loadFromUserId(String userId) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
@@ -48,12 +60,6 @@ class UserSumarryData {
       await user.getPicture();
       return user;
     }
-  }
-
-  static Future<UserSumarryData> currentUser() {
-    User? _user = FirebaseAuth.instance.currentUser;
-    return loadFromUserId(_user!.uid)
-        .then((infos) => infos!); // the current user should always exist
   }
 }
 
@@ -124,6 +130,10 @@ class UserData {
   @override
   String toString() {
     return toJson().toString();
+  }
+
+  Future<String?> getPictureUrl() async {
+    return getImageUrl(userId);
   }
 
   Map<String, dynamic> toJson() {

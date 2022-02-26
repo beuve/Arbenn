@@ -34,16 +34,18 @@ class _ScrollListState extends State<ScrollList> {
   late StreamSubscription<bool> _keyboardSubscription;
 
   void _scrollListener() {
-    if (_scrollControl.position.maxScrollExtent == 0) {
-      setState(() => _scrollState = ScrollState.none);
-    } else if (_scrollControl.offset >=
-        _scrollControl.position.maxScrollExtent) {
-      setState(() => _scrollState = ScrollState.bottom);
-    } else if (_scrollControl.offset <=
-        _scrollControl.position.minScrollExtent) {
-      setState(() => _scrollState = ScrollState.top);
-    } else {
-      setState(() => _scrollState = ScrollState.middle);
+    if (_scrollControl.hasClients) {
+      if (_scrollControl.position.maxScrollExtent == 0) {
+        setState(() => _scrollState = ScrollState.none);
+      } else if (_scrollControl.offset >=
+          _scrollControl.position.maxScrollExtent) {
+        setState(() => _scrollState = ScrollState.bottom);
+      } else if (_scrollControl.offset <=
+          _scrollControl.position.minScrollExtent) {
+        setState(() => _scrollState = ScrollState.top);
+      } else {
+        setState(() => _scrollState = ScrollState.middle);
+      }
     }
   }
 
@@ -96,6 +98,7 @@ class _ScrollListState extends State<ScrollList> {
   @override
   void dispose() {
     _keyboardSubscription.cancel();
+    _scrollControl.dispose();
     super.dispose();
   }
 

@@ -47,3 +47,18 @@ Future<ImageProvider?> loadImage(String id) async {
     // e.g, e.code == 'canceled'
   }
 }
+
+Future<String?> getImageUrl(String id) async {
+  firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+      .ref()
+      .child('images')
+      .child('userProfiles')
+      .child(id);
+  try {
+    String? url = await ref.getDownloadURL();
+    return url;
+  } on FirebaseException catch (e) {
+    return null;
+    // e.g, e.code == 'canceled'
+  }
+}

@@ -52,35 +52,20 @@ class ChatMessage extends StatelessWidget {
   }
 }
 
-class Chat extends StatefulWidget {
-  final String eventId;
-  final String chatId;
+class Chat extends StatelessWidget {
+  final ChatData chatData;
   final UserSumarryData sender;
   final Nuance color;
+  final TextEditingController _messageController = TextEditingController();
 
-  const Chat({
-    required this.chatId,
-    required this.eventId,
+  Chat({
     required this.sender,
+    required this.chatData,
     this.color = Palette.yellow,
     Key? key,
   }) : super(key: key);
 
-  @override
-  State<Chat> createState() => _ChatState();
-}
-
-class _ChatState extends State<Chat> {
-  late ChatData _data;
-  final TextEditingController _messageController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _data = ChatData(eventId: widget.eventId, id: widget.chatId);
-  }
-
-  Widget _buildInput() {
+  Widget _buildInput([bool hasMessage = true]) {
     return Row(
       children: [
         Expanded(
@@ -94,25 +79,28 @@ class _ChatState extends State<Chat> {
               decoration: InputDecoration(
                 fillColor: Palette.green.lighter,
                 border: OutlineInputBorder(
-                    borderSide: BorderSide(color: widget.color.dark)),
+                    borderSide: BorderSide(color: color.dark)),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: widget.color.dark)),
+                    borderSide: BorderSide(color: color.dark)),
                 enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: widget.color.dark)),
+                    borderSide: BorderSide(color: color.dark)),
                 contentPadding: const EdgeInsets.all(5),
               ),
-              cursorColor: widget.color.dark,
-              style: TextStyle(color: widget.color.darker, fontSize: 20),
+              cursorColor: color.dark,
+              style: TextStyle(color: color.darker, fontSize: 20),
             ),
           ),
         ),
         TextButton(
           onPressed: () async {
+            if (!hasMessage && chatData.eventId != chatData.chatId) {
+              await chatData.createChatIfNotExists();
+            }
             if (_messageController.text.trim() != "") {
               await ChatMessageData(
-                      id: widget.chatId,
-                      eventId: widget.eventId,
-                      sender: widget.sender,
+                      id: chatData.chatId,
+                      eventId: chatData.eventId,
+                      sender: sender,
                       timestamp: DateTime.now().millisecondsSinceEpoch,
                       message: _messageController.text.trim())
                   .save();
@@ -124,7 +112,7 @@ class _ChatState extends State<Chat> {
             child: Icon(
               ArbennIcons.send,
               size: 30,
-              color: widget.color.darker,
+              color: color.darker,
             ),
           ),
         ),
@@ -135,10 +123,11 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        stream: _data.messages,
+        stream: chatData.messages,
         builder: (BuildContext context,
             AsyncSnapshot<List<ChatMessageData>> messages) {
           if (messages.hasData) {
+            bool hasMessage = messages.data!.isNotEmpty;
             return Padding(
                 padding: const EdgeInsets.all(5),
                 child: Column(children: [
@@ -148,12 +137,12 @@ class _ChatState extends State<Chat> {
                           children: messages.data!
                               .map((m) => ChatMessage(
                                   message: m,
-                                  color: widget.color,
+                                  color: color,
                                   fromCurrentUser:
-                                      widget.sender.userId == m.sender.userId))
+                                      sender.userId == m.sender.userId))
                               .toList(),
-                          shadowColor: widget.color.darker)),
-                  _buildInput()
+                          shadowColor: color.darker)),
+                  _buildInput(hasMessage)
                 ]));
           } else if (messages.hasError) {
             return Column(children: [

@@ -4,6 +4,7 @@ import 'user_data.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EventDataSummary {
   final String eventId;
@@ -189,7 +190,6 @@ class EventData {
 
   static Future<EventData?> loadFromEventId(String eventId) async {
     CollectionReference users = FirebaseFirestore.instance.collection('events');
-
     Map<String, dynamic>? infos = await users
         .doc(eventId)
         .get()
@@ -218,6 +218,35 @@ class EventData {
     List<CloudImage> cloudImage = await Future.wait(
         result.items.map((ref) => CloudImage.loadImage(ref)).toList());
     return cloudImage;
+  }
+
+  static Future<void> addAttende(String eventId) async {
+    UserSumarryData attende = await UserSumarryData.currentUser();
+
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('events').doc(eventId);
+
+    return FirebaseFirestore.instance.runTransaction<void>((transaction) async {
+      // Get the document
+      DocumentSnapshot snapshot = await transaction.get(documentReference);
+
+      if (!snapshot.exists) {
+        throw Exception("User does not exist!");
+      }
+
+      Map<String, dynamic> infos = snapshot.data()! as Map<String, dynamic>;
+      List<String> attendesId = infos['attendesId'].cast<String>();
+      List<dynamic> attendes = infos['attendes'] as List<dynamic>;
+      int numAttendes = infos['numAttendes'];
+
+      if (!attendesId.any((id) => id == attende.userId)) {
+        transaction.update(documentReference, {
+          'numAttendes': numAttendes + 1,
+          'attendes': [attende.toJson(), ...attendes],
+          'attendesId': [attende.userId, ...attendesId],
+        });
+      }
+    });
   }
 }
 

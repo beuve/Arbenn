@@ -28,21 +28,30 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  late bool _isAttende;
   late EventDataStream _eventDataStream;
 
   @override
   void initState() {
     super.initState();
-    _isAttende = false;
     _eventDataStream = EventDataStream(eventId: widget.eventId);
+  }
+
+  void participate() async {
+    EventData.addAttende(widget.eventId);
+  }
+
+  bool isAttende(EventData event) {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return false;
+    } else {
+      return event.attendes.any((attende) => attende.userId == user.uid);
+    }
   }
 
   Widget _participateButton() {
     return TextButton(
-      onPressed: () => {
-        setState(() => {_isAttende = true})
-      },
+      onPressed: participate,
       child: Container(
           child: Text("PARTICIPER",
               style: TextStyle(
@@ -58,9 +67,7 @@ class _EventPageState extends State<EventPage> {
 
   Widget _cancelParticipation() {
     return TextButton(
-        onPressed: () => {
-              setState(() => {_isAttende = false})
-            },
+        onPressed: () => {setState(() => {})},
         child: SizedBox(
           height: 32,
           child: Row(
@@ -101,7 +108,7 @@ class _EventPageState extends State<EventPage> {
                 color: widget.color.darker,
               )),
           const SizedBox(height: 10),
-          _isAttende ? _cancelParticipation() : _participateButton(),
+          isAttende(event) ? _cancelParticipation() : _participateButton(),
         ],
       ),
     );

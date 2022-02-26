@@ -43,7 +43,10 @@ class UserSumarryData {
     if (infos == null) {
       return null;
     } else {
-      return UserSumarryData(userId: userId, firstName: infos["firstName"]);
+      UserSumarryData user =
+          UserSumarryData(userId: userId, firstName: infos["firstName"]);
+      await user.getPicture();
+      return user;
     }
   }
 

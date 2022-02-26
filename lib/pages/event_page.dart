@@ -92,7 +92,9 @@ class _EventPageState extends State<EventPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-              "$remainingPlaces / ${widget.event.maxAttendes} places restantes",
+              widget.event.maxAttendes != null
+                  ? "$remainingPlaces / ${widget.event.maxAttendes} places restantes"
+                  : "${widget.event.numAttendes} participant${widget.event.numAttendes > 1 ? "s" : ""}",
               style: TextStyle(
                 color: widget.color.darker,
               )),

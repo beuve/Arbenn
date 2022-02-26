@@ -7,7 +7,7 @@ import '../pages/event_page.dart';
 import 'user_elements.dart';
 
 class EventSummary extends StatelessWidget {
-  final EventData data;
+  final EventDataSummary data;
   final Nuance color;
 
   const EventSummary({
@@ -140,7 +140,7 @@ class EventSummary extends StatelessWidget {
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => EventPage(event: data),
+          builder: (context) => EventPage(eventId: data.eventId),
         ),
       ),
     );

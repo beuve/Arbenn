@@ -6,29 +6,12 @@ import '../utils/colors.dart';
 import '../components/tabs.dart';
 
 class CalendarPage extends StatelessWidget {
-  final Future<List<EventData>> eventsData;
+  final Future<List<EventDataSummary>> eventsData;
   final Nuance color;
 
   const CalendarPage(
       {Key? key, required this.eventsData, this.color = Palette.orange})
       : super(key: key);
-
-  static CalendarPage dummy() {
-    return CalendarPage(
-      eventsData: (() async => [
-            EventData.dummy(date: DateTime.parse("19700101")),
-            EventData.dummy(date: DateTime.parse("19700101")),
-            EventData.dummy(date: DateTime.parse("19700101")),
-            EventData.dummy(date: DateTime.parse("19700101")),
-            EventData.dummy(date: DateTime.parse("19700101")),
-            EventData.dummy(date: DateTime.parse("20221211")),
-            EventData.dummy(date: DateTime.parse("20221212")),
-            EventData.dummy(date: DateTime.parse("20221212")),
-            EventData.dummy(date: DateTime.parse("20221213")),
-            EventData.dummy(date: DateTime.parse("20221214")),
-          ])(),
-    );
-  }
 
   String _monthFromInt(int m) {
     switch (m) {
@@ -98,7 +81,7 @@ class CalendarPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildFuturWidgetList(List<EventData> events) {
+  List<Widget> _buildFuturWidgetList(List<EventDataSummary> events) {
     DateTime? prev;
     List<Widget> res = [];
     for (var i = 0; i < events.length; i++) {
@@ -123,10 +106,10 @@ class CalendarPage extends StatelessWidget {
         title: title);
   }
 
-  List<TabInfos> _buildTabs(List<EventData> events) {
-    final List<EventData> past =
+  List<TabInfos> _buildTabs(List<EventDataSummary> events) {
+    final List<EventDataSummary> past =
         events.where((e) => e.date.isBefore(DateTime.now())).toList();
-    final List<EventData> future =
+    final List<EventDataSummary> future =
         events.where((e) => e.date.isAfter(DateTime.now())).toList();
     return [
       _buildSingleTab("Passé(s)",
@@ -144,7 +127,7 @@ class CalendarPage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Tabs(
-                tabs: _buildTabs(snapshot.data as List<EventData>),
+                tabs: _buildTabs(snapshot.data as List<EventDataSummary>),
                 color: color,
                 startingTab: 1,
               );

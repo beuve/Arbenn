@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<EventData> _events = [];
+  List<EventDataSummary> _events = [];
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void initInfos() async {
-    List<EventData> allEvents = await EventData.loadAllEvents();
+    List<EventDataSummary> allEvents = await EventDataSummary.loadAllEvents();
     setState(() {
       _events = allEvents;
     });

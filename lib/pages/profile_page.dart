@@ -15,7 +15,7 @@ class ProfilePage extends StatelessWidget {
   final Nuance color;
   final bool backButton;
   final bool editButton;
-  final Future<List<EventData>> adminEvents;
+  final Future<List<EventDataSummary>> adminEvents;
 
   const ProfilePage({
     Key? key,
@@ -26,17 +26,6 @@ class ProfilePage extends StatelessWidget {
     this.editButton = true,
   }) : super(key: key);
 
-  static ProfilePage dummy() {
-    return ProfilePage(
-      user: UserData.dummy(),
-      adminEvents: (() async => [
-            EventData.dummy(),
-            EventData.dummy(),
-            EventData.dummy(),
-          ])(),
-    );
-  }
-
   Widget _buildEvents(BuildContext context) {
     return FutureBuilder(
       future: adminEvents,
@@ -44,7 +33,7 @@ class ProfilePage extends StatelessWidget {
         if (snapshot.hasData && snapshot.data != null) {
           return ScrollList(
             shadowColor: color.darker,
-            children: (snapshot.data! as List<EventData>)
+            children: (snapshot.data! as List<EventDataSummary>)
                 .map((e) => EventSummary(data: e, color: color))
                 .toList(),
             onRefresh: () async => print("test"),

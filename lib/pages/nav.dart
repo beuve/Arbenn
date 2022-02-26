@@ -43,8 +43,8 @@ class Nav extends StatefulWidget {
 class _NavState extends State<Nav> {
   late _PageInfos _currentPageInfos;
   late List<_PageInfos> _pagesInfos;
-  late Future<List<EventData>> adminEvents;
-  late Future<List<EventData>> attendedEvents;
+  late Future<List<EventDataSummary>> adminEvents;
+  late Future<List<EventDataSummary>> attendedEvents;
 
   void reloadAdminEventsList() {
     adminEvents = widget.currentUser.loadAdminEvents();

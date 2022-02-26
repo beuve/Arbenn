@@ -164,7 +164,7 @@ class UserData {
     await users.doc(userId).set(toJson(), SetOptions(merge: true));
   }
 
-  Future<List<EventData>> loadAdminEvents() async {
+  Future<List<EventDataSummary>> loadAdminEvents() async {
     CollectionReference events =
         FirebaseFirestore.instance.collection('events');
 
@@ -172,12 +172,12 @@ class UserData {
         .where("adminId", isEqualTo: userId)
         .get()
         .then((querySnapshot) {
-      return Future.wait(
-          querySnapshot.docs.map((i) => EventData.ofJson(i.id, i.data())));
+      return Future.wait(querySnapshot.docs
+          .map((i) => EventDataSummary.ofJson(i.id, i.data())));
     });
   }
 
-  Future<List<EventData>> loadAttendesEvents() async {
+  Future<List<EventDataSummary>> loadAttendesEvents() async {
     CollectionReference events =
         FirebaseFirestore.instance.collection('events');
 
@@ -185,8 +185,8 @@ class UserData {
         .where("attendesId", arrayContains: userId)
         .get()
         .then((querySnapshot) {
-      return Future.wait(
-          querySnapshot.docs.map((i) => EventData.ofJson(i.id, i.data())));
+      return Future.wait(querySnapshot.docs
+          .map((i) => EventDataSummary.ofJson(i.id, i.data())));
     });
   }
 }

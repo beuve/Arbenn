@@ -14,12 +14,12 @@ import '../components/tags.dart';
 import '../components/scroller.dart';
 
 class EventPage extends StatefulWidget {
-  final EventData event;
+  final String eventId;
   final Nuance color;
 
   const EventPage({
     Key? key,
-    required this.event,
+    required this.eventId,
     this.color = Palette.yellow,
   }) : super(key: key);
 
@@ -29,11 +29,13 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   late bool _isAttende;
+  late EventDataStream _eventDataStream;
 
   @override
   void initState() {
     super.initState();
     _isAttende = false;
+    _eventDataStream = EventDataStream(eventId: widget.eventId);
   }
 
   Widget _participateButton() {
@@ -79,9 +81,9 @@ class _EventPageState extends State<EventPage> {
         ));
   }
 
-  Widget _participateManage() {
-    final int? remainingPlaces = widget.event.maxAttendes != null
-        ? widget.event.maxAttendes! - widget.event.numAttendes
+  Widget _participateManage(EventData event) {
+    final int? remainingPlaces = event.maxAttendes != null
+        ? event.maxAttendes! - event.numAttendes
         : null;
     return Container(
       padding: const EdgeInsets.all(10),
@@ -92,9 +94,9 @@ class _EventPageState extends State<EventPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-              widget.event.maxAttendes != null
-                  ? "$remainingPlaces / ${widget.event.maxAttendes} places restantes"
-                  : "${widget.event.numAttendes} participant${widget.event.numAttendes > 1 ? "s" : ""}",
+              event.maxAttendes != null
+                  ? "$remainingPlaces / ${event.maxAttendes} places restantes"
+                  : "${event.numAttendes} participant${event.numAttendes > 1 ? "s" : ""}",
               style: TextStyle(
                 color: widget.color.darker,
               )),
@@ -121,7 +123,7 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  Widget _eventInfosWidget() {
+  Widget _eventInfosWidget(EventData event) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -134,9 +136,8 @@ class _EventPageState extends State<EventPage> {
         children: [
           SizedBox(
             height: 35,
-            child: _iconLabel(
-                ProfileMiniature(picture: widget.event.admin.picture),
-                "${widget.event.admin.firstName} "),
+            child: _iconLabel(ProfileMiniature(picture: event.admin.picture),
+                "${event.admin.firstName} "),
           ),
           SizedBox(
             height: 35,
@@ -146,7 +147,7 @@ class _EventPageState extends State<EventPage> {
                   size: 20,
                   color: widget.color.lighter,
                 ),
-                widget.event.location),
+                event.location),
           ),
           SizedBox(
             height: 35,
@@ -159,7 +160,7 @@ class _EventPageState extends State<EventPage> {
                       size: 20,
                       color: widget.color.lighter,
                     ),
-                    '${widget.event.date.day.toString().padLeft(2, '0')} / ${widget.event.date.month.toString().padLeft(2, '0')} / ${widget.event.date.year}',
+                    '${event.date.day.toString().padLeft(2, '0')} / ${event.date.month.toString().padLeft(2, '0')} / ${event.date.year}',
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -170,7 +171,7 @@ class _EventPageState extends State<EventPage> {
                       size: 15,
                       color: widget.color.lighter,
                     ),
-                    '${widget.event.date.hour.toString().padLeft(2, '0')}:${widget.event.date.minute.toString().padLeft(2, '0')}',
+                    '${event.date.hour.toString().padLeft(2, '0')}:${event.date.minute.toString().padLeft(2, '0')}',
                   ),
                 ),
               ],
@@ -186,8 +187,7 @@ class _EventPageState extends State<EventPage> {
                   color: widget.color.lighter,
                 ),
                 const SizedBox(width: 3),
-                Tags.static(widget.event.tags,
-                    color: widget.color, fontSize: 10)
+                Tags.static(event.tags, color: widget.color, fontSize: 10)
               ],
             ),
           ),
@@ -202,15 +202,14 @@ class _EventPageState extends State<EventPage> {
                 ),
                 const SizedBox(width: 10),
                 ProfileMiniatures(
-                  pictures:
-                      widget.event.attendes.map((a) => a.picture).toList(),
+                  pictures: event.attendes.map((a) => a.picture).toList(),
                   size: 15,
                 ),
                 const SizedBox(width: 5),
                 TextButton(
                   onPressed: () => {},
                   child: Text(
-                    "Participants (${widget.event.numAttendes})",
+                    "Participants (${event.numAttendes})",
                     style: TextStyle(
                         decoration: TextDecoration.underline,
                         fontSize: 12,
@@ -226,7 +225,7 @@ class _EventPageState extends State<EventPage> {
     );
   }
 
-  Widget _description() {
+  Widget _description(String description) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -238,44 +237,44 @@ class _EventPageState extends State<EventPage> {
           const TextSpan(
               text: "Description. ",
               style: TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: widget.event.description)
+          TextSpan(text: description)
         ]),
       ),
     );
   }
 
-  Widget _descriptionTab() {
+  Widget _descriptionTab(EventData event) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
       child: ScrollList(
         shadowColor: widget.color.darker,
         children: [
-          _participateManage(),
+          _participateManage(event),
           const SizedBox(height: 15),
-          _eventInfosWidget(),
-          if (widget.event.description != "") ...[
+          _eventInfosWidget(event),
+          if (event.description != "") ...[
             const SizedBox(height: 15),
-            _description()
+            _description(event.description)
           ]
         ],
       ),
     );
   }
 
-  Widget _chatTab() {
+  Widget _chatTab(EventData event) {
     User? _user = FirebaseAuth.instance.currentUser;
     if (_user != null) {
       return Chat(
-        chatId: widget.event.eventId,
-        eventId: widget.event.eventId,
-        sender: widget.event.admin,
+        chatId: event.eventId,
+        eventId: event.eventId,
+        sender: event.admin,
       );
     } else {
       return Text("Error");
     }
   }
 
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent(BuildContext context, EventData event) {
     return Container(
       color: widget.color.main,
       child: Container(
@@ -296,7 +295,7 @@ class _EventPageState extends State<EventPage> {
                     margin: const EdgeInsets.only(top: 4),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     child: Text(
-                      widget.event.title,
+                      event.title,
                       style: TextStyle(
                           color: widget.color.darker,
                           fontSize: 20,
@@ -309,7 +308,7 @@ class _EventPageState extends State<EventPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => EventFormPage(
-                          event: widget.event,
+                          event: event,
                         ),
                       ),
                     ),
@@ -328,8 +327,8 @@ class _EventPageState extends State<EventPage> {
             ),
             Expanded(
               child: Tabs(tabs: [
-                TabInfos(content: _descriptionTab(), title: "Description"),
-                TabInfos(content: _chatTab(), title: "Discussions"),
+                TabInfos(content: _descriptionTab(event), title: "Description"),
+                TabInfos(content: _chatTab(event), title: "Discussions"),
               ], color: widget.color),
             ),
           ],
@@ -340,14 +339,25 @@ class _EventPageState extends State<EventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: widget.color.main,
-      child: SafeArea(
-        child: Scaffold(
-          body: _buildContent(context),
-          appBar: appBar(context, widget.color),
-        ),
-      ),
+    return StreamBuilder(
+      stream: _eventDataStream.event,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ColoredBox(
+            color: widget.color.main,
+            child: SafeArea(
+              child: Scaffold(
+                body: _buildContent(context, snapshot.data as EventData),
+                appBar: appBar(context, widget.color),
+              ),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          return Text("error");
+        } else {
+          return Text("waiting");
+        }
+      },
     );
   }
 }

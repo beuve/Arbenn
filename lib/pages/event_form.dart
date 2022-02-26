@@ -63,24 +63,41 @@ class _EventFormPageState extends State<EventFormPage> {
     }
   }
 
-  Future<EventCreationData> toEventCreationData() async {
+  Future<EventData> saveEvent() async {
     UserSumarryData admin = widget.event != null
         ? widget.event!.admin
         : await UserSumarryData.currentUser();
-
-    return EventCreationData(
-      eventId: widget.event != null ? widget.event!.eventId : null,
-      title: _titleController.text,
-      tags:
-          _tagSearch.tags.where((t) => t.isActive).map((t) => t.label).toList(),
-      date: _dateController.date!,
-      location: _locationController.text,
-      admin: admin,
-      icon: Icons.sports_handball,
-      description: _descriptionController.text,
-      numAttendes: widget.event != null ? widget.event!.numAttendes : 1,
-      attendes: widget.event != null ? widget.event!.attendes : [admin],
-    );
+    if (widget.event != null) {
+      EventData event = EventData(
+        eventId: widget.event!.eventId,
+        title: _titleController.text,
+        tags: _tagSearch.tags
+            .where((t) => t.isActive)
+            .map((t) => t.label)
+            .toList(),
+        date: _dateController.date!,
+        location: _locationController.text,
+        admin: admin,
+        icon: Icons.sports_handball,
+        description: _descriptionController.text,
+        numAttendes: widget.event != null ? widget.event!.numAttendes : 1,
+        attendes: widget.event != null ? widget.event!.attendes : [admin],
+      );
+      await event.save();
+      return event;
+    } else {
+      return EventData.saveNew(
+        title: _titleController.text,
+        tags: _tagSearch.tags
+            .where((t) => t.isActive)
+            .map((t) => t.label)
+            .toList(),
+        date: _dateController.date!,
+        location: _locationController.text,
+        admin: admin,
+        description: _descriptionController.text,
+      );
+    }
   }
 
   Step firstStep(BuildContext context) {
@@ -234,8 +251,7 @@ class _EventFormPageState extends State<EventFormPage> {
       color: widget.color,
       resizeOnKeyboard: const [true, true, false],
       onFinish: () async {
-        EventCreationData event = await toEventCreationData();
-        await event.save(); //  this should add an id to the EventCreationData
+        EventData event = await saveEvent();
         for (var i = 0; i < _localImages.length; i++) {
           saveImage("eventImages/${event.eventId}/${_minImageIndex + i}",
               _localImages[i].path);

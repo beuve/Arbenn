@@ -2,6 +2,7 @@ import 'package:arbenn/components/chat.dart';
 import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/data/chat_data.dart';
 import 'package:arbenn/data/user_data.dart';
+import 'package:arbenn/pages/attende_list.dart';
 import 'package:arbenn/pages/event_form.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -229,7 +230,14 @@ class _EventPageState extends State<EventPage> {
                 ),
                 const SizedBox(width: 5),
                 TextButton(
-                  onPressed: () => {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AttendeList(
+                                attendes: event.attendes,
+                                color: widget.color)));
+                  },
                   child: Text(
                     "Participants (${event.numAttendes})",
                     style: TextStyle(

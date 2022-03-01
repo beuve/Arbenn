@@ -142,11 +142,7 @@ class _SearchPageState extends State<SearchPage> {
                 const BorderRadius.vertical(top: Radius.circular(25))),
         child: _showSettings
             ? Container()
-            : ScrollList(
-                shadowColor: widget.color.darker,
-                children: _events
-                    .map((e) => EventSummary(data: e, color: widget.color))
-                    .toList()),
+            : EventSummariesPlaceHolders(color: widget.color),
       ),
     );
   }

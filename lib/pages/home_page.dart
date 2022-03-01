@@ -14,28 +14,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<EventDataSummary> _events = [];
+  late Future<List<EventDataSummary>> _events;
 
   @override
   void initState() {
     super.initState();
-    initInfos();
-  }
-
-  void initInfos() async {
-    List<EventDataSummary> allEvents = await EventDataSummary.loadAllEvents();
-    setState(() {
-      _events = allEvents;
-    });
+    _events = EventDataSummary.loadAllEvents();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScrollList(
-      shadowColor: widget.color.darker,
-      children: _events
-          .map((e) => EventSummary(data: e, color: widget.color))
-          .toList(),
+    return EventSummaries(
+      color: widget.color,
+      events: _events,
+      numPlaceholders: 1,
     );
   }
 }

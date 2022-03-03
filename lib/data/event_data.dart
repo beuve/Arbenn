@@ -1,5 +1,6 @@
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
+import 'package:arbenn/data/tags_data.dart';
 import 'package:flutter/material.dart';
 import 'user_data.dart';
 
@@ -10,13 +11,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 class EventDataSummary {
   final String eventId;
   final String title;
-  final List<String> tags;
+  final List<TagData> tags;
   final DateTime date;
   final Address address;
   final UserSumarryData admin;
   final int numAttendes;
   final int? maxAttendes;
-  final IconData icon;
+  final String iconUrl;
 
   const EventDataSummary({
     required this.eventId,
@@ -26,14 +27,14 @@ class EventDataSummary {
     required this.address,
     required this.admin,
     required this.numAttendes,
-    required this.icon,
+    required this.iconUrl,
     this.maxAttendes,
   });
 
   static EventDataSummary dummy({
     String eventId = "1",
     String title = "Sport",
-    List<String> tags = const ["sport", "running"],
+    List<TagData>? tags,
     IconData icon = Icons.sports_handball,
     UserSumarryData? admin,
     DateTime? date,
@@ -43,34 +44,42 @@ class EventDataSummary {
     return EventDataSummary(
       eventId: eventId,
       title: title,
-      tags: tags,
+      tags: tags ??
+          [
+            TagData(label: "sport", id: "sport"),
+            TagData(label: "randonnee", id: "hiking")
+          ],
       date: date ?? DateTime.now(),
-      address: Address(
+      address: const Address(
         city: "Saint Sauveur Lendelin",
         cityCode: "50490",
-        coord: GeoPoint(123, 123),
+        coord: GeoPoint(0, 0),
       ),
       admin: admin ?? UserSumarryData.dummy(),
       numAttendes: numAttendes,
       maxAttendes: maxAttendes,
-      icon: icon,
+      iconUrl: "url",
     );
   }
 
   static Future<EventDataSummary> ofJson(eventId, infos) async {
     UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
     await admin.getPicture();
+    List<TagData> tags =
+        await TagData.loadFromIds(infos["tags"].cast<String>() as List<String>);
+    String? url = await getIconUrl(tags[0].id);
+    if (url == null) throw Exception("Icon url is null");
     return EventDataSummary(
       eventId: eventId,
-      icon: Icons.sports_handball,
       admin: admin,
       title: infos["title"],
-      tags: infos["tags"].cast<String>() as List<String>,
+      tags: tags,
       date: DateTime.fromMillisecondsSinceEpoch(
           infos["date"].millisecondsSinceEpoch),
       address: Address.ofJson(infos["address"]),
       maxAttendes: infos["maxAttendes"],
       numAttendes: infos["numAttendes"],
+      iconUrl: url,
     );
   }
 
@@ -98,7 +107,7 @@ class EventDataSummary {
 class EventData {
   final String eventId;
   String title;
-  List<String> tags;
+  List<TagData> tags;
   DateTime date;
   Address address;
   UserSumarryData admin;
@@ -129,7 +138,7 @@ class EventData {
 
   static Future<EventData> saveNew({
     required String title,
-    required List<String> tags,
+    required List<TagData> tags,
     required DateTime date,
     required Address address,
     required UserSumarryData admin,
@@ -140,7 +149,7 @@ class EventData {
       "title": title,
       "date": date,
       "description": description,
-      "tags": tags,
+      "tags": tags.map((t) => t.id).toList(),
       "address": address.toJson(),
       "admin": admin.toJson(),
       "adminId": admin.userId,
@@ -160,12 +169,14 @@ class EventData {
     List<UserSumarryData> attendes = (infos["attendes"] as List<dynamic>)
         .map((i) => UserSumarryData.fromJson(i))
         .toList();
+    List<TagData> tags =
+        await TagData.loadFromIds(infos["tags"].cast<String>() as List<String>);
     return EventData(
       eventId: eventId,
       icon: Icons.sports_handball,
       admin: admin,
       title: infos["title"],
-      tags: infos["tags"].cast<String>() as List<String>,
+      tags: tags,
       date: DateTime.fromMillisecondsSinceEpoch(
           infos["date"].millisecondsSinceEpoch),
       address: Address.ofJson(infos["address"]),

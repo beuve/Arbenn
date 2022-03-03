@@ -74,7 +74,7 @@ class _UserFormPageState extends State<UserFormPage> {
         lastName: _lastNameController.text,
         tags: _tagSearch.tags
             .where((t) => t.isActive)
-            .map((t) => t.label)
+            .map((t) => t.data)
             .toList(),
         birth: _birthDateController.date!,
         location: _city!,

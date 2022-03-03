@@ -1,6 +1,7 @@
 import 'package:arbenn/components/event_summary.dart';
 import 'package:arbenn/components/tags.dart';
 import 'package:arbenn/data/event_data.dart';
+import 'package:arbenn/data/tags_data.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
@@ -101,7 +102,10 @@ class _SearchPageState extends State<SearchPage> {
             ),
             const SizedBox(height: 10),
             Tags.static(
-              ["sport", "handball"],
+              [
+                TagData(label: "sport", id: "sport"),
+                TagData(label: "randonnee", id: "hiking")
+              ],
               active: true,
               color: widget.color,
             ),

@@ -77,7 +77,7 @@ class _EventFormPageState extends State<EventFormPage> {
         title: _titleController.text,
         tags: _tagSearch.tags
             .where((t) => t.isActive)
-            .map((t) => t.label)
+            .map((t) => t.data)
             .toList(),
         date: _dateController.date!,
         address: _address!,
@@ -94,7 +94,7 @@ class _EventFormPageState extends State<EventFormPage> {
         title: _titleController.text,
         tags: _tagSearch.tags
             .where((t) => t.isActive)
-            .map((t) => t.label)
+            .map((t) => t.data)
             .toList(),
         date: _dateController.date!,
         address: _address!,

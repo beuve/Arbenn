@@ -1,5 +1,6 @@
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
+import 'package:arbenn/data/tags_data.dart';
 import 'package:flutter/material.dart';
 import 'event_data.dart';
 
@@ -68,7 +69,7 @@ class UserData {
   final String userId;
   final String firstName;
   final String lastName;
-  final List<String> tags;
+  final List<TagData> tags;
   final DateTime birth;
   final City location;
   final String? phone;
@@ -91,7 +92,7 @@ class UserData {
     String userId = "1",
     String firstName = "John",
     String lastName = "Doe",
-    List<String> tags = const ["Sport", "Handball"],
+    List<TagData>? tags,
     DateTime? birth,
     String location = "Saint Sauveur Lendelin",
     String phone = "0203040506",
@@ -103,7 +104,11 @@ class UserData {
         userId: userId,
         firstName: firstName,
         lastName: lastName,
-        tags: tags,
+        tags: tags ??
+            [
+              TagData(label: "sport", id: "sport"),
+              TagData(label: "randonnee", id: "hiking")
+            ],
         birth: DateTime.parse("19951124"),
         location: City(
           city: "Saint Sauveur Lendelin",
@@ -147,7 +152,7 @@ class UserData {
       "lastName": lastName,
       "birth": birth,
       "description": description,
-      "tags": tags,
+      "tags": tags.map((e) => e.id).toList(),
       "city": location.toJson(),
       "phone": phone,
     };
@@ -155,7 +160,7 @@ class UserData {
 
   static Future<UserData?> loadFromUserId(String userId) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
-
+    ImageProvider? image = await loadImage(userId);
     Map<String, dynamic>? infos = await users
         .doc(userId)
         .get()
@@ -163,16 +168,19 @@ class UserData {
     if (infos == null) {
       return null;
     } else {
+      List<TagData> tags = await TagData.loadFromIds(
+          infos["tags"].cast<String>() as List<String>);
       return UserData(
           userId: userId,
           firstName: infos["firstName"],
           lastName: infos["lastName"],
-          tags: infos["tags"].cast<String>() as List<String>,
+          tags: tags,
           birth: DateTime.fromMillisecondsSinceEpoch(
               infos["birth"].millisecondsSinceEpoch),
           location: City.ofJson(infos["city"]),
           phone: infos["phone"],
-          description: infos["description"]);
+          description: infos["description"],
+          picture: image);
     }
   }
 

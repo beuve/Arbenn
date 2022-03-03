@@ -47,7 +47,7 @@ class Tag extends StatelessWidget {
 }
 
 class Tags extends StatelessWidget {
-  final List<TagInfos> tags;
+  final List<TagWidgetInfos> tags;
   final Nuance color;
   final double fontSize;
 
@@ -59,22 +59,22 @@ class Tags extends StatelessWidget {
   }) : super(key: key);
 
   static Tags static(
-    List<String> labels, {
+    List<TagData> tags, {
     required Nuance color,
     bool active = false,
     double fontSize = 18,
   }) {
     return Tags(
-      tags: labels.map((l) => TagInfos(label: l, isActive: active)).toList(),
+      tags: tags.map((t) => TagWidgetInfos(data: t, isActive: active)).toList(),
       color: color,
       fontSize: fontSize,
     );
   }
 
-  List<Widget> _tagsList(List<TagInfos> tags) {
+  List<Widget> _tagsList(List<TagWidgetInfos> tags) {
     return tags
         .map((t) => Tag(
-              label: t.label,
+              label: t.data.label,
               isActive: t.isActive,
               color: color,
               onPressed: t.onTap,

@@ -48,6 +48,20 @@ Future<ImageProvider?> loadImage(String id) async {
   }
 }
 
+Future<String?> getIconUrl(String id) async {
+  print("icons/$id.svg");
+  firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+      .ref()
+      .child('icons')
+      .child("$id.svg");
+  try {
+    return ref.getDownloadURL();
+  } on FirebaseException catch (e) {
+    return null;
+    // e.g, e.code == 'canceled'
+  }
+}
+
 Future<String?> getImageUrl(String id) async {
   firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
       .ref()

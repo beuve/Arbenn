@@ -1,58 +1,80 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TagInfos {
-  final String label;
+class TagWidgetInfos {
+  final TagData data;
   bool isActive;
   Function()? onTap;
 
-  TagInfos({required this.label, this.isActive = false, this.onTap});
+  TagWidgetInfos({required this.data, this.isActive = false, this.onTap});
+}
+
+class TagData {
+  final String label;
+  final String id;
+
+  TagData({required this.id, required this.label});
+
+  static Future<List<TagData>> loadFromIds(List<String> ids) async {
+    return FirebaseFirestore.instance
+        .collection('tags')
+        .where(FieldPath.documentId, whereIn: ids)
+        .limit(100)
+        .get()
+        .then((snapshot) => snapshot.docs
+            .map((e) =>
+                TagData(id: e.id, label: e.data()["frenchName"] as String))
+            .toList());
+  }
 }
 
 class TagSearch {
-  List<TagInfos> tags = [];
-  List<String> searchResult = [];
+  List<TagWidgetInfos> tags = [];
+  List<TagData> searchResult = [];
 
   Future<void> newSearch(String query, Function(String) onTap) async {
-    List<String> searchResult = await FirebaseFirestore.instance
+    searchResult = await FirebaseFirestore.instance
         .collection('tags')
-        .where("searchQueries", arrayContains: query)
+        .where("frenchQueries", arrayContains: query)
         .limit(100)
         .get()
-        .then((snapshot) => snapshot.docs.map((e) => e.id).toList());
+        .then((snapshot) => snapshot.docs
+            .map((e) =>
+                TagData(id: e.id, label: e.data()["frenchName"] as String))
+            .toList());
     tags.removeWhere((element) => !element.isActive);
     for (var i = 0; i < searchResult.length; i++) {
-      if (!tags.any((element) => element.label == searchResult[i])) {
-        tags.add(
-            TagInfos(label: searchResult[i], onTap: onTap(searchResult[i])));
+      if (!tags.any((element) => element.data.id == searchResult[i].id)) {
+        tags.add(TagWidgetInfos(
+            data: searchResult[i], onTap: onTap(searchResult[i].id)));
       }
     }
   }
 
-  setSelectedTags(List<String> newTags, Function(String) onTap) {
+  setSelectedTags(List<TagData> newTags, Function(String) onTap) {
     for (var i = 0; i < newTags.length; i++) {
-      if (!tags.any((element) => element.label == newTags[i])) {
-        tags.add(TagInfos(
-            label: newTags[i], onTap: onTap(newTags[i]), isActive: true));
+      if (!tags.any((element) => element.data.id == newTags[i].id)) {
+        tags.add(TagWidgetInfos(
+            data: newTags[i], onTap: onTap(newTags[i].id), isActive: true));
       }
     }
   }
 
-  toggle(String label) {
-    if (tags.firstWhere((tag) => tag.label == label).isActive) {
-      deactivate(label);
+  toggle(String id) {
+    if (tags.firstWhere((tag) => tag.data.id == id).isActive) {
+      deactivate(id);
     } else {
-      activate(label);
+      activate(id);
     }
   }
 
-  deactivate(String label) {
-    tags.firstWhere((tag) => tag.label == label).isActive = false;
-    if (!searchResult.contains(label)) {
-      tags.removeWhere((element) => element.label == label);
+  deactivate(String id) {
+    tags.firstWhere((tag) => tag.data.id == id).isActive = false;
+    if (!searchResult.any((t) => t.id == id)) {
+      tags.removeWhere((element) => element.data.id == id);
     }
   }
 
   activate(String label) {
-    tags.firstWhere((tag) => tag.label == label).isActive = true;
+    tags.firstWhere((tag) => tag.data.id == label).isActive = true;
   }
 }

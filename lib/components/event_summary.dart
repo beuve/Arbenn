@@ -1,5 +1,7 @@
 import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/utils/icons.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart' hide IconButton, BackButton;
 import '../utils/colors.dart';
 import '../data/event_data.dart';
@@ -224,10 +226,13 @@ class EventSummary extends StatelessWidget {
     return Container(
       width: 130,
       alignment: Alignment.center,
-      child: Icon(
-        data.icon,
-        size: 100,
+      child: SvgPicture.network(
+        data.iconUrl,
         color: color.lighter,
+        height: 100,
+        placeholderBuilder: (BuildContext context) => Container(
+            padding: const EdgeInsets.all(30.0),
+            child: const CircularProgressIndicator()),
       ),
     );
   }

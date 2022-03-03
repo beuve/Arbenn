@@ -66,10 +66,12 @@ class SearchInput extends StatelessWidget {
   final TextInputType keyboardType;
   final bool isSmallDevice;
   final Function(String)? onChanged;
+  final TextEditingController? controller;
 
   const SearchInput({
     required this.label,
     required this.color,
+    this.controller,
     this.autoFocus = false,
     this.minLines,
     this.maxLines = 1,
@@ -83,6 +85,7 @@ class SearchInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       autocorrect: false,
+      controller: controller,
       autofocus: autoFocus,
       keyboardType: keyboardType,
       onChanged: onChanged,

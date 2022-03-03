@@ -1,5 +1,7 @@
+import 'package:arbenn/components/search_location.dart';
+import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/utils/icons.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Autocomplete;
 import '../utils/colors.dart';
 import '../components/stepper.dart';
 import '../components/inputs.dart';
@@ -35,6 +37,7 @@ class _UserFormPageState extends State<UserFormPage> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TagSearch _tagSearch = TagSearch();
+  late City? _city;
 
   @override
   void initState() {
@@ -51,7 +54,8 @@ class _UserFormPageState extends State<UserFormPage> {
       _firstNameController.text = infos.firstName;
       _lastNameController.text = infos.lastName;
       _birthDateController.date = infos.birth;
-      _cityController.text = infos.location;
+      _cityController.text = infos.location.toString();
+      _city = infos.location;
       _bioController.text = infos.description;
       _phoneController.text = infos.phone ?? "";
       _tagSearch.setSelectedTags(infos.tags,
@@ -73,7 +77,7 @@ class _UserFormPageState extends State<UserFormPage> {
             .map((t) => t.label)
             .toList(),
         birth: _birthDateController.date!,
-        location: _cityController.text,
+        location: _city!,
         phone: _phoneController.text,
         description: _bioController.text);
   }
@@ -188,6 +192,24 @@ class _UserFormPageState extends State<UserFormPage> {
                 label: "Ville",
                 color: widget.color.darker,
                 controller: _cityController,
+                readOnly: true,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchCity(
+                        color: widget.color,
+                        onFinish: (c) {
+                          print(c);
+                          _cityController.text = c.toString();
+                          setState(() {
+                            _city = c;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 30),
               FormInput(

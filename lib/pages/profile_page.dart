@@ -140,7 +140,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          user.location,
+                          user.location.toString(),
                           style: TextStyle(
                               color: color.darker,
                               fontSize: 15,

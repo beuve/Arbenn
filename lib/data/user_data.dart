@@ -1,3 +1,4 @@
+import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:flutter/material.dart';
 import 'event_data.dart';
@@ -69,7 +70,7 @@ class UserData {
   final String lastName;
   final List<String> tags;
   final DateTime birth;
-  final String location;
+  final City location;
   final String? phone;
   final String description;
   ImageProvider<Object>? picture;
@@ -104,7 +105,11 @@ class UserData {
         lastName: lastName,
         tags: tags,
         birth: DateTime.parse("19951124"),
-        location: "Saint Sauveur Lendelin",
+        location: City(
+          city: "Saint Sauveur Lendelin",
+          cityCode: "50490",
+          coord: GeoPoint(123, 123),
+        ),
         description: description,
         phone: phone,
         picture: const AssetImage('assets/images/user_placeholder.png'));
@@ -143,7 +148,7 @@ class UserData {
       "birth": birth,
       "description": description,
       "tags": tags,
-      "location": location,
+      "city": location.toJson(),
       "phone": phone,
     };
   }
@@ -165,7 +170,7 @@ class UserData {
           tags: infos["tags"].cast<String>() as List<String>,
           birth: DateTime.fromMillisecondsSinceEpoch(
               infos["birth"].millisecondsSinceEpoch),
-          location: infos["location"],
+          location: City.ofJson(infos["city"]),
           phone: infos["phone"],
           description: infos["description"]);
     }

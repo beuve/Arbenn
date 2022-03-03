@@ -144,6 +144,8 @@ class EventSummary extends StatelessWidget {
   }) : super(key: key);
 
   Widget _adminAttendesNumRow() {
+    String maxAttendesText =
+        data.maxAttendes == null ? "" : " / ${data.maxAttendes}";
     return Row(
       children: [
         ProfileMiniature(picture: data.admin.picture, size: 12),
@@ -156,7 +158,7 @@ class EventSummary extends StatelessWidget {
         Icon(ArbennIcons.userGroup, size: 12, color: color.lighter),
         const SizedBox(width: 5),
         Text(
-          '${data.numAttendes} / ${data.maxAttendes}',
+          '${data.numAttendes}$maxAttendesText',
           style: TextStyle(color: color.lighter),
         ),
       ],

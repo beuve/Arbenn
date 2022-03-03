@@ -170,7 +170,7 @@ class _EventPageState extends State<EventPage> {
                   size: 20,
                   color: widget.color.lighter,
                 ),
-                event.location),
+                event.address.toString()),
           ),
           SizedBox(
             height: 35,

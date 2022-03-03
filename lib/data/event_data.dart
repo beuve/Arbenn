@@ -1,3 +1,4 @@
+import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:flutter/material.dart';
 import 'user_data.dart';
@@ -11,7 +12,7 @@ class EventDataSummary {
   final String title;
   final List<String> tags;
   final DateTime date;
-  final String location;
+  final Address address;
   final UserSumarryData admin;
   final int numAttendes;
   final int? maxAttendes;
@@ -22,7 +23,7 @@ class EventDataSummary {
     required this.title,
     required this.tags,
     required this.date,
-    required this.location,
+    required this.address,
     required this.admin,
     required this.numAttendes,
     required this.icon,
@@ -33,7 +34,6 @@ class EventDataSummary {
     String eventId = "1",
     String title = "Sport",
     List<String> tags = const ["sport", "running"],
-    String location = "Saint Sauveur Lendelin",
     IconData icon = Icons.sports_handball,
     UserSumarryData? admin,
     DateTime? date,
@@ -45,7 +45,11 @@ class EventDataSummary {
       title: title,
       tags: tags,
       date: date ?? DateTime.now(),
-      location: location,
+      address: Address(
+        city: "Saint Sauveur Lendelin",
+        cityCode: "50490",
+        coord: GeoPoint(123, 123),
+      ),
       admin: admin ?? UserSumarryData.dummy(),
       numAttendes: numAttendes,
       maxAttendes: maxAttendes,
@@ -64,7 +68,7 @@ class EventDataSummary {
       tags: infos["tags"].cast<String>() as List<String>,
       date: DateTime.fromMillisecondsSinceEpoch(
           infos["date"].millisecondsSinceEpoch),
-      location: infos["location"],
+      address: Address.ofJson(infos["address"]),
       maxAttendes: infos["maxAttendes"],
       numAttendes: infos["numAttendes"],
     );
@@ -96,7 +100,7 @@ class EventData {
   String title;
   List<String> tags;
   DateTime date;
-  String location;
+  Address address;
   UserSumarryData admin;
   String description;
   int numAttendes;
@@ -109,7 +113,7 @@ class EventData {
     required this.title,
     required this.tags,
     required this.date,
-    required this.location,
+    required this.address,
     required this.admin,
     required this.description,
     required this.numAttendes,
@@ -127,7 +131,7 @@ class EventData {
     required String title,
     required List<String> tags,
     required DateTime date,
-    required String location,
+    required Address address,
     required UserSumarryData admin,
     required String description,
     int? maxAttendes,
@@ -137,12 +141,12 @@ class EventData {
       "date": date,
       "description": description,
       "tags": tags,
-      "location": location,
+      "address": address.toJson(),
       "admin": admin.toJson(),
       "adminId": admin.userId,
       "maxAttendes": maxAttendes,
       "numAttendes": 1,
-      "attendes": [admin],
+      "attendes": [admin.toJson()],
       "attendesId": [admin.userId]
     };
     CollectionReference users = FirebaseFirestore.instance.collection('events');
@@ -164,7 +168,7 @@ class EventData {
       tags: infos["tags"].cast<String>() as List<String>,
       date: DateTime.fromMillisecondsSinceEpoch(
           infos["date"].millisecondsSinceEpoch),
-      location: infos["location"],
+      address: Address.ofJson(infos["address"]),
       maxAttendes: infos["maxAttendes"],
       numAttendes: infos["numAttendes"],
       description: infos["description"],
@@ -178,7 +182,7 @@ class EventData {
       "date": date,
       "description": description,
       "tags": tags,
-      "location": location,
+      "address": address,
       "admin": admin.toJson(),
       "adminId": admin.userId,
       "attendes": attendes,

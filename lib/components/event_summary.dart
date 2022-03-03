@@ -190,7 +190,7 @@ class EventSummary extends StatelessWidget {
         Icon(ArbennIcons.location, size: 12, color: color.lighter),
         const SizedBox(width: 5),
         Text(
-          data.location,
+          data.address.toString(),
           style: TextStyle(color: color.lighter),
         ),
       ],

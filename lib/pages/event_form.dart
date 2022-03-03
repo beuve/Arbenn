@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:arbenn/components/search_location.dart';
+import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/utils/icons.dart';
@@ -30,11 +32,12 @@ class _EventFormPageState extends State<EventFormPage> {
   List<File> _localImages = [];
   List<CloudImage> _cloudImages = [];
   int _minImageIndex = 0;
+  Address? _address;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final DatePickingController _dateController =
       DatePickingController(needTime: true);
-  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TagSearch _tagSearch = TagSearch();
 
   @override
@@ -48,7 +51,8 @@ class _EventFormPageState extends State<EventFormPage> {
       _titleController.text = widget.event!.title;
       _descriptionController.text = widget.event!.description;
       _dateController.date = widget.event!.date;
-      _locationController.text = widget.event!.location;
+      _address = widget.event!.address;
+      _addressController.text = widget.event!.address.toString();
       _tagSearch.setSelectedTags(widget.event!.tags,
           (label) => () => setState(() => _tagSearch.toggle(label)));
       _cloudImages = await widget.event!.getImages();
@@ -66,7 +70,7 @@ class _EventFormPageState extends State<EventFormPage> {
   Future<EventData> saveEvent() async {
     UserSumarryData admin = widget.event != null
         ? widget.event!.admin
-        : await UserSumarryData.currentUser();
+        : UserSumarryData.currentUser();
     if (widget.event != null) {
       EventData event = EventData(
         eventId: widget.event!.eventId,
@@ -76,7 +80,7 @@ class _EventFormPageState extends State<EventFormPage> {
             .map((t) => t.label)
             .toList(),
         date: _dateController.date!,
-        location: _locationController.text,
+        address: _address!,
         admin: admin,
         icon: Icons.sports_handball,
         description: _descriptionController.text,
@@ -93,7 +97,7 @@ class _EventFormPageState extends State<EventFormPage> {
             .map((t) => t.label)
             .toList(),
         date: _dateController.date!,
-        location: _locationController.text,
+        address: _address!,
         admin: admin,
         description: _descriptionController.text,
       );
@@ -131,9 +135,26 @@ class _EventFormPageState extends State<EventFormPage> {
               ),
               const SizedBox(height: 30),
               FormInput(
-                label: "Location",
+                label: "Addresse",
                 color: widget.color.darker,
-                controller: _locationController,
+                readOnly: true,
+                controller: _addressController,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchAddress(
+                        color: widget.color,
+                        onFinish: (a) {
+                          _addressController.text = a.toString();
+                          setState(() {
+                            _address = a;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 30),
               FormInput(

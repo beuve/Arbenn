@@ -8,14 +8,15 @@ const String host = "api-adresse.data.gouv.fr";
 const String path = "search";
 
 class Address {
-  final double lon, lat;
-  final String houseNumber, street, city, cityCode;
+  final GeoPoint coord;
+  final String? street, houseNumber, locality;
+  final String city, cityCode;
 
   const Address({
-    required this.lon,
-    required this.lat,
-    required this.houseNumber,
-    required this.street,
+    required this.coord,
+    this.street,
+    this.houseNumber,
+    this.locality,
     required this.city,
     required this.cityCode,
   });
@@ -25,16 +26,114 @@ class Address {
       scheme: "https",
       host: host,
       path: path,
-      query: query,
-      queryParameters: {"limit": limit, "type": "housenumber"},
+      queryParameters: {
+        "limit": [limit.toString()],
+        //"type": ["housenumber"],
+        "q": [query]
+      },
     );
+
+    Address readHouseNumber(Map<String, dynamic> infos) {
+      return Address(
+        houseNumber: infos["properties"]["housenumber"],
+        street: infos["properties"]["street"],
+        city: infos["properties"]["city"],
+        cityCode: infos["properties"]["postcode"],
+        coord: GeoPoint((infos["geometry"]["coordinates"] as List<dynamic>)[1],
+            (infos["geometry"]["coordinates"] as List<dynamic>)[0]),
+      );
+    }
+
+    Address readStreet(Map<String, dynamic> infos) {
+      return Address(
+        street: infos["properties"]["name"],
+        city: infos["properties"]["city"],
+        cityCode: infos["properties"]["postcode"],
+        coord: GeoPoint((infos["geometry"]["coordinates"] as List<dynamic>)[1],
+            (infos["geometry"]["coordinates"] as List<dynamic>)[0]),
+      );
+    }
+
+    Address readLocality(Map<String, dynamic> infos) {
+      return Address(
+        locality: infos["properties"]["name"],
+        city: infos["properties"]["city"],
+        cityCode: infos["properties"]["postcode"],
+        coord: GeoPoint((infos["geometry"]["coordinates"] as List<dynamic>)[1],
+            (infos["geometry"]["coordinates"] as List<dynamic>)[0]),
+      );
+    }
+
+    Address readMunicipality(Map<String, dynamic> infos) {
+      return Address(
+        city: infos["properties"]["city"],
+        cityCode: infos["properties"]["postcode"],
+        coord: GeoPoint((infos["geometry"]["coordinates"] as List<dynamic>)[1],
+            (infos["geometry"]["coordinates"] as List<dynamic>)[0]),
+      );
+    }
+
     http.Response response = await http.get(uri);
-    print(response.body);
-    return [];
+    List<Address> result = [];
+    try {
+      Map<String, dynamic> json = jsonDecode(response.body);
+      result = (json["features"] as List<dynamic>).map((e) {
+        switch (e["properties"]["type"]) {
+          case "municipality":
+            return readMunicipality(e);
+          case "street":
+            return readStreet(e);
+          case "housenumber":
+            return readHouseNumber(e);
+          case "locality":
+            return readLocality(e);
+          default:
+            throw Exception("Wring type: ${e["properties"]["type"]} $e");
+        }
+      }).toList();
+    } catch (e) {
+      print("error: $e");
+    }
+
+    return result;
   }
 
-  Autocomplete<Address> get autocomplete {
+  static Autocomplete<Address> get autocomplete {
     return Autocomplete(search: fromQuery);
+  }
+
+  @override
+  String toString() {
+    assert((locality == null && street == null && houseNumber == null) ||
+        (locality != null && street == null && houseNumber == null) ||
+        (locality == null && street != null));
+
+    assert(!(houseNumber != null && street == null));
+
+    String number = houseNumber == null ? "" : "$houseNumber ";
+    String streetName = street == null ? "" : "$street, ";
+    String localityName = locality == null ? "" : "$locality, ";
+    return "$number$streetName$localityName$city ($cityCode)";
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "houseNumber": houseNumber,
+      "street": street,
+      "city": city,
+      "cityCode": cityCode,
+      "coord": coord,
+    };
+  }
+
+  static Address ofJson(Map<String, dynamic> infos) {
+    return Address(
+      street: infos["street"],
+      houseNumber: infos["houseNumber"],
+      city: infos["city"],
+      cityCode: infos["cityCode"],
+      coord: infos["coord"],
+    );
   }
 }
 
@@ -116,8 +215,10 @@ class Autocomplete<T> extends ValueNotifier<bool> {
       value = true;
       await Future.delayed(delay);
       List<T> addresses = await search(_textController.text);
-      _streamController.add(addresses);
-      value = false;
+      if (!_streamController.isClosed) {
+        _streamController.add(addresses);
+        value = false;
+      }
     } else if (!value) {
       _streamController.add([]);
     }

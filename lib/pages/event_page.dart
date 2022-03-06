@@ -439,28 +439,29 @@ class _EventPageState extends State<EventPage> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     )),
-                Container(
-                  alignment: Alignment.topRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EventFormPage(
-                          event: event,
+                if (isAdmin(event))
+                  Container(
+                    alignment: Alignment.topRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EventFormPage(
+                            event: event,
+                          ),
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 18),
+                        child: Icon(
+                          ArbennIcons.pencil,
+                          size: 20,
+                          color: widget.color.darker,
                         ),
                       ),
                     ),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 18),
-                      child: Icon(
-                        ArbennIcons.pencil,
-                        size: 20,
-                        color: widget.color.darker,
-                      ),
-                    ),
-                  ),
-                )
+                  )
               ],
             ),
             _buildTabs(event)

@@ -4,6 +4,7 @@ import 'package:arbenn/data/chat_data.dart';
 import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/pages/attende_list.dart';
 import 'package:arbenn/pages/event_form.dart';
+import 'package:arbenn/pages/profile_page.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide BackButton;
@@ -158,10 +159,9 @@ class _EventPageState extends State<EventPage> {
       child: Column(
         children: [
           SizedBox(
-            height: 35,
-            child: _iconLabel(ProfileMiniature(picture: event.admin.picture),
-                "${event.admin.firstName} "),
-          ),
+              height: 35,
+              child: _iconLabel(ProfileMiniature(picture: event.admin.picture),
+                  event.admin.firstName)),
           SizedBox(
             height: 35,
             child: _iconLabel(

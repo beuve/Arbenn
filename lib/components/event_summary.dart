@@ -202,9 +202,15 @@ class EventSummary extends StatelessWidget {
         data.iconUrl,
         color: color.lighter,
         height: 100,
-        placeholderBuilder: (BuildContext context) => Container(
-            padding: const EdgeInsets.all(30.0),
-            child: const CircularProgressIndicator()),
+        placeholderBuilder: (BuildContext context) => FlashingContainer(
+          margin: const EdgeInsets.all(15.0),
+          startingColor: color.lighter,
+          endingColor: color.light,
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20))),
+          width: 130,
+          height: 130,
+        ),
       ),
     );
   }

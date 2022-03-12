@@ -3,7 +3,7 @@ import '../utils/colors.dart';
 import 'dart:async';
 
 class FlashingContainer extends StatefulWidget {
-  final Widget child;
+  final Widget? child;
   final Duration duration;
   final Color startingColor;
   final Color endingColor;
@@ -15,7 +15,7 @@ class FlashingContainer extends StatefulWidget {
 
   const FlashingContainer({
     Key? key,
-    required this.child,
+    this.child,
     required this.startingColor,
     required this.endingColor,
     this.alignment,

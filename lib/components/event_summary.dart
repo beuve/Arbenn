@@ -250,7 +250,7 @@ class EventSummary extends StatelessWidget {
 }
 
 class EventSummaries extends StatelessWidget {
-  final Future<List<EventDataSummary>> events;
+  final List<EventDataSummary> events;
   final Nuance color;
   final int numPlaceholders;
 
@@ -263,15 +263,32 @@ class EventSummaries extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ScrollList(
+        children:
+            events.map((e) => EventSummary(data: e, color: color)).toList(),
+        shadowColor: color.darker);
+  }
+}
+
+class FutureEventSummaries extends StatelessWidget {
+  final Future<List<EventDataSummary>> events;
+  final Nuance color;
+  final int numPlaceholders;
+
+  const FutureEventSummaries({
+    Key? key,
+    required this.color,
+    required this.events,
+    this.numPlaceholders = 2,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder<List<EventDataSummary>>(
       future: events,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return ScrollList(
-              children: snapshot.data!
-                  .map((e) => EventSummary(data: e, color: color))
-                  .toList(),
-              shadowColor: color.darker);
+          return EventSummaries(color: color, events: snapshot.data!);
         }
         return EventSummariesPlaceHolders(color: color, num: numPlaceholders);
       },

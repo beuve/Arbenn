@@ -203,16 +203,17 @@ class UserData {
     });
   }
 
-  Future<List<EventDataSummary>> loadAttendesEvents() async {
+  Stream<List<EventDataSummary>> loadAttendesEvents() {
     CollectionReference events =
         FirebaseFirestore.instance.collection('events');
 
     return events
         .where("attendesId", arrayContains: userId)
-        .get()
-        .then((querySnapshot) {
-      return Future.wait(querySnapshot.docs
+        .snapshots()
+        .asyncMap((querySnapshot) async {
+      var data = await Future.wait(querySnapshot.docs
           .map((i) => EventDataSummary.ofJson(i.id, i.data())));
+      return data;
     });
   }
 }

@@ -161,7 +161,7 @@ class ProfilePage extends StatelessWidget {
             content: _Description(user: user, color: color),
             title: "Description"),
         TabInfos(
-            content: EventSummaries(events: adminEvents, color: color),
+            content: FutureEventSummaries(events: adminEvents, color: color),
             title: "Evenements"),
       ], color: color),
     );

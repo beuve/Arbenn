@@ -6,11 +6,15 @@ import '../utils/colors.dart';
 import '../components/tabs.dart';
 
 class CalendarPage extends StatelessWidget {
-  final Future<List<EventDataSummary>> eventsData;
+  final List<EventDataSummary>? futureEvents;
+  final List<EventDataSummary>? pastEvents;
   final Nuance color;
 
   const CalendarPage(
-      {Key? key, required this.eventsData, this.color = Palette.orange})
+      {Key? key,
+      required this.pastEvents,
+      required this.futureEvents,
+      this.color = Palette.orange})
       : super(key: key);
 
   String _monthFromInt(int m) {
@@ -81,7 +85,7 @@ class CalendarPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildFuturWidgetList(List<EventDataSummary> events) {
+  Widget _buildFuturWidgetList(List<EventDataSummary> events) {
     DateTime? prev;
     List<Widget> res = [];
     for (var i = 0; i < events.length; i++) {
@@ -94,54 +98,41 @@ class CalendarPage extends StatelessWidget {
       }
       res.add(EventSummary(data: events[i], color: color));
     }
-    return res;
+    return ScrollList(children: res, shadowColor: color.darker);
   }
 
-  TabInfos _buildSingleTab(String title, List<Widget> events) {
-    return TabInfos(
-        content: ScrollList(
-          shadowColor: color.darker,
-          children: events,
-        ),
-        title: title);
+  TabInfos _buildSingleTab(String title, Widget events) {
+    return TabInfos(title: title, content: events);
   }
 
-  List<TabInfos> _buildTabs(List<EventDataSummary> events) {
-    final List<EventDataSummary> past =
-        events.where((e) => e.date.isBefore(DateTime.now())).toList();
-    final List<EventDataSummary> future =
-        events.where((e) => e.date.isAfter(DateTime.now())).toList();
+  List<TabInfos> _buildTabs(
+    List<EventDataSummary>? pastEvents,
+    List<EventDataSummary>? futurEvents,
+  ) {
     return [
-      _buildSingleTab("Passé(s)",
-          past.map((e) => EventSummary(data: e, color: color)).toList()),
-      _buildSingleTab("Futur(s)", _buildFuturWidgetList(future))
+      _buildSingleTab(
+        "Passé(s)",
+        pastEvents == null
+            ? EventSummariesPlaceHolders(color: color)
+            : EventSummaries(color: color, events: pastEvents),
+      ),
+      _buildSingleTab(
+          "Futur(s)",
+          futurEvents == null
+              ? EventSummariesPlaceHolders(color: color)
+              : _buildFuturWidgetList(futurEvents))
     ];
   }
 
   @override
   Widget build(BuildContext context) {
+    print(futureEvents);
     return Container(
-      color: color.main,
-      child: FutureBuilder(
-          future: eventsData,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Tabs(
-                tabs: _buildTabs(snapshot.data as List<EventDataSummary>),
-                color: color,
-                startingTab: 1,
-              );
-            } else {
-              return Tabs(
-                tabs: [
-                  _buildSingleTab("Passé(s)", []),
-                  _buildSingleTab("Futur(s)", [])
-                ],
-                color: color,
-                startingTab: 1,
-              );
-            }
-          }),
-    );
+        color: color.main,
+        child: Tabs(
+          tabs: _buildTabs(pastEvents, futureEvents),
+          color: color,
+          startingTab: 1,
+        ));
   }
 }

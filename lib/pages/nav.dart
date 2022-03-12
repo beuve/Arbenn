@@ -15,13 +15,11 @@ import '../data/event_data.dart';
 class _PageInfos {
   final int num;
   final IconData icon;
-  final Widget content;
   final Nuance color;
 
   const _PageInfos({
     required this.num,
     required this.icon,
-    required this.content,
     required this.color,
   });
 }
@@ -41,59 +39,58 @@ class Nav extends StatefulWidget {
 }
 
 class _NavState extends State<Nav> {
+  final _pagesInfos = const [
+    _PageInfos(
+      num: 0,
+      icon: ArbennIcons.home,
+      color: Palette.red,
+    ),
+    _PageInfos(
+      num: 1,
+      icon: ArbennIcons.calendar,
+      color: Palette.orange,
+    ),
+    _PageInfos(
+      num: 2,
+      icon: ArbennIcons.plus,
+      color: Palette.yellow,
+    ),
+    _PageInfos(
+      num: 3,
+      icon: ArbennIcons.search,
+      color: Palette.green,
+    ),
+    _PageInfos(
+      num: 4,
+      icon: ArbennIcons.user,
+      color: Palette.blue,
+    ),
+  ];
   late _PageInfos _currentPageInfos;
-  late List<_PageInfos> _pagesInfos;
+  // Profile infos
   late Future<List<EventDataSummary>> adminEvents;
-  late Future<List<EventDataSummary>> attendedEvents;
+  // Calendar Infos
+  late Stream<List<EventDataSummary>> attendedEvents;
+  late List<EventDataSummary>? futureAttendedEvents;
+  late List<EventDataSummary>? pastAttendedEvents;
 
-  void reloadAdminEventsList() {
-    adminEvents = widget.currentUser.loadAdminEvents();
-  }
-
-  void reloadAttendedEventsList() {
-    attendedEvents = widget.currentUser.loadAttendesEvents();
+  void setFutureAndPastEvents(List<EventDataSummary> events) {
+    setState(() {
+      futureAttendedEvents =
+          events.where((event) => event.date.isAfter(DateTime.now())).toList();
+      pastAttendedEvents =
+          events.where((event) => event.date.isBefore(DateTime.now())).toList();
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    reloadAdminEventsList();
-    reloadAttendedEventsList();
-    _pagesInfos = [
-      const _PageInfos(
-        num: 0,
-        icon: ArbennIcons.home,
-        content: HomePage(),
-        color: Palette.red,
-      ),
-      _PageInfos(
-        num: 1,
-        icon: ArbennIcons.calendar,
-        content: CalendarPage(eventsData: attendedEvents),
-        color: Palette.orange,
-      ),
-      _PageInfos(
-        num: 2,
-        icon: ArbennIcons.plus,
-        content: Container(),
-        color: Palette.yellow,
-      ),
-      const _PageInfos(
-        num: 3,
-        icon: ArbennIcons.search,
-        content: SearchPage(),
-        color: Palette.green,
-      ),
-      _PageInfos(
-        num: 4,
-        icon: ArbennIcons.user,
-        content: ProfilePage(
-          user: widget.currentUser,
-          adminEvents: adminEvents,
-        ),
-        color: Palette.blue,
-      ),
-    ];
+    adminEvents = widget.currentUser.loadAdminEvents();
+    futureAttendedEvents = null;
+    pastAttendedEvents = null;
+    attendedEvents = widget.currentUser.loadAttendesEvents();
+    attendedEvents.listen(setFutureAndPastEvents);
     _currentPageInfos = _pagesInfos[widget.startingPage];
   }
 
@@ -106,8 +103,7 @@ class _NavState extends State<Nav> {
                 MaterialPageRoute(
                   builder: (context) => const EventFormPage(),
                 ))
-            : () =>
-                setState(() => _currentPageInfos = _pagesInfos[pageInfos.num]);
+            : () => setState(() => _currentPageInfos = pageInfos);
         Widget icon = Container(
             margin: EdgeInsets.only(
               bottom: pageInfos.num == 2 ? 2 : 5,
@@ -137,9 +133,30 @@ class _NavState extends State<Nav> {
             topRight: Radius.circular(25),
           ),
         ),
-        child: Flex(direction: Axis.horizontal, children: buttons),
+        child: Row(children: buttons),
       ),
     );
+  }
+
+  Widget _getContent() {
+    switch (_currentPageInfos.num) {
+      case 0:
+        return const HomePage();
+      case 1:
+        return CalendarPage(
+          pastEvents: pastAttendedEvents,
+          futureEvents: futureAttendedEvents,
+        );
+      case 3:
+        return const SearchPage();
+      case 4:
+        return ProfilePage(
+          user: widget.currentUser,
+          adminEvents: adminEvents,
+        );
+      default:
+        throw Exception("Wtf");
+    }
   }
 
   Widget _buildContent(BuildContext context) {
@@ -156,7 +173,7 @@ class _NavState extends State<Nav> {
                   topRight: Radius.circular(35),
                 ),
               ),
-              child: _currentPageInfos.content,
+              child: _getContent(),
             ),
           ),
         ),

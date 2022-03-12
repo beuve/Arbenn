@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../data/event_data.dart';
 import '../components/event_summary.dart';
 import '../utils/colors.dart';
-import '../components/scroller.dart';
 
 class HomePage extends StatefulWidget {
   final Nuance color;
@@ -24,7 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return EventSummaries(
+    return FutureEventSummaries(
       color: widget.color,
       events: _events,
       numPlaceholders: 1,

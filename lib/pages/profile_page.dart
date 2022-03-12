@@ -1,3 +1,4 @@
+import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import '../utils/colors.dart';
@@ -10,44 +11,16 @@ import '../components/tags.dart';
 import 'user_settings.dart';
 import '../data/event_data.dart';
 
-class ProfilePage extends StatelessWidget {
+class _Description extends StatelessWidget {
   final UserData user;
   final Nuance color;
-  final bool backButton;
-  final bool editButton;
-  final Future<List<EventDataSummary>> adminEvents;
 
-  const ProfilePage({
-    Key? key,
-    required this.user,
-    required this.adminEvents,
-    this.color = Palette.blue,
-    this.backButton = false,
-    this.editButton = true,
-  }) : super(key: key);
+  const _Description(
+      {Key? key, required this.user, this.color = Palette.yellow})
+      : super(key: key);
 
-  Widget _buildEvents(BuildContext context) {
-    return FutureBuilder(
-      future: adminEvents,
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          return ScrollList(
-            shadowColor: color.darker,
-            children: (snapshot.data! as List<EventDataSummary>)
-                .map((e) => EventSummary(data: e, color: color))
-                .toList(),
-            onRefresh: () async => print("test"),
-          );
-        } else if (snapshot.hasData && snapshot.data == null) {
-          return Text("No Data");
-        } else {
-          return Text("breath waiting");
-        }
-      },
-    );
-  }
-
-  Widget _buildDescription(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.all(10),
@@ -85,8 +58,117 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildContent(BuildContext context) {
+class _UserInfos extends StatelessWidget {
+  final UserData user;
+  final Nuance color;
+
+  const _UserInfos({Key? key, required this.user, required this.color})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        ProfileMiniature(picture: user.picture, size: 180),
+        Container(
+          alignment: Alignment.topCenter,
+          margin: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Text(
+            "${user.firstName} ${user.lastName}, ${user.age} ans",
+            style: TextStyle(
+                color: color.darker, fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              ArbennIcons.location,
+              color: color.darker,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              user.location.toString(),
+              style: TextStyle(
+                  color: color.darker,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 30),
+      ],
+    );
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  final UserData user;
+  final Nuance color;
+  final bool backButton;
+  final bool editButton;
+  final Future<List<EventDataSummary>> adminEvents;
+
+  const ProfilePage({
+    Key? key,
+    required this.user,
+    required this.adminEvents,
+    this.color = Palette.blue,
+    this.backButton = false,
+    this.editButton = true,
+  }) : super(key: key);
+
+  _buildEditButton(BuildContext context) {
+    return Container(
+      alignment: Alignment.topRight,
+      child: TextButton(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (context) => UserSettings(
+              user: user,
+            ),
+          ),
+        ),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          child: Icon(
+            ArbennIcons.vdots,
+            size: 24,
+            color: color.darker,
+          ),
+        ),
+      ),
+    );
+  }
+
+  _buildBackButton() {
+    return Container(
+        alignment: Alignment.topLeft,
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: BackButton(color: color));
+  }
+
+  _buildTabs() {
+    return Expanded(
+      child: Tabs(tabs: [
+        TabInfos(
+            content: _Description(user: user, color: color),
+            title: "Description"),
+        TabInfos(
+            content: EventSummaries(events: adminEvents, color: color),
+            title: "Evenements"),
+      ], color: color),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       color: color.main,
       child: Container(
@@ -98,99 +180,15 @@ class ProfilePage extends StatelessWidget {
           children: [
             Stack(
               children: [
-                if (backButton)
-                  Container(
-                      alignment: Alignment.topLeft,
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: BackButton(color: color)),
-                Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 20),
-                      width: 180,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: user.picture ??
-                              const AssetImage(
-                                  'assets/images/user_placeholder.png'),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.topCenter,
-                      margin: const EdgeInsets.only(top: 4),
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                      child: Text(
-                        "${user.firstName} ${user.lastName}, ${user.age} ans",
-                        style: TextStyle(
-                            color: color.darker,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          ArbennIcons.location,
-                          color: color.darker,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          user.location.toString(),
-                          style: TextStyle(
-                              color: color.darker,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-                if (editButton)
-                  Container(
-                    alignment: Alignment.topRight,
-                    child: TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserSettings(
-                            user: user,
-                          ),
-                        ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 18),
-                        child: Icon(
-                          ArbennIcons.vdots,
-                          size: 24,
-                          color: color.darker,
-                        ),
-                      ),
-                    ),
-                  )
+                if (backButton) _buildBackButton(),
+                _UserInfos(user: user, color: color),
+                if (editButton) _buildEditButton(context)
               ],
             ),
-            Expanded(
-              child: Tabs(tabs: [
-                TabInfos(
-                    content: _buildDescription(context), title: "Description"),
-                TabInfos(content: _buildEvents(context), title: "Evenements"),
-              ], color: color),
-            ),
+            _buildTabs(),
           ],
         ),
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _buildContent(context);
   }
 }

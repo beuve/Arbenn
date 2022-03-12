@@ -21,11 +21,12 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage>
+    with SingleTickerProviderStateMixin {
   late bool _showSettings;
   late List<EventDataSummary> _events;
-  final _settingsKey = GlobalKey();
-  final _eventsListKey = GlobalKey();
+  late AnimationController expandController;
+  late Animation<double> animation;
 
   @override
   void initState() {
@@ -38,7 +39,27 @@ class _SearchPageState extends State<SearchPage> {
       EventDataSummary.dummy(),
       EventDataSummary.dummy(),
     ];
+    expandController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    animation = CurvedAnimation(
+      parent: expandController,
+      curve: Curves.fastOutSlowIn,
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    expandController.dispose();
+    super.dispose();
+  }
+
+  void _runExpandCheck() {
+    if (_showSettings) {
+      expandController.forward();
+    } else {
+      expandController.reverse();
+    }
   }
 
   Widget _buildInputArea() {
@@ -67,7 +88,10 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
         TextButton(
-          onPressed: () => setState(() => _showSettings = !_showSettings),
+          onPressed: () {
+            setState(() => _showSettings = !_showSettings);
+            _runExpandCheck();
+          },
           child: Container(
             padding: const EdgeInsets.only(right: 15),
             child: Icon(
@@ -82,17 +106,16 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSettings() {
-    return Expanded(
-      key: _settingsKey,
-      flex: 10,
+    return SizeTransition(
+      axisAlignment: -1.0,
+      sizeFactor: animation,
       child: Container(
-        width: double.infinity,
         color: widget.color.light,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
             Text(
               "Tags",
               style: TextStyle(
@@ -129,6 +152,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
             const SizedBox(height: 10),
             SearchInput(label: "Chercher une date...", color: widget.color),
+            const SizedBox(height: 20),
           ],
         ),
       ),
@@ -137,16 +161,16 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _buildEventsList() {
     return Expanded(
-      key: _eventsListKey,
       flex: 1,
       child: Container(
         decoration: BoxDecoration(
             color: widget.color.lighter,
             borderRadius:
                 const BorderRadius.vertical(top: Radius.circular(25))),
-        child: _showSettings
-            ? Container()
-            : EventSummariesPlaceHolders(color: widget.color),
+        child: AnimatedSwitcher(
+          duration: const Duration(seconds: 5),
+          child: EventSummariesPlaceHolders(color: widget.color),
+        ),
       ),
     );
   }
@@ -164,7 +188,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           children: [
             _buildInputArea(),
-            if (_showSettings) _buildSettings(),
+            _buildSettings(),
             _buildEventsList(),
           ],
         ),

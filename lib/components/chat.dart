@@ -150,10 +150,8 @@ class Chat extends StatelessWidget {
               _buildInput()
             ]);
           } else {
-            return Column(children: [
-              const Expanded(child: Text("waiting")),
-              _buildInput()
-            ]);
+            return Column(
+                children: [Expanded(child: Container()), _buildInput()]);
           }
         });
   }

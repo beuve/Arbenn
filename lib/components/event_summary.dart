@@ -1,4 +1,4 @@
-import 'package:arbenn/components/flashing_widgets.dart';
+import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -246,7 +246,7 @@ class EventSummary extends StatelessWidget {
       onPressed: () => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => EventPage(eventId: data.eventId),
+          builder: (context) => EventPage(eventSummary: data),
         ),
       ),
     );

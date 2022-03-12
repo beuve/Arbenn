@@ -160,8 +160,18 @@ class _EventPageState extends State<EventPage> {
         children: [
           SizedBox(
               height: 35,
-              child: _iconLabel(ProfileMiniature(picture: event.admin.picture),
-                  event.admin.firstName)),
+              child: TextButton(
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FutureProfilePage(
+                              backButton: true,
+                              editButton: false,
+                              user: UserData.loadFromUserId(
+                                  event.admin.userId)))),
+                  child: _iconLabel(
+                      ProfileMiniature(picture: event.admin.picture),
+                      event.admin.firstName))),
           SizedBox(
             height: 35,
             child: _iconLabel(

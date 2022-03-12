@@ -10,16 +10,15 @@ import '../pages/event_page.dart';
 import 'user_elements.dart';
 import 'dart:async';
 
-class EventSummariesPlaceHolders extends StatelessWidget {
+class EventSummaryPlaceholder extends StatelessWidget {
   final Nuance color;
-  final int num;
+  final double tick;
 
-  const EventSummariesPlaceHolders({
+  const EventSummaryPlaceholder({
     Key? key,
     required this.color,
-    this.num = 2,
+    this.tick = 0,
   }) : super(key: key);
-
   Widget _buildDivider() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -48,57 +47,56 @@ class EventSummariesPlaceHolders extends StatelessWidget {
     );
   }
 
-  Widget _fakeLine({IconData? icon, double width = 60}) {
-    return Row(children: [
-      if (icon != null) Icon(icon, size: 12, color: color.lighter),
-      Container(
-        height: 10,
-        width: width,
-        decoration: BoxDecoration(
-          color: color.lighter,
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-        ),
-      )
-    ]);
-  }
-
   Widget _buildDataSummary() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 5),
-        _fakeLine(width: 150),
+        TextPlaceholder(color: color.lighter, width: 150),
         const SizedBox(height: 42),
-        _fakeLine(width: 110),
+        TextPlaceholder(color: color.lighter, width: 110),
         const SizedBox(height: 7),
-        _fakeLine(width: 70),
+        TextPlaceholder(color: color.lighter, width: 70),
         const SizedBox(height: 7),
-        _fakeLine(width: 100),
+        TextPlaceholder(color: color.lighter, width: 100),
         const SizedBox(height: 7),
-        _fakeLine(width: 50),
+        TextPlaceholder(color: color.lighter, width: 50),
       ],
-    );
-  }
-
-  Widget _dummy() {
-    return FlashingContainer(
-      height: 150,
-      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
-      startingColor: color.light,
-      endingColor: color.lighter,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-      ),
-      child:
-          Row(children: [_buildIcon(), _buildDivider(), _buildDataSummary()]),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScrollList(
-        children: List.filled(num, _dummy()), shadowColor: color.darker);
+    return Container(
+      height: 150,
+      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+      decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          color: Color.lerp(color.light, color.lighter, tick)),
+      child:
+          Row(children: [_buildIcon(), _buildDivider(), _buildDataSummary()]),
+    );
+  }
+}
+
+class EventSummariesPlaceHolders extends StatelessWidget {
+  final Nuance color;
+  final int num;
+
+  const EventSummariesPlaceHolders({
+    Key? key,
+    required this.color,
+    this.num = 2,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TickingBuilder(
+        builder: (context, tick) => ScrollList(
+            children: List.filled(
+                num, EventSummaryPlaceholder(color: color, tick: tick)),
+            shadowColor: color.darker));
   }
 }
 
@@ -198,20 +196,20 @@ class EventSummary extends StatelessWidget {
     return Container(
       width: 130,
       alignment: Alignment.center,
-      child: SvgPicture.network(
-        data.iconUrl,
-        color: color.lighter,
-        height: 100,
-        placeholderBuilder: (BuildContext context) => FlashingContainer(
-          margin: const EdgeInsets.all(15.0),
-          startingColor: color.lighter,
-          endingColor: color.light,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(20))),
-          width: 130,
-          height: 130,
-        ),
-      ),
+      child: SvgPicture.network(data.iconUrl,
+          color: color.lighter,
+          height: 100,
+          placeholderBuilder: (BuildContext context) => TickingBuilder(
+                builder: (context, tick) => Container(
+                  margin: const EdgeInsets.all(15.0),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    color: Color.lerp(color.light, color.lighter, tick)!,
+                  ),
+                  width: 130,
+                  height: 130,
+                ),
+              )),
     );
   }
 

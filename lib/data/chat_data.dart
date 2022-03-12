@@ -1,10 +1,8 @@
 import 'package:arbenn/components/user_elements.dart';
-import 'package:arbenn/data/event_data.dart';
 import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ChatMessageData {
   String id;

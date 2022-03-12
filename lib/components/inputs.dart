@@ -108,6 +108,8 @@ class SearchInput extends StatelessWidget {
 class DatePicker extends StatelessWidget {
   final String label;
   final Color color;
+  final DateTime startDate;
+  final DateTime stopDate;
   final DatePickingController controller;
   final BuildContext context;
 
@@ -117,6 +119,8 @@ class DatePicker extends StatelessWidget {
     required this.label,
     required this.controller,
     required this.color,
+    required this.startDate,
+    required this.stopDate,
   }) : super(key: key);
 
   @override
@@ -127,14 +131,18 @@ class DatePicker extends StatelessWidget {
         readOnly: true,
         controller: controller.textController,
         onTap: () {
-          controller.pickDate(context);
+          controller.pickDate(context, start: startDate, stop: stopDate);
         });
   }
 }
 
 class DatePickingController extends ValueNotifier<DateTime?> {
   final bool needTime;
-  DatePickingController({DateTime? date, this.needTime = false}) : super(date);
+
+  DatePickingController({
+    DateTime? date,
+    this.needTime = false,
+  }) : super(date);
 
   TextEditingController get textController {
     final TextEditingController controller = TextEditingController(text: text);
@@ -164,7 +172,9 @@ class DatePickingController extends ValueNotifier<DateTime?> {
     value = newDate;
   }
 
-  Future<void> picTime(BuildContext context) async {
+  Future<void> picTime(
+    BuildContext context,
+  ) async {
     if (value != null) {
       TimeOfDay? t = await showTimePicker(
         context: context,
@@ -177,12 +187,13 @@ class DatePickingController extends ValueNotifier<DateTime?> {
     }
   }
 
-  Future<void> pickDate(BuildContext context) async {
+  Future<void> pickDate(BuildContext context,
+      {required DateTime start, required DateTime stop, DateTime? init}) async {
     DateTime? newDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
+      initialDate: init ?? stop,
+      firstDate: start,
+      lastDate: stop,
     );
     value = newDate;
     if (needTime && newDate != null) {

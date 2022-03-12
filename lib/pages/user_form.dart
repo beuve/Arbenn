@@ -179,6 +179,8 @@ class _UserFormPageState extends State<UserFormPage> {
                 label: "Date de naissance",
                 color: widget.color.darker,
                 controller: _birthDateController,
+                startDate: DateTime(1900),
+                stopDate: DateTime(DateTime.now().year - 13),
               ),
               const SizedBox(height: 30),
               FormInput(

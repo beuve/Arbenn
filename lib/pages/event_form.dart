@@ -105,6 +105,7 @@ class _EventFormPageState extends State<EventFormPage> {
   }
 
   Step firstStep(BuildContext context) {
+    final DateTime now = DateTime.now();
     return Step(
         title: Text(
           'EVENEMENT',
@@ -132,6 +133,8 @@ class _EventFormPageState extends State<EventFormPage> {
                 label: "Date",
                 color: widget.color.darker,
                 controller: _dateController,
+                startDate: now,
+                stopDate: DateTime(now.year + 2),
               ),
               const SizedBox(height: 30),
               FormInput(

@@ -210,7 +210,10 @@ class _EventPageState extends State<EventPage> {
                   color: widget.color.lighter,
                 ),
                 const SizedBox(width: 3),
-                Tags.static(event.tags, color: widget.color, fontSize: 10)
+                Tags.static(event.tags,
+                    color: widget.color,
+                    fontSize: 12,
+                    colorTheme: ColorTheme.dark)
               ],
             ),
           ),

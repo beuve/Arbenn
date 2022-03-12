@@ -6,6 +6,7 @@ class Tag extends StatelessWidget {
   final String label;
   final bool isActive;
   final Nuance color;
+  final ColorTheme colorTheme;
   final Function()? onPressed;
   final double fontSize;
 
@@ -14,12 +15,17 @@ class Tag extends StatelessWidget {
       required this.label,
       required this.color,
       this.onPressed,
+      this.colorTheme = ColorTheme.light,
       this.fontSize = 18,
       this.isActive = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Color outlineColor =
+        colorTheme == ColorTheme.light ? color.lighter : color.darker;
+    Color backgroundColor =
+        colorTheme == ColorTheme.light ? color.darker : color.lighter;
     return TextButton(
       child: Container(
         margin: const EdgeInsets.only(bottom: 6, right: 6),
@@ -28,16 +34,16 @@ class Tag extends StatelessWidget {
           vertical: fontSize / 4 + (isActive ? fontSize / 9 : 0),
         ),
         decoration: BoxDecoration(
-          color: isActive ? color.darker : null,
+          color: isActive ? backgroundColor : null,
           borderRadius: BorderRadius.all(Radius.circular(fontSize / 4)),
           border: isActive
               ? null
-              : Border.all(color: color.darker, width: fontSize / 9),
+              : Border.all(color: backgroundColor, width: fontSize / 9),
         ),
         child: Text(
           "#" + label,
           style: TextStyle(
-              color: isActive ? color.lighter : color.darker,
+              color: isActive ? outlineColor : backgroundColor,
               fontSize: fontSize),
         ),
       ),
@@ -50,24 +56,26 @@ class Tags extends StatelessWidget {
   final List<TagWidgetInfos> tags;
   final Nuance color;
   final double fontSize;
+  final ColorTheme colorTheme;
 
   const Tags({
     Key? key,
     required this.tags,
     required this.color,
+    this.colorTheme = ColorTheme.light,
     this.fontSize = 18,
   }) : super(key: key);
 
-  static Tags static(
-    List<TagData> tags, {
-    required Nuance color,
-    bool active = false,
-    double fontSize = 18,
-  }) {
+  static Tags static(List<TagData> tags,
+      {required Nuance color,
+      bool active = false,
+      double fontSize = 18,
+      ColorTheme colorTheme = ColorTheme.light}) {
     return Tags(
       tags: tags.map((t) => TagWidgetInfos(data: t, isActive: active)).toList(),
       color: color,
       fontSize: fontSize,
+      colorTheme: colorTheme,
     );
   }
 
@@ -79,6 +87,7 @@ class Tags extends StatelessWidget {
               color: color,
               onPressed: t.onTap,
               fontSize: fontSize,
+              colorTheme: colorTheme,
             ))
         .toList();
   }

@@ -58,7 +58,7 @@ class UserSettings extends StatelessWidget {
         ),
       );
     } else {
-      return Text("Wrong user");
+      return const Text("Wrong user");
     }
   }
 

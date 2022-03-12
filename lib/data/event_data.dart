@@ -6,7 +6,6 @@ import 'user_data.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_auth/firebase_auth.dart';
 
 class EventDataSummary {
   final String eventId;
@@ -236,7 +235,7 @@ class EventData {
   }
 
   static Future<void> addAttende(String eventId) async {
-    UserSumarryData attende = await UserSumarryData.currentUser();
+    UserSumarryData attende = UserSumarryData.currentUser();
 
     DocumentReference documentReference =
         FirebaseFirestore.instance.collection('events').doc(eventId);
@@ -265,7 +264,7 @@ class EventData {
   }
 
   static Future<void> removeAttende(String eventId) async {
-    UserSumarryData attende = await UserSumarryData.currentUser();
+    UserSumarryData attende = UserSumarryData.currentUser();
 
     DocumentReference documentReference =
         FirebaseFirestore.instance.collection('events').doc(eventId);

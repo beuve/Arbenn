@@ -126,7 +126,6 @@ class CalendarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(futureEvents);
     return Container(
         color: color.main,
         child: Tabs(

@@ -490,9 +490,9 @@ class _EventPageState extends State<EventPage> {
             ),
           );
         } else if (snapshot.hasError) {
-          return Text("error");
+          return const Text("error");
         } else {
-          return Text("waiting");
+          return const Text("waiting");
         }
       },
     );

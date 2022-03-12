@@ -15,8 +15,6 @@ import '../data/event_data.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
-
 class EventFormPage extends StatefulWidget {
   final Nuance color;
   final EventData? event;

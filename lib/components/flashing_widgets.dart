@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
 import 'dart:async';
 
 class FlashingContainer extends StatefulWidget {

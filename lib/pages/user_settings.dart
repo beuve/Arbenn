@@ -1,4 +1,4 @@
-import 'package:arbenn/components/page_animations.dart';
+import 'package:arbenn/components/page_transitions.dart';
 import 'package:arbenn/pages/user_form.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

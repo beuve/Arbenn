@@ -28,40 +28,40 @@ class ArbennIcons {
 
   static const fontName = 'ArbennIcons';
 
-  static const IconData sliders = IconData(0xe900, fontFamily: fontName);
-  static const IconData bell = IconData(0xe902, fontFamily: fontName);
-  static const IconData calendar = IconData(0xe903, fontFamily: fontName);
+  static const IconData sliders = IconData(0xf1de, fontFamily: fontName);
+  static const IconData bell = IconData(0xf0f3, fontFamily: fontName);
+  static const IconData calendar = IconData(0xf073, fontFamily: fontName);
   static const IconData plainChevronDown =
-      IconData(0xe904, fontFamily: fontName);
+      IconData(0xf0d7, fontFamily: fontName);
   static const IconData plainChevronLeft =
-      IconData(0xe905, fontFamily: fontName);
+      IconData(0xf0d9, fontFamily: fontName);
   static const IconData plainChevronRight =
-      IconData(0xe906, fontFamily: fontName);
-  static const IconData plainChevronUp = IconData(0xe907, fontFamily: fontName);
-  static const IconData chevronDown = IconData(0xe908, fontFamily: fontName);
-  static const IconData chevronLeft = IconData(0xe909, fontFamily: fontName);
-  static const IconData chevronRight = IconData(0xe90a, fontFamily: fontName);
-  static const IconData chevronUp = IconData(0xe90b, fontFamily: fontName);
-  static const IconData exclamation = IconData(0xe90c, fontFamily: fontName);
-  static const IconData info = IconData(0xe90d, fontFamily: fontName);
-  static const IconData plus = IconData(0xe90e, fontFamily: fontName);
-  static const IconData xmark = IconData(0xe90f, fontFamily: fontName);
-  static const IconData clock = IconData(0xe910, fontFamily: fontName);
-  static const IconData vdots = IconData(0xe911, fontFamily: fontName);
-  static const IconData hdots = IconData(0xe912, fontFamily: fontName);
-  static const IconData email = IconData(0xe901, fontFamily: fontName);
-  static const IconData eyeSlash = IconData(0xe913, fontFamily: fontName);
-  static const IconData eye = IconData(0xe914, fontFamily: fontName);
-  static const IconData gear = IconData(0xe915, fontFamily: fontName);
-  static const IconData hashtag = IconData(0xe916, fontFamily: fontName);
-  static const IconData home = IconData(0xe917, fontFamily: fontName);
-  static const IconData back = IconData(0xe918, fontFamily: fontName);
-  static const IconData next = IconData(0xe91f, fontFamily: fontName);
-  static const IconData location = IconData(0xe919, fontFamily: fontName);
-  static const IconData search = IconData(0xe91a, fontFamily: fontName);
-  static const IconData pencil = IconData(0xe91b, fontFamily: fontName);
-  static const IconData userGroup = IconData(0xe91c, fontFamily: fontName);
-  static const IconData user = IconData(0xe91d, fontFamily: fontName);
-  static const IconData addPhoto = IconData(0xe91e, fontFamily: fontName);
-  static const IconData send = IconData(0xe920, fontFamily: fontName);
+      IconData(0xf0da, fontFamily: fontName);
+  static const IconData plainChevronUp = IconData(0xf0d8, fontFamily: fontName);
+  static const IconData chevronDown = IconData(0xf078, fontFamily: fontName);
+  static const IconData chevronLeft = IconData(0xf053, fontFamily: fontName);
+  static const IconData chevronRight = IconData(0xf054, fontFamily: fontName);
+  static const IconData chevronUp = IconData(0xf077, fontFamily: fontName);
+  static const IconData exclamation = IconData(0xf06a, fontFamily: fontName);
+  static const IconData info = IconData(0xf05a, fontFamily: fontName);
+  static const IconData plus = IconData(0xf055, fontFamily: fontName);
+  static const IconData xmark = IconData(0xf00d, fontFamily: fontName);
+  static const IconData clock = IconData(0xf017, fontFamily: fontName);
+  static const IconData vdots = IconData(0xf142, fontFamily: fontName);
+  static const IconData hdots = IconData(0xf141, fontFamily: fontName);
+  static const IconData email = IconData(0xf0e0, fontFamily: fontName);
+  static const IconData eyeSlash = IconData(0xf070, fontFamily: fontName);
+  static const IconData eye = IconData(0xf06e, fontFamily: fontName);
+  static const IconData gear = IconData(0xf013, fontFamily: fontName);
+  static const IconData hashtag = IconData(0x0023, fontFamily: fontName);
+  static const IconData home = IconData(0xf015, fontFamily: fontName);
+  static const IconData back = IconData(0xf060, fontFamily: fontName);
+  static const IconData next = IconData(0xf061, fontFamily: fontName);
+  static const IconData location = IconData(0xf3c5, fontFamily: fontName);
+  static const IconData search = IconData(0xf002, fontFamily: fontName);
+  static const IconData pencil = IconData(0xf304, fontFamily: fontName);
+  static const IconData userGroup = IconData(0xf500, fontFamily: fontName);
+  static const IconData user = IconData(0xf007, fontFamily: fontName);
+  static const IconData addPhoto = IconData(0xf030, fontFamily: fontName);
+  static const IconData send = IconData(0xe20a, fontFamily: fontName);
 }

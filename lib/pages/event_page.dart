@@ -1,5 +1,5 @@
 import 'package:arbenn/components/chat.dart';
-import 'package:arbenn/components/page_animations.dart';
+import 'package:arbenn/components/page_transitions.dart';
 import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/data/chat_data.dart';

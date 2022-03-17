@@ -1,4 +1,4 @@
-import 'package:arbenn/components/page_animations.dart';
+import 'package:arbenn/components/page_transitions.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/icons.dart';

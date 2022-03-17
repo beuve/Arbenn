@@ -1,4 +1,4 @@
-import 'package:arbenn/components/page_animations.dart';
+import 'package:arbenn/components/page_transitions.dart';
 import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/utils/icons.dart';

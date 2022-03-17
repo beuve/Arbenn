@@ -72,8 +72,13 @@ class IconButton extends StatelessWidget {
 class BackButton extends StatelessWidget {
   final Nuance color;
   final Function()? onPressed;
+  final IconData icon;
 
-  const BackButton({Key? key, required this.color, this.onPressed})
+  const BackButton(
+      {Key? key,
+      required this.color,
+      this.onPressed,
+      this.icon = ArbennIcons.back})
       : super(key: key);
 
   @override

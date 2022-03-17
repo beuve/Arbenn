@@ -1,3 +1,4 @@
+import 'package:arbenn/components/page_animations.dart';
 import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/utils/icons.dart';
@@ -243,12 +244,8 @@ class EventSummary extends StatelessWidget {
           _buildDataSummary(),
         ]),
       ),
-      onPressed: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => EventPage(eventSummary: data),
-        ),
-      ),
+      onPressed: () =>
+          Navigator.of(context).push(slideIn(EventPage(eventSummary: data))),
     );
   }
 }

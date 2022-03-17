@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:arbenn/components/app_bar.dart';
+import 'package:arbenn/components/page_animations.dart';
 import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/pages/user_settings.dart';
@@ -205,14 +206,9 @@ class ProfilePage extends StatelessWidget {
   }) : super(key: key);
 
   void onEdit(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          fullscreenDialog: true,
-          builder: (context) => UserSettings(
-            user: user,
-          ),
-        ));
+    Navigator.of(context).push(slideIn(UserSettings(
+      user: user,
+    )));
   }
 
   @override

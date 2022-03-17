@@ -1,4 +1,5 @@
 import 'package:arbenn/components/overlay.dart';
+import 'package:arbenn/components/page_animations.dart';
 import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/data/user_data.dart';
@@ -26,13 +27,11 @@ class AttendeList extends StatelessWidget {
             shadowColor: color.darker,
             children: attendes
                 .map((a) => TextButton(
-                    onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FutureProfilePage(
-                                backButton: true,
-                                editButton: false,
-                                user: UserData.loadFromUserId(a.userId)))),
+                    onPressed: () => Navigator.of(context).push(slideIn(
+                        FutureProfilePage(
+                            backButton: true,
+                            editButton: false,
+                            user: UserData.loadFromUserId(a.userId)))),
                     child: SizedBox(
                         height: 50,
                         child: Row(

@@ -1,3 +1,4 @@
+import 'package:arbenn/components/page_animations.dart';
 import 'package:arbenn/pages/user_form.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +25,8 @@ class UserSettings extends StatelessWidget {
             SettingButton(
               color: color,
               label: "Modifier mon profile",
-              onPressed: () => {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserFormPage(user: user),
-                  ),
-                ),
-              },
+              onPressed: () =>
+                  Navigator.of(context).push(slideIn(UserFormPage(user: user))),
             ),
             const SizedBox(height: 15),
             SettingButton(

@@ -1,3 +1,4 @@
+import 'package:arbenn/components/page_animations.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/icons.dart';
@@ -97,11 +98,7 @@ class _NavState extends State<Nav> {
     final List<Widget> buttons = _pagesInfos.map(
       (pageInfos) {
         Function() onPressed = pageInfos.num == 2
-            ? () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const EventFormPage(),
-                ))
+            ? () => Navigator.of(context).push(slideIn(const EventFormPage()))
             : () => setState(() => _currentPageInfos = pageInfos);
         Widget icon = Container(
             margin: EdgeInsets.only(

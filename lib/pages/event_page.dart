@@ -1,5 +1,5 @@
 import 'package:arbenn/components/chat.dart';
-import 'package:arbenn/components/event_summary.dart';
+import 'package:arbenn/components/page_animations.dart';
 import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/data/chat_data.dart';
@@ -58,13 +58,10 @@ class _EventInfos extends StatelessWidget {
 
   Widget _adminInfos(BuildContext context) {
     return TextButton(
-        onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => FutureProfilePage(
-                    backButton: true,
-                    editButton: false,
-                    user: UserData.loadFromUserId(admin.userId)))),
+        onPressed: () => Navigator.of(context).push(slideIn(FutureProfilePage(
+            backButton: true,
+            editButton: false,
+            user: UserData.loadFromUserId(admin.userId)))),
         child: _iconLabel(
             ProfileMiniature(picture: admin.picture), admin.firstName));
   }
@@ -132,11 +129,8 @@ class _EventInfos extends StatelessWidget {
       const SizedBox(width: 5),
       TextButton(
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      AttendeList(attendes: attendes, color: color)));
+          Navigator.of(context)
+              .push(slideIn(AttendeList(attendes: attendes, color: color)));
         },
         child: Text(
           "Participants ($numAttendes)",

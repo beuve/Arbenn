@@ -49,7 +49,6 @@ Future<ImageProvider?> loadImage(String id) async {
 }
 
 Future<String?> getIconUrl(String id) async {
-  print("icons/$id.svg");
   firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
       .ref()
       .child('icons')

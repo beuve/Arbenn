@@ -1,3 +1,4 @@
+import 'package:arbenn/components/page_transitions.dart';
 import 'package:arbenn/components/search_location.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/utils/icons.dart';
@@ -8,7 +9,6 @@ import '../components/inputs.dart';
 import '../components/scroller.dart';
 import '../components/tags.dart';
 import '../data/tags_data.dart';
-import 'nav.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../data/user_data.dart';
@@ -19,8 +19,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 class UserFormPage extends StatefulWidget {
   final Nuance color;
   final UserData? user;
+  final Function(UserData) onFinish;
 
-  const UserFormPage({Key? key, this.color = Palette.blue, this.user})
+  const UserFormPage(
+      {Key? key, required this.onFinish, this.color = Palette.blue, this.user})
       : super(key: key);
 
   @override
@@ -196,13 +198,11 @@ class _UserFormPageState extends State<UserFormPage> {
                 controller: _cityController,
                 readOnly: true,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchCity(
+                  Navigator.of(context).push(
+                    slideIn(
+                      SearchCity(
                         color: widget.color,
                         onFinish: (c) {
-                          print(c);
                           _cityController.text = c.toString();
                           setState(() {
                             _city = c;
@@ -257,35 +257,30 @@ class _UserFormPageState extends State<UserFormPage> {
         ])));
   }
 
+  Future<void> saveAndFinish() async {
+    final String userId = FirebaseAuth.instance.currentUser!.uid;
+    UserData userData = toUserData(userId);
+    await userData.save();
+    User _user = FirebaseAuth.instance.currentUser!;
+    if (userData.firstName != _user.displayName) {
+      await _user.updateDisplayName(userData.firstName);
+    }
+    String? profileUrl = await userData.getPictureUrl();
+    if (profileUrl != null && _user.photoURL != profileUrl) {
+      await _user.updatePhotoURL(profileUrl);
+    }
+    if (_localProfilePicture != null) {
+      await saveProfileImage(userId, _localProfilePicture!.path);
+    }
+    widget.onFinish(userData);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FormStepper(
       color: widget.color,
       resizeOnKeyboard: const [true, true, false],
-      onFinish: () async {
-        final String userId = FirebaseAuth.instance.currentUser!.uid;
-        UserData userData = toUserData(userId);
-        await userData.save();
-        User _user = FirebaseAuth.instance.currentUser!;
-        if (userData.firstName != _user.displayName) {
-          await _user.updateDisplayName(userData.firstName);
-        }
-        String? profileUrl = await userData.getPictureUrl();
-        if (profileUrl != null && _user.photoURL != profileUrl) {
-          await _user.updatePhotoURL(profileUrl);
-        }
-        if (_localProfilePicture != null) {
-          await saveProfileImage(userId, _localProfilePicture!.path);
-        }
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Nav(
-                    currentUser: userData,
-                    startingPage: widget.user == null ? 0 : 4,
-                  )),
-        );
-      },
+      onFinish: saveAndFinish,
       steps: <Step>[
         firstStep(),
         secondStep(),

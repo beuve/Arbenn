@@ -26,8 +26,8 @@ class UserSettings extends StatelessWidget {
             SettingButton(
               color: color,
               label: "Modifier mon profile",
-              onPressed: () =>
-                  Navigator.of(context).push(slideIn(UserFormPage(user: user))),
+              onPressed: () => Navigator.of(context).push(slideIn(UserFormPage(
+                  user: user, onFinish: (_) => Navigator.of(context).pop()))),
             ),
             const SizedBox(height: 15),
             SettingButton(

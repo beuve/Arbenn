@@ -85,6 +85,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late User? _user;
+  late Future<UserData?> _userData;
 
   @override
   initState() {
@@ -93,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       setState(() => _user = user);
     });
+    _userData = getUserData();
   }
 
   Future<UserData?> getUserData() async {
@@ -107,14 +109,19 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_user == null) {
       return SignPage();
     } else if (_user!.emailVerified == false) {
-      return const EmailValidationPage(nextPage: UserFormPage());
+      return EmailValidationPage(
+          nextPage: UserFormPage(
+              onFinish: (userData) =>
+                  setState(() => _userData = Future.value(userData))));
     }
     return FutureBuilder<UserData?>(
       future: getUserData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.data == null) {
-            return const UserFormPage();
+            return UserFormPage(
+                onFinish: (userData) =>
+                    setState(() => _userData = Future.value(userData)));
           }
           return Nav(currentUser: snapshot.data!);
         } else if (snapshot.hasError) {

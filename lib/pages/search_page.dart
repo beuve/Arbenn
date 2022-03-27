@@ -168,7 +168,8 @@ class _SearchPageState extends State<SearchPage>
                 const BorderRadius.vertical(top: Radius.circular(25))),
         child: AnimatedSwitcher(
           duration: const Duration(seconds: 5),
-          child: EventSummariesPlaceHolders(color: widget.color),
+          child: FutureOptionEventSummary(
+              color: widget.color, events: Future.value(null)),
         ),
       ),
     );

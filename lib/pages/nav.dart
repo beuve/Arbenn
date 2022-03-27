@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:arbenn/components/page_transitions.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
@@ -68,19 +70,30 @@ class _NavState extends State<Nav> {
   ];
   late _PageInfos _currentPageInfos;
   // Profile infos
-  late Future<List<EventDataSummary>> adminEvents;
+  late Future<List<EventDataSummary>?> adminEvents;
   // Calendar Infos
-  late Stream<List<EventDataSummary>> attendedEvents;
+  late Stream<List<EventDataSummary>?> attendedEvents;
+  late StreamSubscription<List<EventDataSummary>?> _subscription;
   late List<EventDataSummary>? futureAttendedEvents;
   late List<EventDataSummary>? pastAttendedEvents;
 
-  void setFutureAndPastEvents(List<EventDataSummary> events) {
-    setState(() {
-      futureAttendedEvents =
-          events.where((event) => event.date.isAfter(DateTime.now())).toList();
-      pastAttendedEvents =
-          events.where((event) => event.date.isBefore(DateTime.now())).toList();
-    });
+  void setFutureAndPastEvents(List<EventDataSummary>? events) async {
+    if (events != null) {
+      setState(() {
+        futureAttendedEvents = events
+            .where((event) => event.date.isAfter(DateTime.now()))
+            .toList();
+        pastAttendedEvents = events
+            .where((event) => event.date.isBefore(DateTime.now()))
+            .toList();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -90,7 +103,7 @@ class _NavState extends State<Nav> {
     futureAttendedEvents = null;
     pastAttendedEvents = null;
     attendedEvents = widget.currentUser.loadAttendesEvents();
-    attendedEvents.listen(setFutureAndPastEvents);
+    _subscription = attendedEvents.listen(setFutureAndPastEvents);
     _currentPageInfos = _pagesInfos[widget.startingPage];
   }
 

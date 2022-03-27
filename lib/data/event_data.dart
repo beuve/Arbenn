@@ -61,11 +61,12 @@ class EventDataSummary {
     );
   }
 
-  static Future<EventDataSummary> ofJson(eventId, infos) async {
+  static Future<EventDataSummary?> ofJson(eventId, infos) async {
     UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
     await admin.getPicture();
-    List<TagData> tags =
+    List<TagData>? tags =
         await TagData.loadFromIds(infos["tags"].cast<String>() as List<String>);
+    if (tags == null) return null;
     String? url = await getIconUrl(tags[0].id);
     if (url == null) throw Exception("Icon url is null");
     return EventDataSummary(
@@ -82,10 +83,16 @@ class EventDataSummary {
     );
   }
 
-  static Future<List<EventDataSummary>> loadAllEvents() async {
-    return FirebaseFirestore.instance.collection('events').get().then(
-        (value) async =>
-            Future.wait(value.docs.map((doc) => ofJson(doc.id, doc.data()))));
+  static Future<List<EventDataSummary>?> loadAllEvents() async {
+    return FirebaseFirestore.instance
+        .collection('events')
+        .get()
+        .then((value) async {
+      List<EventDataSummary?> l = await Future.wait(
+          value.docs.map((doc) => ofJson(doc.id, doc.data())));
+      if (l.any((element) => element == null)) return null;
+      return l.map((e) => e!).toList();
+    });
   }
 
   static Future<EventDataSummary?> loadFromEventId(String eventId) async {
@@ -135,7 +142,7 @@ class EventData {
     return toJson().toString();
   }
 
-  static Future<EventData> saveNew({
+  static Future<EventData?> saveNew({
     required String title,
     required List<TagData> tags,
     required DateTime date,
@@ -158,18 +165,22 @@ class EventData {
       "attendesId": [admin.userId]
     };
     CollectionReference users = FirebaseFirestore.instance.collection('events');
-    DocumentReference event = await users.add(json);
+    DocumentReference? event =
+        await (users.add(json) as Future<DocumentReference?>)
+            .onError((error, stackTrace) => null);
+    if (event == null) return null;
     return EventData.ofJson(event.id, json);
   }
 
-  static Future<EventData> ofJson(eventId, infos) async {
+  static Future<EventData?> ofJson(eventId, infos) async {
     UserSumarryData admin = UserSumarryData.fromJson(infos["admin"]);
     await admin.getPicture();
     List<UserSumarryData> attendes = (infos["attendes"] as List<dynamic>)
         .map((i) => UserSumarryData.fromJson(i))
         .toList();
-    List<TagData> tags =
+    List<TagData>? tags =
         await TagData.loadFromIds(infos["tags"].cast<String>() as List<String>);
+    if (tags == null) return null;
     return EventData(
       eventId: eventId,
       icon: Icons.sports_handball,
@@ -215,10 +226,15 @@ class EventData {
     }
   }
 
-  Future<void> save() async {
+  Future<bool> save() async {
     CollectionReference users = FirebaseFirestore.instance.collection('events');
     DocumentReference event = users.doc(eventId);
-    await event.set(toJson(), SetOptions(merge: true));
+    bool res = await event
+        .set(toJson(), SetOptions(merge: true))
+        .then((_) => false)
+        .onError((error, stackTrace) => true);
+    print(res);
+    return res;
   }
 
   Future<List<CloudImage>> getImages() async {
@@ -296,15 +312,13 @@ class EventData {
 }
 
 class EventDataStream {
-  /// Correspond to the user (for chat with admin and unique user) or the
-  /// eventId if the chat is the event chat (with all attendes).
   final String eventId;
-  late Stream<EventData> event;
+  late Stream<EventData?> event;
 
   EventDataStream({required this.eventId}) {
     event = FirebaseFirestore.instance
         .collection('events')
-        .doc(eventId) // make it variable in the future
+        .doc(eventId)
         .snapshots()
         .asyncMap((snapshot) {
       Map<String, dynamic>? infos = snapshot.data();

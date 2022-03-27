@@ -205,12 +205,14 @@ class FutureButton extends StatefulWidget {
   final String label;
   final ColorTheme theme;
   final Future<bool> Function() onPressed;
+  final Function()? onEnd;
 
   const FutureButton(
       {Key? key,
       required this.color,
       required this.label,
       required this.onPressed,
+      this.onEnd,
       this.theme = ColorTheme.light})
       : super(key: key);
 
@@ -222,13 +224,11 @@ enum _ButtonState { waiting, done, running }
 
 class _FutureButtonState extends State<FutureButton>
     with TickerProviderStateMixin {
-  late AnimationController _controller;
   late _ButtonState _state;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
     _state = _ButtonState.waiting;
   }
 
@@ -245,6 +245,10 @@ class _FutureButtonState extends State<FutureButton>
       setState(() {
         _state = _ButtonState.done;
       });
+      if (widget.onEnd != null) {
+        await Future.delayed(const Duration(milliseconds: 300));
+        widget.onEnd!();
+      }
     }
   }
 
@@ -289,8 +293,8 @@ class _FutureButtonState extends State<FutureButton>
     } else {
       content = _doneContent();
     }
-    return InkWell(
-      onTap: _state == _ButtonState.waiting ? onPressed : null,
+    return TextButton(
+      onPressed: _state == _ButtonState.waiting ? onPressed : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         padding: EdgeInsets.symmetric(

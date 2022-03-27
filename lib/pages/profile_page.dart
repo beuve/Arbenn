@@ -194,7 +194,7 @@ class ProfilePage extends StatelessWidget {
   final Nuance color;
   final bool backButton;
   final bool editButton;
-  final Future<List<EventDataSummary>> adminEvents;
+  final Future<List<EventDataSummary>?> adminEvents;
 
   const ProfilePage({
     Key? key,
@@ -217,7 +217,7 @@ class ProfilePage extends StatelessWidget {
       backButton: backButton,
       onEdit: editButton ? onEdit : null,
       description: _Description(user: user, color: color),
-      events: FutureEventSummaries(events: adminEvents, color: color),
+      events: FutureOptionEventSummary(events: adminEvents, color: color),
       userInfos: _UserInfos(user: user, color: color),
     );
   }

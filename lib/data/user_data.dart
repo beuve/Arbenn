@@ -168,8 +168,11 @@ class UserData {
     if (infos == null) {
       return null;
     } else {
-      List<TagData> tags = await TagData.loadFromIds(
+      List<TagData>? tags = await TagData.loadFromIds(
           infos["tags"].cast<String>() as List<String>);
+      if (tags == null) {
+        return null;
+      }
       return UserData(
           userId: userId,
           firstName: infos["firstName"],
@@ -184,26 +187,32 @@ class UserData {
     }
   }
 
-  Future<void> save() async {
+  Future<bool> save(BuildContext context) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-    await users.doc(userId).set(toJson(), SetOptions(merge: true));
+    bool res = await users
+        .doc(userId)
+        .set(toJson(), SetOptions(merge: true))
+        .then((_) => false)
+        .onError((error, stackTrace) => true);
+    return res;
   }
 
-  Future<List<EventDataSummary>> loadAdminEvents() async {
+  Future<List<EventDataSummary>?> loadAdminEvents() async {
     CollectionReference events =
         FirebaseFirestore.instance.collection('events');
 
     return events
         .where("adminId", isEqualTo: userId)
         .get()
-        .then((querySnapshot) {
-      return Future.wait(querySnapshot.docs
+        .then((querySnapshot) async {
+      final List<EventDataSummary?> data = await Future.wait(querySnapshot.docs
           .map((i) => EventDataSummary.ofJson(i.id, i.data())));
+      if (data.any((element) => element == null)) return null;
+      return data.map((e) => e!).toList();
     });
   }
 
-  Stream<List<EventDataSummary>> loadAttendesEvents() {
+  Stream<List<EventDataSummary>?> loadAttendesEvents() {
     CollectionReference events =
         FirebaseFirestore.instance.collection('events');
 
@@ -211,9 +220,10 @@ class UserData {
         .where("attendesId", arrayContains: userId)
         .snapshots()
         .asyncMap((querySnapshot) async {
-      var data = await Future.wait(querySnapshot.docs
+      final List<EventDataSummary?> data = await Future.wait(querySnapshot.docs
           .map((i) => EventDataSummary.ofJson(i.id, i.data())));
-      return data;
+      if (data.any((element) => element == null)) return null;
+      return data.map((e) => e!).toList();
     });
   }
 }

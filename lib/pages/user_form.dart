@@ -1,5 +1,6 @@
 import 'package:arbenn/components/page_transitions.dart';
 import 'package:arbenn/components/search_location.dart';
+import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide Autocomplete;
@@ -20,9 +21,14 @@ class UserFormPage extends StatefulWidget {
   final Nuance color;
   final UserData? user;
   final Function(UserData) onFinish;
+  final bool pop;
 
   const UserFormPage(
-      {Key? key, required this.onFinish, this.color = Palette.blue, this.user})
+      {Key? key,
+      required this.onFinish,
+      this.color = Palette.blue,
+      this.user,
+      this.pop = true})
       : super(key: key);
 
   @override
@@ -69,7 +75,38 @@ class _UserFormPageState extends State<UserFormPage> {
     }
   }
 
-  UserData toUserData(userId) {
+  UserData? toUserData(BuildContext context, String userId) {
+    if (_firstNameController.text == "") {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer votre prénom.",
+          color: widget.color);
+      return null;
+    } else if (_lastNameController.text == "") {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer votre nom de famille.",
+          color: widget.color);
+      return null;
+    } else if (_birthDateController.date == null) {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer votre date de naissance.",
+          color: widget.color);
+      return null;
+    } else if (_city == null) {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer votre ville de residence.",
+          color: widget.color);
+      return null;
+    } else if (_tagSearch.tags == []) {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer au moins un centre d'intérêt.",
+          color: widget.color);
+      return null;
+    }
     return UserData(
         userId: userId,
         firstName: _firstNameController.text,
@@ -257,22 +294,36 @@ class _UserFormPageState extends State<UserFormPage> {
         ])));
   }
 
-  Future<void> saveAndFinish() async {
+  void showGenericError() {
+    showSnackBar(
+        context: context,
+        text:
+            "Une erreur s'est produite pendant la sauvegarde. Verifiez votre connexion internet.",
+        color: widget.color);
+  }
+
+  Future<bool> saveAndFinish(BuildContext context) async {
     final String userId = FirebaseAuth.instance.currentUser!.uid;
-    UserData userData = toUserData(userId);
-    await userData.save();
-    User _user = FirebaseAuth.instance.currentUser!;
-    if (userData.firstName != _user.displayName) {
-      await _user.updateDisplayName(userData.firstName);
-    }
-    String? profileUrl = await userData.getPictureUrl();
-    if (profileUrl != null && _user.photoURL != profileUrl) {
-      await _user.updatePhotoURL(profileUrl);
+    UserData? userData = toUserData(context, userId);
+    if (userData == null) return true;
+    bool error = await userData.save(context);
+    if (error) {
+      showGenericError();
+      return true;
     }
     if (_localProfilePicture != null) {
-      await saveProfileImage(userId, _localProfilePicture!.path);
+      bool error = await saveProfileImage(userId, _localProfilePicture!.path)
+          .then(
+            (_) => false,
+          )
+          .onError((error, stackTrace) => true);
+      if (error) {
+        showGenericError();
+        return true;
+      }
     }
     widget.onFinish(userData);
+    return false;
   }
 
   @override
@@ -280,7 +331,8 @@ class _UserFormPageState extends State<UserFormPage> {
     return FormStepper(
       color: widget.color,
       resizeOnKeyboard: const [true, true, false],
-      onFinish: saveAndFinish,
+      onFinish: () async => saveAndFinish(context),
+      pop: widget.pop,
       steps: <Step>[
         firstStep(),
         secondStep(),

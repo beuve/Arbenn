@@ -11,6 +11,46 @@ import '../pages/event_page.dart';
 import 'user_elements.dart';
 import 'dart:async';
 
+class EventSummaryNoData extends StatelessWidget {
+  final Nuance color;
+
+  const EventSummaryNoData({
+    Key? key,
+    required this.color,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ScrollList(children: [
+      Container(
+        alignment: Alignment.center,
+        height: 150,
+        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+            color: color.dark),
+        child: Column(
+          children: [
+            Icon(
+              ArbennIcons.info,
+              color: color.lighter,
+              size: 20,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              "Une erreur de chargement s'est produite. Verifiez votre connexion internet.",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: color.lighter, fontSize: 20),
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
+        ),
+      ),
+    ], shadowColor: color.darker);
+  }
+}
+
 class EventSummaryPlaceholder extends StatelessWidget {
   final Nuance color;
   final double tick;
@@ -20,6 +60,7 @@ class EventSummaryPlaceholder extends StatelessWidget {
     required this.color,
     this.tick = 0,
   }) : super(key: key);
+
   Widget _buildDivider() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -229,7 +270,7 @@ class EventSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return InkWell(
       child: Container(
         height: 150,
         margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
@@ -244,7 +285,7 @@ class EventSummary extends StatelessWidget {
           _buildDataSummary(),
         ]),
       ),
-      onPressed: () =>
+      onTap: () =>
           Navigator.of(context).push(slideIn(EventPage(eventSummary: data))),
     );
   }
@@ -289,6 +330,35 @@ class FutureEventSummaries extends StatelessWidget {
       future: events,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          return EventSummaries(color: color, events: snapshot.data!);
+        }
+        return EventSummariesPlaceHolders(color: color, num: numPlaceholders);
+      },
+    );
+  }
+}
+
+class FutureOptionEventSummary extends StatelessWidget {
+  final Future<List<EventDataSummary>?> events;
+  final Nuance color;
+  final int numPlaceholders;
+
+  const FutureOptionEventSummary({
+    Key? key,
+    required this.color,
+    required this.events,
+    this.numPlaceholders = 2,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<EventDataSummary>?>(
+      future: events,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.data == null) {
+            return EventSummaryNoData(color: color);
+          }
           return EventSummaries(color: color, events: snapshot.data!);
         }
         return EventSummariesPlaceHolders(color: color, num: numPlaceholders);

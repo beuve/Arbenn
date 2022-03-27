@@ -116,10 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.data == null) {
-            return UserFormPage(onFinish: (ud) {
-              _userData = Future.value(ud); // Don't know why this is needed
-              setState(() => {});
-            });
+            return UserFormPage(
+                onFinish: (ud) {
+                  _userData = Future.value(ud); // Don't know why this is needed
+                  setState(() => {});
+                },
+                pop: false);
           }
           return Nav(currentUser: snapshot.data!);
         } else if (snapshot.hasError) {

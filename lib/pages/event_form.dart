@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:arbenn/components/search_location.dart';
+import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/user_data.dart';
@@ -65,10 +66,48 @@ class _EventFormPageState extends State<EventFormPage> {
     }
   }
 
-  Future<EventData> saveEvent() async {
+  bool _checkEvent() {
+    if (_titleController.text == "") {
+      showSnackBar(
+          context: context,
+          text: "Veillez choisir un titre pour votre événement.",
+          color: widget.color);
+      return true;
+    } else if (_tagSearch.tags == []) {
+      showSnackBar(
+          context: context,
+          text: "Veillez sélectionner au moins un tag.",
+          color: widget.color);
+      return true;
+    } else if (_dateController.date == null) {
+      showSnackBar(
+          context: context,
+          text: "Veillez sélectionner une date pour votre événement.",
+          color: widget.color);
+      return true;
+    } else if (_address == null) {
+      showSnackBar(
+          context: context,
+          text: "Veillez sélectionner une addresse pour votre événement.",
+          color: widget.color);
+      return true;
+    }
+    return false;
+  }
+
+  void showGenericError() {
+    showSnackBar(
+        context: context,
+        text:
+            "Une erreur s'est produite pendant la sauvegarde. Verifiez votre connexion internet et recomencez.",
+        color: widget.color);
+  }
+
+  Future<EventData?> saveEvent() async {
     UserSumarryData admin = widget.event != null
         ? widget.event!.admin
         : UserSumarryData.currentUser();
+    if (_checkEvent()) return null;
     if (widget.event != null) {
       EventData event = EventData(
         eventId: widget.event!.eventId,
@@ -85,7 +124,11 @@ class _EventFormPageState extends State<EventFormPage> {
         numAttendes: widget.event != null ? widget.event!.numAttendes : 1,
         attendes: widget.event != null ? widget.event!.attendes : [admin],
       );
-      await event.save();
+      bool error = await event.save();
+      if (error) {
+        showGenericError();
+        return null;
+      }
       return event;
     } else {
       return EventData.saveNew(
@@ -273,12 +316,18 @@ class _EventFormPageState extends State<EventFormPage> {
       color: widget.color,
       resizeOnKeyboard: const [true, true, false],
       onFinish: () async {
-        EventData event = await saveEvent();
+        EventData? event = await saveEvent();
+        if (event == null) return true;
+        bool error = false;
         for (var i = 0; i < _localImages.length; i++) {
-          saveImage("eventImages/${event.eventId}/${_minImageIndex + i}",
-              _localImages[i].path);
+          error = error ||
+              await saveImage(
+                      "eventImages/${event.eventId}/${_minImageIndex + i}",
+                      _localImages[i].path)
+                  .then((value) => false)
+                  .onError((error, stackTrace) => true);
         }
-        Navigator.pop(context);
+        return false;
       },
       steps: <Step>[
         firstStep(context),

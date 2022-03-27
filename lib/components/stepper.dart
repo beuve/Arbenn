@@ -41,7 +41,8 @@ class FormStepper extends StatefulWidget {
     this.onNext,
     this.onBack,
     this.onCancel,
-    this.onFinish,
+    this.pop = true,
+    required this.onFinish,
     this.resizeOnKeyboard,
   }) : super(key: key);
 
@@ -64,7 +65,7 @@ class FormStepper extends StatefulWidget {
   ///
   /// It is only used for custom behiviors. A value is not needed for the
   /// stepper to work.
-  final VoidCallback? onFinish;
+  final Future<bool> Function() onFinish;
 
   /// If true the [body] and the scaffold's floating widgets should size
   /// themselves to avoid the onscreen keyboard whose height is defined by the
@@ -93,6 +94,8 @@ class FormStepper extends StatefulWidget {
   ///
   /// If null, the 'cancel' button will be disabled.
   final ValueChanged<int>? onBack;
+
+  final bool pop;
 
   @override
   State<FormStepper> createState() => _FormStepperState();
@@ -194,18 +197,14 @@ class _FormStepperState extends State<FormStepper> {
           ...isLast()
               ? [
                   Expanded(
-                      flex: 3,
-                      child: Button(
-                        onPressed: () {
-                          if (widget.onFinish != null) {
-                            widget.onFinish!();
-                          } else {
-                            Navigator.pop(context);
-                          }
-                        },
-                        color: widget.color,
-                        label: "FINIR",
-                      ))
+                    flex: 3,
+                    child: FutureButton(
+                      onPressed: widget.onFinish,
+                      onEnd: widget.pop ? () => Navigator.pop(context) : null,
+                      color: widget.color,
+                      label: "FINIR",
+                    ),
+                  )
                 ]
               : [
                   Expanded(flex: 1, child: Container()),

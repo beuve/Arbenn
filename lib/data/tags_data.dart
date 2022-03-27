@@ -14,16 +14,17 @@ class TagData {
 
   TagData({required this.id, required this.label});
 
-  static Future<List<TagData>> loadFromIds(List<String> ids) async {
-    return FirebaseFirestore.instance
-        .collection('tags')
-        .where(FieldPath.documentId, whereIn: ids)
-        .limit(100)
-        .get()
-        .then((snapshot) => snapshot.docs
-            .map((e) =>
-                TagData(id: e.id, label: e.data()["frenchName"] as String))
-            .toList());
+  static Future<List<TagData>?> loadFromIds(List<String> ids) async {
+    return (FirebaseFirestore.instance
+            .collection('tags')
+            .where(FieldPath.documentId, whereIn: ids)
+            .limit(100)
+            .get()
+            .then((snapshot) => snapshot.docs
+                .map((e) =>
+                    TagData(id: e.id, label: e.data()["frenchName"] as String))
+                .toList()) as Future<List<TagData>?>)
+        .onError((error, stackTrace) => null);
   }
 }
 

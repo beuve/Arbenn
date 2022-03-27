@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List<EventDataSummary>> _events;
+  late Future<List<EventDataSummary>?> _events;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureEventSummaries(
+    return FutureOptionEventSummary(
       color: widget.color,
       events: _events,
       numPlaceholders: 1,

@@ -94,12 +94,43 @@ class ChangeEmail extends StatelessWidget {
             text: "Le nouvel email est identique a l'ancien.",
             color: color);
       } else {
-        AuthCredential credential = EmailAuthProvider.credential(
-            email: user.email!, password: _passwordController.text);
-        await user.reauthenticateWithCredential(credential);
-        await user.updateEmail(_newEmailController.text);
-        await user.reload();
-        Navigator.pop(context);
+        try {
+          AuthCredential credential = EmailAuthProvider.credential(
+              email: user.email!, password: _passwordController.text);
+          await user.reauthenticateWithCredential(credential);
+          await user.updateEmail(_newEmailController.text);
+          await user.reload();
+          Navigator.pop(context);
+        } on FirebaseAuthException catch (e) {
+          if (e.code == "email-already-in-use") {
+            showSnackBar(
+                context: context,
+                text: "Cet email est déjà associé a un autre compte.",
+                color: color);
+          } else if (e.code == "wrong-password") {
+            showSnackBar(
+                context: context,
+                text: "Le mot de passe est incorrect.",
+                color: color);
+          } else if (e.code == "network-request-failed") {
+            showSnackBar(
+                context: context,
+                text: "La connexion internet est trop faible.",
+                color: color);
+          } else {
+            showSnackBar(
+                context: context,
+                text: "Une erreur inconnue est survenue.",
+                color: color);
+            print(e);
+          }
+        } catch (e) {
+          showSnackBar(
+              context: context,
+              text: "Une erreur inconnue est survenue.",
+              color: color);
+          print(e);
+        }
       }
     } else {
       throw Exception("User is null");
@@ -159,7 +190,6 @@ class ChangePassword extends StatelessWidget {
     } else if (user != null) {
       AuthCredential credential = EmailAuthProvider.credential(
           email: user.email!, password: _passwordController.text);
-      await user.reauthenticateWithCredential(credential);
       if (_newPasswordController.text == "") {
         showSnackBar(
             context: context,
@@ -172,8 +202,40 @@ class ChangePassword extends StatelessWidget {
             text: "Les mots de passes ne correspondent pas.",
             color: color);
       } else {
-        await user.updatePassword(_newPasswordController.text);
-        Navigator.pop(context);
+        try {
+          await user.reauthenticateWithCredential(credential);
+          await user.updatePassword(_newPasswordController.text);
+          Navigator.pop(context);
+        } on FirebaseAuthException catch (e) {
+          if (e.code == "wrong-password") {
+            showSnackBar(
+                context: context,
+                text: "Le mot de passe est incorrect.",
+                color: color);
+          } else if (e.code == "weak-password") {
+            showSnackBar(
+                context: context,
+                text: "Le nouveau mot de passe est trop faible.",
+                color: color);
+          } else if (e.code == "network-request-failed") {
+            showSnackBar(
+                context: context,
+                text: "La connexion internet est trop faible.",
+                color: color);
+          } else {
+            showSnackBar(
+                context: context,
+                text: "Une erreur inconnue est survenue.",
+                color: color);
+            print(e);
+          }
+        } catch (e) {
+          showSnackBar(
+              context: context,
+              text: "Une erreur inconnue est survenue.",
+              color: color);
+          print(e);
+        }
       }
     } else {
       throw Exception("User is null");

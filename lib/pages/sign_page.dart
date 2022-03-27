@@ -144,9 +144,24 @@ class _SignUpState extends State<_SignUp> {
             context: context,
             text: 'Un compte existant utilise déjà cet email.',
             color: widget.color);
+      } else if (e.code == "network-request-failed") {
+        showSnackBar(
+            context: context,
+            text: "La connexion internet est trop faible.",
+            color: widget.color);
+      } else {
+        showSnackBar(
+            context: context,
+            text: "Une erreur inconnue est survenue.",
+            color: widget.color);
+        print(e);
       }
       return null;
     } catch (e) {
+      showSnackBar(
+          context: context,
+          text: "Une erreur inconnue est survenue.",
+          color: widget.color);
       print(e);
       return null;
     }
@@ -233,7 +248,25 @@ class _SignIn extends StatelessWidget {
             context: context,
             text: "Le mot de passe n'est pas celui associé a cet email.",
             color: color);
+      } else if (e.code == "network-request-failed") {
+        showSnackBar(
+            context: context,
+            text: "La connexion internet est trop faible.",
+            color: color);
+      } else {
+        showSnackBar(
+            context: context,
+            text: "Une erreur inconnue est survenue.",
+            color: color);
+        print(e);
       }
+      return null;
+    } catch (e) {
+      showSnackBar(
+          context: context,
+          text: "Une erreur inconnue est survenue.",
+          color: color);
+      print(e);
       return null;
     }
   }

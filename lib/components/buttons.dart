@@ -199,3 +199,111 @@ class SettingButton extends StatelessWidget {
     );
   }
 }
+
+class FutureButton extends StatefulWidget {
+  final Nuance color;
+  final String label;
+  final ColorTheme theme;
+  final Future<bool> Function() onPressed;
+
+  const FutureButton(
+      {Key? key,
+      required this.color,
+      required this.label,
+      required this.onPressed,
+      this.theme = ColorTheme.light})
+      : super(key: key);
+
+  @override
+  State<FutureButton> createState() => _FutureButtonState();
+}
+
+enum _ButtonState { waiting, done, running }
+
+class _FutureButtonState extends State<FutureButton>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late _ButtonState _state;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+    _state = _ButtonState.waiting;
+  }
+
+  void onPressed() async {
+    setState(() {
+      _state = _ButtonState.running;
+    });
+    final bool error = await widget.onPressed();
+    if (error == true) {
+      setState(() {
+        _state = _ButtonState.waiting;
+      });
+    } else {
+      setState(() {
+        _state = _ButtonState.done;
+      });
+    }
+  }
+
+  Widget _waitingContent() {
+    return Text(
+      widget.label,
+      style: TextStyle(
+          color: widget.theme == ColorTheme.light
+              ? widget.color.lighter
+              : widget.color.darker,
+          fontSize: 19),
+    );
+  }
+
+  Widget _doneContent() {
+    return Icon(ArbennIcons.check,
+        color: widget.theme == ColorTheme.light
+            ? widget.color.lighter
+            : widget.color.darker,
+        size: 19);
+  }
+
+  Widget _runningContent() {
+    return SizedBox(
+      height: 19,
+      width: 19,
+      child: CircularProgressIndicator(
+        color: widget.theme == ColorTheme.light
+            ? widget.color.lighter
+            : widget.color.darker,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    late Widget content;
+    if (_state == _ButtonState.waiting) {
+      content = _waitingContent();
+    } else if (_state == _ButtonState.running) {
+      content = _runningContent();
+    } else {
+      content = _doneContent();
+    }
+    return InkWell(
+      onTap: _state == _ButtonState.waiting ? onPressed : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        padding: EdgeInsets.symmetric(
+            horizontal: _state == _ButtonState.waiting ? 50 : 20, vertical: 20),
+        child: content,
+        decoration: BoxDecoration(
+          color: widget.theme == ColorTheme.light
+              ? widget.color.darker
+              : widget.color.lighter,
+          borderRadius: BorderRadius.all(
+              Radius.circular(_state == _ButtonState.waiting ? 25 : 50)),
+        ),
+      ),
+    );
+  }
+}

@@ -63,5 +63,6 @@ class ArbennIcons {
   static const IconData userGroup = IconData(0xf500, fontFamily: fontName);
   static const IconData user = IconData(0xf007, fontFamily: fontName);
   static const IconData addPhoto = IconData(0xf030, fontFamily: fontName);
-  static const IconData send = IconData(0xe20a, fontFamily: fontName);
+  static const IconData send = IconData(0xf1d8, fontFamily: fontName);
+  static const IconData check = IconData(0xf00c, fontFamily: fontName);
 }

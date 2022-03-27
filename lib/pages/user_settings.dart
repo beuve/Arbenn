@@ -75,24 +75,27 @@ class ChangeEmail extends StatelessWidget {
 
   ChangeEmail({Key? key, this.color = Palette.blue}) : super(key: key);
 
-  void onConfirm(BuildContext context) async {
+  Future<bool> onConfirm(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (_passwordController.text == "") {
       showSnackBar(
           context: context,
           text: "Veillez entrer le mot de passe actuel.",
           color: color);
+      return true;
     } else if (_newEmailController.text == "") {
       showSnackBar(
           context: context,
           text: "Veillez entrer le nouvel email.",
           color: color);
+      return true;
     } else if (user != null) {
       if (_newEmailController.text == user.email) {
         showSnackBar(
             context: context,
             text: "Le nouvel email est identique a l'ancien.",
             color: color);
+        return true;
       } else {
         try {
           AuthCredential credential = EmailAuthProvider.credential(
@@ -101,28 +104,33 @@ class ChangeEmail extends StatelessWidget {
           await user.updateEmail(_newEmailController.text);
           await user.reload();
           Navigator.pop(context);
+          return false;
         } on FirebaseAuthException catch (e) {
           if (e.code == "email-already-in-use") {
             showSnackBar(
                 context: context,
                 text: "Cet email est déjà associé a un autre compte.",
                 color: color);
+            return true;
           } else if (e.code == "wrong-password") {
             showSnackBar(
                 context: context,
                 text: "Le mot de passe est incorrect.",
                 color: color);
+            return true;
           } else if (e.code == "network-request-failed") {
             showSnackBar(
                 context: context,
                 text: "La connexion internet est trop faible.",
                 color: color);
+            return true;
           } else {
             showSnackBar(
                 context: context,
                 text: "Une erreur inconnue est survenue.",
                 color: color);
             print(e);
+            return true;
           }
         } catch (e) {
           showSnackBar(
@@ -130,6 +138,7 @@ class ChangeEmail extends StatelessWidget {
               text: "Une erreur inconnue est survenue.",
               color: color);
           print(e);
+          return true;
         }
       }
     } else {
@@ -155,10 +164,10 @@ class ChangeEmail extends StatelessWidget {
             controller: _newEmailController,
           ),
           const SizedBox(height: 40),
-          Button(
+          FutureButton(
               color: color,
               label: "VALIDER",
-              onPressed: () => onConfirm(context))
+              onPressed: () async => onConfirm(context))
         ],
       ),
     );
@@ -180,13 +189,14 @@ class ChangePassword extends StatelessWidget {
 
   ChangePassword({Key? key, this.color = Palette.blue}) : super(key: key);
 
-  void onConfirm(BuildContext context) async {
+  Future<bool> onConfirm(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (_passwordController.text == "") {
       showSnackBar(
           context: context,
           text: "Veillez entrer le mot de passe actuel.",
           color: color);
+      return true;
     } else if (user != null) {
       AuthCredential credential = EmailAuthProvider.credential(
           email: user.email!, password: _passwordController.text);
@@ -195,39 +205,46 @@ class ChangePassword extends StatelessWidget {
             context: context,
             text: "Veillez entrer un nouveau mot de passe.",
             color: color);
+        return true;
       } else if (_confirmNewPasswordController.text !=
           _newPasswordController.text) {
         showSnackBar(
             context: context,
             text: "Les mots de passes ne correspondent pas.",
             color: color);
+        return true;
       } else {
         try {
           await user.reauthenticateWithCredential(credential);
           await user.updatePassword(_newPasswordController.text);
           Navigator.pop(context);
+          return false;
         } on FirebaseAuthException catch (e) {
           if (e.code == "wrong-password") {
             showSnackBar(
                 context: context,
                 text: "Le mot de passe est incorrect.",
                 color: color);
+            return true;
           } else if (e.code == "weak-password") {
             showSnackBar(
                 context: context,
                 text: "Le nouveau mot de passe est trop faible.",
                 color: color);
+            return true;
           } else if (e.code == "network-request-failed") {
             showSnackBar(
                 context: context,
                 text: "La connexion internet est trop faible.",
                 color: color);
+            return true;
           } else {
             showSnackBar(
                 context: context,
                 text: "Une erreur inconnue est survenue.",
                 color: color);
             print(e);
+            return true;
           }
         } catch (e) {
           showSnackBar(
@@ -235,6 +252,7 @@ class ChangePassword extends StatelessWidget {
               text: "Une erreur inconnue est survenue.",
               color: color);
           print(e);
+          return true;
         }
       }
     } else {
@@ -265,10 +283,10 @@ class ChangePassword extends StatelessWidget {
             controller: _confirmNewPasswordController,
           ),
           const SizedBox(height: 40),
-          Button(
+          FutureButton(
               color: color,
               label: "VALIDER",
-              onPressed: () => onConfirm(context))
+              onPressed: () async => onConfirm(context))
         ],
       ),
     );

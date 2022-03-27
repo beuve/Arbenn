@@ -6,7 +6,6 @@ import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../data/event_data.dart';
-import '../components/scroller.dart';
 import '../components/inputs.dart';
 
 class SearchPage extends StatefulWidget {

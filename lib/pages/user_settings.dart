@@ -1,5 +1,6 @@
 import 'package:arbenn/components/inputs.dart';
 import 'package:arbenn/components/page_transitions.dart';
+import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/pages/user_form.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -76,12 +77,30 @@ class ChangeEmail extends StatelessWidget {
 
   void onConfirm(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      AuthCredential credential = EmailAuthProvider.credential(
-          email: user.email!, password: _passwordController.text);
-      await user.reauthenticateWithCredential(credential);
-      await user.updateEmail(_newEmailController.text);
-      Navigator.pop(context);
+    if (_passwordController.text == "") {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer le mot de passe actuel.",
+          color: color);
+    } else if (_newEmailController.text == "") {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer le nouvel email.",
+          color: color);
+    } else if (user != null) {
+      if (_newEmailController.text == user.email) {
+        showSnackBar(
+            context: context,
+            text: "Le nouvel email est identique a l'ancien.",
+            color: color);
+      } else {
+        AuthCredential credential = EmailAuthProvider.credential(
+            email: user.email!, password: _passwordController.text);
+        await user.reauthenticateWithCredential(credential);
+        await user.updateEmail(_newEmailController.text);
+        await user.reload();
+        Navigator.pop(context);
+      }
     } else {
       throw Exception("User is null");
     }
@@ -117,7 +136,7 @@ class ChangeEmail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FullPageOverlay(
-        color: color, title: "Settings", body: _buildBody(context));
+        color: color, title: "Parametres", body: _buildBody(context));
   }
 }
 
@@ -132,16 +151,29 @@ class ChangePassword extends StatelessWidget {
 
   void onConfirm(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      print(user.email);
+    if (_passwordController.text == "") {
+      showSnackBar(
+          context: context,
+          text: "Veillez entrer le mot de passe actuel.",
+          color: color);
+    } else if (user != null) {
       AuthCredential credential = EmailAuthProvider.credential(
           email: user.email!, password: _passwordController.text);
       await user.reauthenticateWithCredential(credential);
-      if (_confirmNewPasswordController.text == _newPasswordController.text) {
+      if (_newPasswordController.text == "") {
+        showSnackBar(
+            context: context,
+            text: "Veillez entrer un nouveau mot de passe.",
+            color: color);
+      } else if (_confirmNewPasswordController.text !=
+          _newPasswordController.text) {
+        showSnackBar(
+            context: context,
+            text: "Les mots de passes ne correspondent pas.",
+            color: color);
+      } else {
         await user.updatePassword(_newPasswordController.text);
         Navigator.pop(context);
-      } else {
-        print("New password is not the same");
       }
     } else {
       throw Exception("User is null");

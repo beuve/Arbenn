@@ -1,3 +1,6 @@
+import 'package:arbenn/components/overlay.dart';
+import 'package:arbenn/components/page_transitions.dart';
+import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../components/up_expension.dart';
@@ -8,37 +11,91 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
+class _ForgotPassword extends StatelessWidget {
+  final Nuance color;
+  final TextEditingController _emailController = TextEditingController();
+
+  _ForgotPassword({Key? key, this.color = Palette.red}) : super(key: key);
+
+  void onConfirm(BuildContext context) async {
+    if (_emailController.text == "") {
+      showSnackBar(
+          context: context,
+          text: "Entrez l'email lié à votre compte avant de valider.",
+          color: color);
+    } else {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _emailController.text);
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FullPageOverlay(
+      color: color,
+      title: "Reinitialiser l'email",
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            Icon(
+              ArbennIcons.email,
+              size: 150,
+              color: color.darker,
+            ),
+            const SizedBox(height: 40),
+            FormInput(
+              label: "Email",
+              color: color.dark,
+              controller: _emailController,
+            ),
+            const SizedBox(height: 40),
+            Button(
+                color: color,
+                label: "SEND EMAIL",
+                onPressed: () => onConfirm(context))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _Conditions extends StatelessWidget {
-  const _Conditions({Key? key}) : super(key: key);
+  final Nuance color;
+
+  const _Conditions({Key? key, required this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Flexible(
         child: RichText(
-            text: TextSpan(
-                style: TextStyle(color: Palette.purple.darker),
-                children: [
-          const TextSpan(
-            text: "J'accepte les ",
-          ),
-          TextSpan(
-            style: TextStyle(color: Palette.purple.flash),
-            text: "conditions d'utilisation ",
-          ),
-          const TextSpan(
-            text: "et la ",
-          ),
-          TextSpan(
-            style: TextStyle(color: Palette.purple.flash),
-            text: "politique de confidentialité.",
-          )
-        ])));
+            text: TextSpan(style: TextStyle(color: color.darker), children: [
+      const TextSpan(
+        text: "J'accepte les ",
+      ),
+      TextSpan(
+        style: TextStyle(color: color.flash),
+        text: "conditions d'utilisation ",
+      ),
+      const TextSpan(
+        text: "et la ",
+      ),
+      TextSpan(
+        style: TextStyle(color: color.flash),
+        text: "politique de confidentialité.",
+      )
+    ])));
   }
 }
 
 class _SignUp extends StatefulWidget {
   final double height;
-  const _SignUp({Key? key, required this.height}) : super(key: key);
+  final Nuance color;
+  const _SignUp({Key? key, required this.height, this.color = Palette.purple})
+      : super(key: key);
 
   @override
   State<_SignUp> createState() => _SignUpState();
@@ -58,8 +115,17 @@ class _SignUpState extends State<_SignUp> {
 
   Future<UserCredential?> _signUp() async {
     if (passController.text != confirmPassController.text) {
+      showSnackBar(
+          context: context,
+          text: 'Les mots de passe ne sont pas identiques.',
+          color: widget.color);
       return null;
     } else if (!_isChecked) {
+      showSnackBar(
+          context: context,
+          text:
+              "Veuillez accepter les conditions d'utilisations et la politique de confidientialité.",
+          color: widget.color);
       return null;
     }
     try {
@@ -69,9 +135,15 @@ class _SignUpState extends State<_SignUp> {
       return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        showSnackBar(
+            context: context,
+            text: 'Le mot de passe choisit est trop faible.',
+            color: widget.color);
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        showSnackBar(
+            context: context,
+            text: 'Un compte existant utilise déjà cet email.',
+            color: widget.color);
       }
       return null;
     } catch (e) {
@@ -90,32 +162,32 @@ class _SignUpState extends State<_SignUp> {
           FormInput(
             label: "email",
             controller: emailController,
-            color: Palette.purple.darker,
+            color: widget.color.darker,
             autoFocus: true,
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: widget.height * 0.05),
           FormInput(
             label: "mot de passe",
-            color: Palette.purple.darker,
+            color: widget.color.darker,
             controller: passController,
           ),
           SizedBox(height: widget.height * 0.05),
           FormInput(
             label: "confirmer mot de passe",
-            color: Palette.purple.darker,
+            color: widget.color.darker,
             controller: confirmPassController,
           ),
           SizedBox(height: widget.height * 0.05),
           Row(
             children: [
               Checkbox(
-                activeColor: Palette.purple.darker,
+                activeColor: widget.color.darker,
                 value: _isChecked,
                 onChanged: (value) =>
                     {setState(() => _isChecked = !_isChecked)},
               ),
-              const _Conditions(),
+              _Conditions(color: widget.color),
             ],
           ),
           SizedBox(height: widget.height * 0.05),
@@ -136,13 +208,15 @@ class _SignUpState extends State<_SignUp> {
 }
 
 class _SignIn extends StatelessWidget {
+  final Nuance color;
   final double height;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
 
-  _SignIn({Key? key, required this.height}) : super(key: key);
+  _SignIn({Key? key, required this.height, this.color = Palette.red})
+      : super(key: key);
 
-  Future<UserCredential?> _signIn() async {
+  Future<UserCredential?> _signIn(BuildContext context) async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -150,9 +224,15 @@ class _SignIn extends StatelessWidget {
       return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        showSnackBar(
+            context: context,
+            text: 'Aucun utilisateur existant avec cet email.',
+            color: color);
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        showSnackBar(
+            context: context,
+            text: "Le mot de passe n'est pas celui associé a cet email.",
+            color: color);
       }
       return null;
     }
@@ -168,7 +248,7 @@ class _SignIn extends StatelessWidget {
           SizedBox(height: height * 0.07),
           FormInput(
             label: "email",
-            color: Palette.red.darker,
+            color: color.darker,
             controller: emailController,
             autoFocus: true,
             keyboardType: TextInputType.emailAddress,
@@ -176,23 +256,24 @@ class _SignIn extends StatelessWidget {
           SizedBox(height: height * 0.08),
           FormInput(
               label: "mot de passe",
-              color: Palette.red.darker,
+              color: color.darker,
               controller: passController),
           Container(
               margin: const EdgeInsets.only(top: 5, right: 10),
               alignment: Alignment.centerRight,
               child: TextButton(
-                  onPressed: () => {},
+                  onPressed: () =>
+                      Navigator.of(context).push(slideIn(_ForgotPassword())),
                   child: Text(
                     "Mot de pass oublié ?",
-                    style: TextStyle(color: Palette.red.flash),
+                    style: TextStyle(color: color.flash),
                   ))),
           SizedBox(height: height * 0.12),
           Button(
             color: Palette.red,
             label: "VALIDER",
             onPressed: () async {
-              UserCredential? _ = await _signIn();
+              UserCredential? _ = await _signIn(context);
             },
           )
         ],
@@ -247,11 +328,11 @@ class SignPage extends StatelessWidget {
 }
 
 class EmailValidationPage extends StatefulWidget {
-  final Widget nextPage;
+  final Function() onFinish;
   final Nuance color;
 
   const EmailValidationPage(
-      {Key? key, required this.nextPage, this.color = Palette.red})
+      {Key? key, required this.onFinish, this.color = Palette.red})
       : super(key: key);
 
   @override
@@ -275,10 +356,7 @@ class _EmailValidationPageState extends State<EmailValidationPage> {
       await user.reload();
       if (user.emailVerified) {
         _timer.cancel();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => widget.nextPage),
-        );
+        widget.onFinish();
       }
     }
   }

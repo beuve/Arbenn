@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
   initState() {
     super.initState();
     _user = FirebaseAuth.instance.currentUser;
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    FirebaseAuth.instance.userChanges().listen((User? user) {
       setState(() => _user = user);
     });
     _userData = getUserData();
@@ -109,19 +109,17 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_user == null) {
       return SignPage();
     } else if (_user!.emailVerified == false) {
-      return EmailValidationPage(
-          nextPage: UserFormPage(
-              onFinish: (userData) =>
-                  setState(() => _userData = Future.value(userData))));
+      return EmailValidationPage(onFinish: () => _user!.reload());
     }
     return FutureBuilder<UserData?>(
       future: getUserData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.data == null) {
-            return UserFormPage(
-                onFinish: (userData) =>
-                    setState(() => _userData = Future.value(userData)));
+            return UserFormPage(onFinish: (ud) {
+              _userData = Future.value(ud); // Don't know why this is needed
+              setState(() => {});
+            });
           }
           return Nav(currentUser: snapshot.data!);
         } else if (snapshot.hasError) {

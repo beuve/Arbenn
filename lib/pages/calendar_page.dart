@@ -66,12 +66,13 @@ class CalendarPage extends StatelessWidget {
   }
 
   Widget _buildDateSeparator(DateTime date) {
+    String year = date.year != DateTime.now().year ? " ${date.year}" : "";
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Row(
         children: [
           Text(
-            '${_weekDayFromInt(date.weekday)} ${date.day} ${_monthFromInt(date.month)}',
+            '${_weekDayFromInt(date.weekday)} ${date.day} ${_monthFromInt(date.month)}$year',
             style: TextStyle(color: color.main, fontWeight: FontWeight.bold),
           ),
           const SizedBox(width: 5),

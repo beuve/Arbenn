@@ -38,10 +38,11 @@ class _ScrollListState extends State<ScrollList> {
       if (_scrollControl.position.maxScrollExtent == 0) {
         setState(() => _scrollState = ScrollState.none);
       } else if (_scrollControl.offset >=
-          _scrollControl.position.maxScrollExtent) {
+          _scrollControl.position.maxScrollExtent * 0.95) {
         setState(() => _scrollState = ScrollState.bottom);
       } else if (_scrollControl.offset <=
-          _scrollControl.position.minScrollExtent) {
+          _scrollControl.position.minScrollExtent +
+              _scrollControl.position.maxScrollExtent * 0.05) {
         setState(() => _scrollState = ScrollState.top);
       } else {
         setState(() => _scrollState = ScrollState.middle);
@@ -115,7 +116,7 @@ class _ScrollListState extends State<ScrollList> {
     );
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 5),
       child: widget.onRefresh != null
           ? RefreshIndicator(child: list, onRefresh: widget.onRefresh!)
           : list,

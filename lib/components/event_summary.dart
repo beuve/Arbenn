@@ -305,10 +305,13 @@ class EventSummaries extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScrollList(
-        children:
-            events.map((e) => EventSummary(data: e, color: color)).toList(),
-        shadowColor: color.darker);
+    return Container(
+      margin: const EdgeInsets.all(5),
+      child: ScrollList(
+          children:
+              events.map((e) => EventSummary(data: e, color: color)).toList(),
+          shadowColor: color.darker),
+    );
   }
 }
 

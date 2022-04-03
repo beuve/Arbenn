@@ -99,7 +99,10 @@ class CalendarPage extends StatelessWidget {
       }
       res.add(EventSummary(data: events[i], color: color));
     }
-    return ScrollList(children: res, shadowColor: color.darker);
+    return Container(
+      margin: const EdgeInsets.all(5),
+      child: ScrollList(children: res, shadowColor: color.darker),
+    );
   }
 
   TabInfos _buildSingleTab(String title, Widget events) {

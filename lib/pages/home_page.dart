@@ -23,10 +23,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureOptionEventSummary(
-      color: widget.color,
-      events: _events,
-      numPlaceholders: 1,
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      child: FutureOptionEventSummary(
+        color: widget.color,
+        events: _events,
+        numPlaceholders: 1,
+      ),
     );
   }
 }

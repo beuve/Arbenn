@@ -150,7 +150,7 @@ class _NavState extends State<Nav> {
   Widget _getContent() {
     switch (_currentPageInfos.num) {
       case 0:
-        return const HomePage();
+        return HomePage(currentUser: widget.currentUser);
       case 1:
         return CalendarPage(
           pastEvents: pastAttendedEvents,

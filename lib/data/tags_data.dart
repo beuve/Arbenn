@@ -32,7 +32,7 @@ class TagSearch {
   List<TagWidgetInfos> tags = [];
   List<TagData> searchResult = [];
 
-  Future<void> newSearch(String query, Function(String) onTap) async {
+  Future<void> newSearch(String query, Function(Function()) setState) async {
     searchResult = await FirebaseFirestore.instance
         .collection('tags')
         .where("frenchQueries", arrayContains: query)
@@ -46,21 +46,25 @@ class TagSearch {
     for (var i = 0; i < searchResult.length; i++) {
       if (!tags.any((element) => element.data.id == searchResult[i].id)) {
         tags.add(TagWidgetInfos(
-            data: searchResult[i], onTap: onTap(searchResult[i].id)));
+            data: searchResult[i],
+            onTap: () => setState(() => toggle(tags[i].data.id))));
       }
     }
   }
 
-  setSelectedTags(List<TagData> newTags, Function(String) onTap) {
+  setSelectedTags(List<TagData> newTags, Function(Function()) setState) {
     for (var i = 0; i < newTags.length; i++) {
       if (!tags.any((element) => element.data.id == newTags[i].id)) {
         tags.add(TagWidgetInfos(
-            data: newTags[i], onTap: onTap(newTags[i].id), isActive: true));
+            data: newTags[i],
+            onTap: () => setState(() => toggle(newTags[i].id)),
+            isActive: true));
       }
     }
   }
 
   toggle(String id) {
+    print(tags);
     if (tags.firstWhere((tag) => tag.data.id == id).isActive) {
       deactivate(id);
     } else {

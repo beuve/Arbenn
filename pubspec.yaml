@@ -44,6 +44,7 @@ dependencies:
   flutter_keyboard_visibility: ^5.2.0
   http: ^0.13.4
   flutter_svg: ^1.0.3
+  typesense: ^0.2.0
 
 dev_dependencies:
   flutter_test:

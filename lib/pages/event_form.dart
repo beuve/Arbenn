@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:arbenn/components/search_location.dart';
 import 'package:arbenn/components/snack_bar.dart';
+import 'package:arbenn/data/event_search.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/user_data.dart';
@@ -52,8 +53,7 @@ class _EventFormPageState extends State<EventFormPage> {
       _dateController.date = widget.event!.date;
       _address = widget.event!.address;
       _addressController.text = widget.event!.address.toString();
-      _tagSearch.setSelectedTags(widget.event!.tags,
-          (label) => () => setState(() => _tagSearch.toggle(label)));
+      _tagSearch.setSelectedTags(widget.event!.tags, setState);
       _cloudImages = await widget.event!.getImages();
       _minImageIndex = (_cloudImages.isEmpty
                   ? [-1]
@@ -124,14 +124,15 @@ class _EventFormPageState extends State<EventFormPage> {
         numAttendes: widget.event != null ? widget.event!.numAttendes : 1,
         attendes: widget.event != null ? widget.event!.attendes : [admin],
       );
-      bool error = await event.save();
-      if (error) {
+      bool errorSave = await event.save();
+      bool errorIndex = await Search().update(event);
+      if (errorSave || errorIndex) {
         showGenericError();
         return null;
       }
       return event;
     } else {
-      return EventData.saveNew(
+      EventData? event = await EventData.saveNew(
         title: _titleController.text,
         tags: _tagSearch.tags
             .where((t) => t.isActive)
@@ -142,6 +143,17 @@ class _EventFormPageState extends State<EventFormPage> {
         admin: admin,
         description: _descriptionController.text,
       );
+      if (event == null) {
+        showGenericError();
+        return null;
+      } else {
+        bool errorIndex = await Search().create(event);
+        if (errorIndex) {
+          showGenericError();
+          return null;
+        }
+        return event;
+      }
     }
   }
 
@@ -172,7 +184,7 @@ class _EventFormPageState extends State<EventFormPage> {
               DatePicker(
                 context,
                 label: "Date",
-                color: widget.color.darker,
+                color: widget.color,
                 controller: _dateController,
                 startDate: now,
                 stopDate: DateTime(now.year + 2),
@@ -231,8 +243,7 @@ class _EventFormPageState extends State<EventFormPage> {
               label: "Chercher des tags...",
               color: widget.color,
               onChanged: (query) async {
-                await _tagSearch.newSearch(query,
-                    (label) => () => setState(() => _tagSearch.toggle(label)));
+                await _tagSearch.newSearch(query, setState);
                 setState(() => {});
               },
             ),

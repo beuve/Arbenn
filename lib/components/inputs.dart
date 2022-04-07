@@ -67,6 +67,8 @@ class SearchInput extends StatelessWidget {
   final bool isSmallDevice;
   final Function(String)? onChanged;
   final TextEditingController? controller;
+  final Function()? onTap;
+  final bool readOnly;
 
   const SearchInput({
     required this.label,
@@ -78,6 +80,8 @@ class SearchInput extends StatelessWidget {
     this.isSmallDevice = false,
     this.keyboardType = TextInputType.text,
     this.onChanged,
+    this.readOnly = false,
+    this.onTap,
     Key? key,
   }) : super(key: key);
 
@@ -89,6 +93,8 @@ class SearchInput extends StatelessWidget {
       autofocus: autoFocus,
       keyboardType: keyboardType,
       onChanged: onChanged,
+      onTap: onTap,
+      readOnly: readOnly,
       decoration: InputDecoration(
         border: const UnderlineInputBorder(),
         enabledBorder: UnderlineInputBorder(
@@ -107,11 +113,12 @@ class SearchInput extends StatelessWidget {
 
 class DatePicker extends StatelessWidget {
   final String label;
-  final Color color;
+  final Nuance color;
   final DateTime startDate;
   final DateTime stopDate;
   final DatePickingController controller;
   final BuildContext context;
+  final bool searchDesign;
 
   const DatePicker(
     this.context, {
@@ -121,13 +128,24 @@ class DatePicker extends StatelessWidget {
     required this.color,
     required this.startDate,
     required this.stopDate,
+    this.searchDesign = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (searchDesign) {
+      return SearchInput(
+          label: label,
+          color: color,
+          readOnly: true,
+          controller: controller.textController,
+          onTap: () {
+            controller.pickDate(context, start: startDate, stop: stopDate);
+          });
+    }
     return FormInput(
         label: label,
-        color: color,
+        color: color.darker,
         readOnly: true,
         controller: controller.textController,
         onTap: () {
@@ -199,5 +217,95 @@ class DatePickingController extends ValueNotifier<DateTime?> {
     if (needTime && newDate != null) {
       await picTime(context);
     }
+  }
+}
+
+class DateRangePicker extends StatelessWidget {
+  final String label;
+  final Nuance color;
+  final DateTime startDate;
+  final DateTime stopDate;
+  final DateRangePickingController controller;
+  final BuildContext context;
+  final bool searchDesign;
+
+  const DateRangePicker(
+    this.context, {
+    Key? key,
+    required this.label,
+    required this.controller,
+    required this.color,
+    required this.startDate,
+    required this.stopDate,
+    this.searchDesign = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (searchDesign) {
+      return SearchInput(
+          label: label,
+          color: color,
+          readOnly: true,
+          controller: controller.textController,
+          onTap: () {
+            controller.pickDateRange(context, start: startDate, stop: stopDate);
+          });
+    }
+    return FormInput(
+        label: label,
+        color: color.darker,
+        readOnly: true,
+        controller: controller.textController,
+        onTap: () {
+          controller.pickDateRange(context, start: startDate, stop: stopDate);
+        });
+  }
+}
+
+class DateRangePickingController extends ValueNotifier<DateTimeRange?> {
+  DateRangePickingController({
+    DateTimeRange? dateRange,
+  }) : super(dateRange);
+
+  TextEditingController get textController {
+    final TextEditingController controller = TextEditingController(text: text);
+    addListener(() {
+      if (value != null) {
+        controller.text =
+            "${value!.start.day} / ${value!.start.month} / ${value!.start.year} - ${value!.end.day} / ${value!.end.month} / ${value!.end.year}";
+      } else {
+        controller.text = "";
+      }
+    });
+    return controller;
+  }
+
+  String? get text {
+    if (value != null && value != null) {
+      return "${value!.start.day} / ${value!.start.month} / ${value!.start.year} - ${value!.end.day} / ${value!.end.month} / ${value!.end.year}";
+    }
+    return null;
+  }
+
+  DateTimeRange? get dateRange => value;
+  DateTimeRange? get start => value;
+  DateTimeRange? get end => value;
+
+  set date(DateTimeRange? newDateRange) {
+    value = newDateRange;
+  }
+
+  Future<void> pickDateRange(BuildContext context,
+      {required DateTime start,
+      required DateTime stop,
+      DateTimeRange? init}) async {
+    DateTimeRange? newDate = await showDateRangePicker(
+      context: context,
+      initialDateRange: init,
+      firstDate: start,
+      lastDate: stop,
+    );
+    value = newDate;
   }
 }

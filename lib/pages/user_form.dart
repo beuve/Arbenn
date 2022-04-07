@@ -66,8 +66,7 @@ class _UserFormPageState extends State<UserFormPage> {
       _city = infos.location;
       _bioController.text = infos.description;
       _phoneController.text = infos.phone ?? "";
-      _tagSearch.setSelectedTags(infos.tags,
-          (label) => () => setState(() => _tagSearch.toggle(label)));
+      _tagSearch.setSelectedTags(infos.tags, setState);
       ImageProvider? image = await loadImage(user.uid);
       if (image != null) {
         setState(() => _profilePicture = image);
@@ -216,7 +215,7 @@ class _UserFormPageState extends State<UserFormPage> {
               DatePicker(
                 context,
                 label: "Date de naissance",
-                color: widget.color.darker,
+                color: widget.color,
                 controller: _birthDateController,
                 startDate: DateTime(1900),
                 stopDate: DateTime(DateTime.now().year - 13),
@@ -281,8 +280,7 @@ class _UserFormPageState extends State<UserFormPage> {
               label: "Chercher des tags...",
               color: widget.color,
               onChanged: (query) async {
-                await _tagSearch.newSearch(query,
-                    (label) => () => setState(() => _tagSearch.toggle(label)));
+                await _tagSearch.newSearch(query, setState);
                 setState(() => {});
               },
             ),

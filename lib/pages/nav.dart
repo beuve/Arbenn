@@ -157,7 +157,7 @@ class _NavState extends State<Nav> {
           futureEvents: futureAttendedEvents,
         );
       case 3:
-        return const SearchPage();
+        return SearchPage(currentUser: widget.currentUser);
       case 4:
         return ProfilePage(
           user: widget.currentUser,

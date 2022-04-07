@@ -1,3 +1,4 @@
+import 'package:arbenn/data/event_search.dart';
 import 'package:flutter/material.dart';
 import '../data/event_data.dart';
 import '../components/event_summary.dart';
@@ -15,10 +16,19 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late Future<List<EventDataSummary>?> _events;
 
+  void printSearchResults() async {
+    List<EventDataSummary>? events = await Search().search({
+      "q": "haha",
+      'query_by': 'title',
+    });
+    print(events);
+  }
+
   @override
   void initState() {
     super.initState();
     _events = EventDataSummary.loadAllEvents();
+    printSearchResults();
   }
 
   @override

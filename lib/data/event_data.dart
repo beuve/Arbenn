@@ -34,7 +34,6 @@ class EventDataSummary {
     String eventId = "1",
     String title = "Sport",
     List<TagData>? tags,
-    IconData icon = Icons.sports_handball,
     UserSumarryData? admin,
     DateTime? date,
     int numAttendes = 30,
@@ -107,6 +106,29 @@ class EventDataSummary {
     } else {
       return ofJson(eventId, infos);
     }
+  }
+
+  // Need optimisation with a ofJsons
+  static Future<List<EventDataSummary>?> loadFromEventIds(
+      List<String> eventIds) async {
+    if (eventIds.isEmpty) return [];
+
+    CollectionReference users = FirebaseFirestore.instance.collection('events');
+    List<Map<String, dynamic>> infos = await users
+        .where(FieldPath.documentId, whereIn: eventIds)
+        .get()
+        .then((doc) =>
+            doc.docs.map((doc) => doc.data() as Map<String, dynamic>).toList());
+    List<EventDataSummary> res = [];
+    for (var i = 0; i < infos.length; i++) {
+      EventDataSummary? eventData = await ofJson(eventIds[i], infos[i]);
+      if (eventData != null) {
+        res.add(eventData);
+      } else {
+        return null;
+      }
+    }
+    return res;
   }
 }
 

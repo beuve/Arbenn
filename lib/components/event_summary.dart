@@ -21,33 +21,36 @@ class EventSummaryNoData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScrollList(children: [
-      Container(
-        alignment: Alignment.center,
-        height: 150,
-        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
-        decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(20)),
-            color: color.dark),
-        child: Column(
-          children: [
-            Icon(
-              ArbennIcons.info,
-              color: color.lighter,
-              size: 20,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "Une erreur de chargement s'est produite. Verifiez votre connexion internet.",
-              textAlign: TextAlign.center,
-              style: TextStyle(color: color.lighter, fontSize: 20),
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.center,
+    return ScrollList(
+      children: [
+        Container(
+          alignment: Alignment.center,
+          height: 150,
+          margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
+          decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              color: color.dark),
+          child: Column(
+            children: [
+              Icon(
+                ArbennIcons.info,
+                color: color.lighter,
+                size: 20,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Une erreur de chargement s'est produite. Verifiez votre connexion internet.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: color.lighter, fontSize: 20),
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          ),
         ),
-      ),
-    ], shadowColor: color.darker);
+      ],
+      color: color,
+    );
   }
 }
 
@@ -136,9 +139,10 @@ class EventSummariesPlaceHolders extends StatelessWidget {
   Widget build(BuildContext context) {
     return TickingBuilder(
         builder: (context, tick) => ScrollList(
-            children: List.filled(
-                num, EventSummaryPlaceholder(color: color, tick: tick)),
-            shadowColor: color.darker));
+              children: List.filled(
+                  num, EventSummaryPlaceholder(color: color, tick: tick)),
+              color: color,
+            ));
   }
 }
 
@@ -295,11 +299,13 @@ class EventSummaries extends StatelessWidget {
   final List<EventDataSummary> events;
   final Nuance color;
   final int numPlaceholders;
+  final Future<void> Function()? onRefresh;
 
   const EventSummaries({
     Key? key,
     required this.color,
     required this.events,
+    this.onRefresh,
     this.numPlaceholders = 2,
   }) : super(key: key);
 
@@ -308,9 +314,11 @@ class EventSummaries extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(5),
       child: ScrollList(
-          children:
-              events.map((e) => EventSummary(data: e, color: color)).toList(),
-          shadowColor: color.darker),
+        onRefresh: onRefresh,
+        children:
+            events.map((e) => EventSummary(data: e, color: color)).toList(),
+        color: color,
+      ),
     );
   }
 }
@@ -319,11 +327,13 @@ class FutureEventSummaries extends StatelessWidget {
   final Future<List<EventDataSummary>> events;
   final Nuance color;
   final int numPlaceholders;
+  final Future<void> Function()? onRefresh;
 
   const FutureEventSummaries({
     Key? key,
     required this.color,
     required this.events,
+    this.onRefresh,
     this.numPlaceholders = 2,
   }) : super(key: key);
 
@@ -345,11 +355,13 @@ class FutureOptionEventSummary extends StatelessWidget {
   final Future<List<EventDataSummary>?> events;
   final Nuance color;
   final int numPlaceholders;
+  final Future<void> Function()? onRefresh;
 
   const FutureOptionEventSummary({
     Key? key,
     required this.color,
     required this.events,
+    this.onRefresh,
     this.numPlaceholders = 2,
   }) : super(key: key);
 
@@ -362,7 +374,8 @@ class FutureOptionEventSummary extends StatelessWidget {
           if (snapshot.data == null) {
             return EventSummaryNoData(color: color);
           }
-          return EventSummaries(color: color, events: snapshot.data!);
+          return EventSummaries(
+              color: color, events: snapshot.data!, onRefresh: onRefresh);
         }
         return EventSummariesPlaceHolders(color: color, num: numPlaceholders);
       },

@@ -24,7 +24,7 @@ class AttendeList extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(10),
         child: ScrollList(
-            shadowColor: color.darker,
+            color: color,
             children: attendes
                 .map((a) => TextButton(
                     onPressed: () => Navigator.of(context).push(slideIn(

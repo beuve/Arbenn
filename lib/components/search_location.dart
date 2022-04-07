@@ -80,7 +80,7 @@ class _SearchCityState extends State<SearchCity> {
                 stream: _autocomplete.stream,
                 builder: (context, snapshot) {
                   return ScrollList(
-                      shadowColor: widget.color.darker,
+                      color: widget.color,
                       children: snapshot.hasData
                           ? snapshot.data!
                               .map((c) => CitySearchResult(
@@ -182,7 +182,7 @@ class _SearchAddressState extends State<SearchAddress> {
                 stream: _autocomplete.stream,
                 builder: (context, snapshot) {
                   return ScrollList(
-                      shadowColor: widget.color.darker,
+                      color: widget.color,
                       children: snapshot.hasData
                           ? snapshot.data!
                               .map((c) => AddressSearchResult(

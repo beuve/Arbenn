@@ -1,3 +1,4 @@
+import 'package:arbenn/utils/colors.dart';
 import 'package:flutter/material.dart' hide IconButton, BackButton;
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'dart:async';
@@ -11,14 +12,14 @@ enum ScrollState {
 
 class ScrollList extends StatefulWidget {
   final List<Widget> children;
-  final Color shadowColor;
+  final Nuance color;
   final Future<void> Function()? onRefresh;
   final bool reverse;
 
   const ScrollList(
       {Key? key,
       required this.children,
-      required this.shadowColor,
+      required this.color,
       this.reverse = false,
       this.onRefresh})
       : super(key: key);
@@ -108,6 +109,9 @@ class _ScrollListState extends State<ScrollList> {
     Widget list = ListView.builder(
       scrollDirection: Axis.vertical,
       reverse: widget.reverse,
+      physics: widget.onRefresh != null
+          ? const AlwaysScrollableScrollPhysics()
+          : null,
       itemBuilder: (BuildContext context, int index) {
         return widget.children[index];
       },
@@ -118,15 +122,20 @@ class _ScrollListState extends State<ScrollList> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: widget.onRefresh != null
-          ? RefreshIndicator(child: list, onRefresh: widget.onRefresh!)
+          ? RefreshIndicator(
+              child: list,
+              onRefresh: widget.onRefresh!,
+              color: widget.color.darker,
+              backgroundColor: widget.color.lighter,
+            )
           : list,
       decoration: BoxDecoration(
         border: Border(
           top: hasTopHidedInfos()
-              ? BorderSide(width: 1, color: widget.shadowColor)
+              ? BorderSide(width: 1, color: widget.color.darker)
               : BorderSide.none,
           bottom: hasBottomHidedInfos()
-              ? BorderSide(width: 1, color: widget.shadowColor)
+              ? BorderSide(width: 1, color: widget.color.darker)
               : BorderSide.none,
         ),
       ),

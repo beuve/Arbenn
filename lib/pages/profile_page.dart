@@ -108,7 +108,7 @@ class _Description extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.all(10),
       child: ScrollList(
-        shadowColor: color.darker,
+        color: color,
         children: [
           Text(
             "Centres d'interets",
@@ -239,7 +239,7 @@ class _DescriptionPlaceholder extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.all(10),
       child: ScrollList(
-        shadowColor: color.darker,
+        color: color,
         children: [
           Text(
             "Centres d'interets",

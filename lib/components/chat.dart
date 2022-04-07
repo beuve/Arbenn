@@ -132,16 +132,18 @@ class Chat extends StatelessWidget {
                 padding: const EdgeInsets.all(5),
                 child: Column(children: [
                   Expanded(
-                      child: ScrollList(
-                          reverse: true,
-                          children: messages.data!
-                              .map((m) => ChatMessage(
-                                  message: m,
-                                  color: color,
-                                  fromCurrentUser:
-                                      sender.userId == m.sender.userId))
-                              .toList(),
-                          shadowColor: color.darker)),
+                    child: ScrollList(
+                      reverse: true,
+                      color: color,
+                      children: messages.data!
+                          .map((m) => ChatMessage(
+                              message: m,
+                              color: color,
+                              fromCurrentUser:
+                                  sender.userId == m.sender.userId))
+                          .toList(),
+                    ),
+                  ),
                   _buildInput(hasMessage)
                 ]));
           } else if (messages.hasError) {

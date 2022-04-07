@@ -101,7 +101,7 @@ class CalendarPage extends StatelessWidget {
     }
     return Container(
       margin: const EdgeInsets.all(5),
-      child: ScrollList(children: res, shadowColor: color.darker),
+      child: ScrollList(children: res, color: color),
     );
   }
 

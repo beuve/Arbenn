@@ -196,7 +196,7 @@ class _UserFormPageState extends State<UserFormPage> {
         content: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
           child: ScrollList(
-            shadowColor: widget.color.dark,
+            color: widget.color,
             children: [
               const SizedBox(height: 10),
               FormInput(

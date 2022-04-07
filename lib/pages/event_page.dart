@@ -329,7 +329,7 @@ class _DescriptionTab extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
       child: ScrollList(
-        shadowColor: color.darker,
+        color: color,
         children: [
           if (event != null) _ManageParticipate(event: event!, color: color),
           const SizedBox(height: 15),
@@ -474,7 +474,7 @@ class _EventPageState extends State<EventPage> {
             padding: const EdgeInsets.all(10),
             child: Center(
               child: ScrollList(
-                shadowColor: widget.color.darker,
+                color: widget.color,
                 children: chats
                     .map((chatSummary) => _chatButton(chatSummary))
                     .toList(),

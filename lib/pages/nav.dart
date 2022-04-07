@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:arbenn/components/page_transitions.dart';
+import 'package:arbenn/data/event_search.dart';
+import 'package:arbenn/data/tags_data.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../utils/icons.dart';
@@ -76,6 +79,7 @@ class _NavState extends State<Nav> {
   late StreamSubscription<List<EventDataSummary>?> _subscription;
   late List<EventDataSummary>? futureAttendedEvents;
   late List<EventDataSummary>? pastAttendedEvents;
+  late Future<List<EventDataSummary>?> recommendedEvents;
 
   void setFutureAndPastEvents(List<EventDataSummary>? events) async {
     if (events != null) {
@@ -96,12 +100,24 @@ class _NavState extends State<Nav> {
     super.dispose();
   }
 
+  setRecommendedEvents() {
+    final GeoPoint coord = widget.currentUser.location.coord;
+    final List<TagData> tags = widget.currentUser.tags;
+    recommendedEvents = Search().search({
+      "q": "*",
+      'query_by': 'title',
+      'sort_by': 'location(${coord.latitude}, ${coord.longitude}):asc',
+      'filter_by': "tags:=${tags.map((t) => t.id).toString()}",
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     adminEvents = widget.currentUser.loadAdminEvents();
     futureAttendedEvents = null;
     pastAttendedEvents = null;
+    setRecommendedEvents();
     attendedEvents = widget.currentUser.loadAttendesEvents();
     _subscription = attendedEvents.listen(setFutureAndPastEvents);
     _currentPageInfos = _pagesInfos[widget.startingPage];
@@ -150,7 +166,13 @@ class _NavState extends State<Nav> {
   Widget _getContent() {
     switch (_currentPageInfos.num) {
       case 0:
-        return HomePage(currentUser: widget.currentUser);
+        return HomePage(
+          events: recommendedEvents,
+          onRefresh: () async {
+            setRecommendedEvents();
+            setState(() {});
+          },
+        );
       case 1:
         return CalendarPage(
           pastEvents: pastAttendedEvents,

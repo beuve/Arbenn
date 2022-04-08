@@ -109,14 +109,15 @@ class Tags extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.only(bottom: 6, right: 6),
           padding: EdgeInsets.symmetric(
-            horizontal: fontSize / 3 + (fontSize / 9),
-            vertical: fontSize / 4 + (fontSize / 9),
+            horizontal: fontSize / 2,
+            vertical: fontSize / 12,
           ),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.all(Radius.circular(fontSize / 4)),
           ),
-          child: Icon(ArbennIcons.plus, color: outlineColor, size: fontSize),
+          child: Text("+",
+              style: TextStyle(color: outlineColor, fontSize: fontSize * 1.5)),
         ),
         onPressed: addAction);
   }

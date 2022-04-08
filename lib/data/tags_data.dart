@@ -47,7 +47,7 @@ class TagSearch {
       if (!tags.any((element) => element.data.id == searchResult[i].id)) {
         tags.add(TagWidgetInfos(
             data: searchResult[i],
-            onTap: () => setState(() => toggle(tags[i].data.id))));
+            onTap: () => setState(() => toggle(searchResult[i].id))));
       }
     }
   }
@@ -64,7 +64,6 @@ class TagSearch {
   }
 
   toggle(String id) {
-    print(tags);
     if (tags.firstWhere((tag) => tag.data.id == id).isActive) {
       deactivate(id);
     } else {

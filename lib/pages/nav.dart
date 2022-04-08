@@ -80,6 +80,7 @@ class _NavState extends State<Nav> {
   late List<EventDataSummary>? futureAttendedEvents;
   late List<EventDataSummary>? pastAttendedEvents;
   late Future<List<EventDataSummary>?> recommendedEvents;
+  late UserData _user;
 
   void setFutureAndPastEvents(List<EventDataSummary>? events) async {
     if (events != null) {
@@ -100,9 +101,13 @@ class _NavState extends State<Nav> {
     super.dispose();
   }
 
+  setCurrentUser(UserData user) {
+    setState(() => _user = user);
+  }
+
   setRecommendedEvents() {
-    final GeoPoint coord = widget.currentUser.location.coord;
-    final List<TagData> tags = widget.currentUser.tags;
+    final GeoPoint coord = _user.location.coord;
+    final List<TagData> tags = _user.tags;
     recommendedEvents = Search().search({
       "q": "*",
       'query_by': 'title',
@@ -114,11 +119,12 @@ class _NavState extends State<Nav> {
   @override
   void initState() {
     super.initState();
-    adminEvents = widget.currentUser.loadAdminEvents();
+    _user = widget.currentUser;
+    adminEvents = _user.loadAdminEvents();
     futureAttendedEvents = null;
     pastAttendedEvents = null;
     setRecommendedEvents();
-    attendedEvents = widget.currentUser.loadAttendesEvents();
+    attendedEvents = _user.loadAttendesEvents();
     _subscription = attendedEvents.listen(setFutureAndPastEvents);
     _currentPageInfos = _pagesInfos[widget.startingPage];
   }
@@ -179,11 +185,12 @@ class _NavState extends State<Nav> {
           futureEvents: futureAttendedEvents,
         );
       case 3:
-        return SearchPage(currentUser: widget.currentUser);
+        return SearchPage(currentUser: _user);
       case 4:
         return ProfilePage(
-          user: widget.currentUser,
+          user: _user,
           adminEvents: adminEvents,
+          onEditUser: setCurrentUser,
         );
       default:
         throw Exception("Wtf");

@@ -12,8 +12,13 @@ import '../data/user_data.dart';
 class UserSettings extends StatelessWidget {
   final UserData user;
   final Nuance color;
+  final Function(UserData) onEditUser;
 
-  const UserSettings({Key? key, required this.user, this.color = Palette.blue})
+  const UserSettings(
+      {Key? key,
+      required this.user,
+      required this.onEditUser,
+      this.color = Palette.blue})
       : super(key: key);
 
   Widget _buildBody(BuildContext context) {
@@ -27,8 +32,8 @@ class UserSettings extends StatelessWidget {
             SettingButton(
               color: color,
               label: "Modifier mon profile",
-              onPressed: () => Navigator.of(context)
-                  .push(slideIn(UserFormPage(user: user, onFinish: (_) => {}))),
+              onPressed: () => Navigator.of(context).push(
+                  slideIn(UserFormPage(user: user, onFinish: onEditUser))),
             ),
             const SizedBox(height: 15),
             SettingButton(

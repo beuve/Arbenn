@@ -146,6 +146,10 @@ class UserData {
     return getImageUrl(userId);
   }
 
+  Future<void> loadPicture() async {
+    picture = await loadImage(userId);
+  }
+
   Map<String, dynamic> toJson() {
     return {
       "firstName": firstName,

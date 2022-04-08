@@ -193,21 +193,22 @@ class ProfilePage extends StatelessWidget {
   final UserData user;
   final Nuance color;
   final bool backButton;
-  final bool editButton;
+  final Function(UserData)? onEditUser;
   final Future<List<EventDataSummary>?> adminEvents;
 
   const ProfilePage({
     Key? key,
     required this.user,
     required this.adminEvents,
+    this.onEditUser,
     this.color = Palette.blue,
     this.backButton = false,
-    this.editButton = true,
   }) : super(key: key);
 
   void onEdit(BuildContext context) {
     Navigator.of(context).push(slideIn(UserSettings(
       user: user,
+      onEditUser: onEditUser!,
     )));
   }
 
@@ -215,7 +216,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return _Tabs(
       backButton: backButton,
-      onEdit: editButton ? onEdit : null,
+      onEdit: onEditUser != null ? onEdit : null,
       description: _Description(user: user, color: color),
       events: FutureOptionEventSummary(events: adminEvents, color: color),
       userInfos: _UserInfos(user: user, color: color),
@@ -350,14 +351,14 @@ class FutureProfilePage extends StatelessWidget {
   final Future<UserData?> user;
   final Nuance color;
   final bool backButton;
-  final bool editButton;
+  final Function(UserData)? onEditUser;
 
   const FutureProfilePage({
     Key? key,
     required this.user,
     this.color = Palette.blue,
+    this.onEditUser,
     this.backButton = false,
-    this.editButton = true,
   }) : super(key: key);
 
   @override
@@ -378,13 +379,13 @@ class FutureProfilePage extends StatelessWidget {
                     adminEvents: snapshot.data!.loadAdminEvents(),
                     color: color,
                     backButton: backButton,
-                    editButton: editButton,
+                    onEditUser: onEditUser,
                   );
                 } else {
                   return _ProfilePagePlaceholder(
                     color: color,
                     backButton: backButton,
-                    editButton: editButton,
+                    editButton: onEditUser != null,
                   );
                 }
               },

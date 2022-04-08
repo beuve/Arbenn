@@ -30,7 +30,6 @@ class AttendeList extends StatelessWidget {
                     onPressed: () => Navigator.of(context).push(slideIn(
                         FutureProfilePage(
                             backButton: true,
-                            editButton: false,
                             user: UserData.loadFromUserId(a.userId)))),
                     child: SizedBox(
                         height: 50,

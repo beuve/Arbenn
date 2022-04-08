@@ -59,9 +59,7 @@ class _EventInfos extends StatelessWidget {
   Widget _adminInfos(BuildContext context) {
     return TextButton(
         onPressed: () => Navigator.of(context).push(slideIn(FutureProfilePage(
-            backButton: true,
-            editButton: false,
-            user: UserData.loadFromUserId(admin.userId)))),
+            backButton: true, user: UserData.loadFromUserId(admin.userId)))),
         child: _iconLabel(
             ProfileMiniature(picture: admin.picture), admin.firstName));
   }

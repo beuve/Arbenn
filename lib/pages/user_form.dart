@@ -74,7 +74,7 @@ class _UserFormPageState extends State<UserFormPage> {
     }
   }
 
-  UserData? toUserData(BuildContext context, String userId) {
+  Future<UserData?> toUserData(BuildContext context, String userId) async {
     if (_firstNameController.text == "") {
       showSnackBar(
           context: context,
@@ -106,7 +106,7 @@ class _UserFormPageState extends State<UserFormPage> {
           color: widget.color);
       return null;
     }
-    return UserData(
+    final UserData user = UserData(
         userId: userId,
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
@@ -118,6 +118,8 @@ class _UserFormPageState extends State<UserFormPage> {
         location: _city!,
         phone: _phoneController.text,
         description: _bioController.text);
+    user.loadPicture();
+    return user;
   }
 
   Step firstStep() {
@@ -302,7 +304,7 @@ class _UserFormPageState extends State<UserFormPage> {
 
   Future<bool> saveAndFinish(BuildContext context) async {
     final String userId = FirebaseAuth.instance.currentUser!.uid;
-    UserData? userData = toUserData(context, userId);
+    UserData? userData = await toUserData(context, userId);
     if (userData == null) return true;
     bool error = await userData.save(context);
     if (error) {

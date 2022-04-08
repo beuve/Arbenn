@@ -137,12 +137,14 @@ class EventSummariesPlaceHolders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TickingBuilder(
-        builder: (context, tick) => ScrollList(
-              children: List.filled(
-                  num, EventSummaryPlaceholder(color: color, tick: tick)),
-              color: color,
-            ));
+    return Container(
+        margin: const EdgeInsets.all(5),
+        child: TickingBuilder(
+            builder: (context, tick) => ScrollList(
+                  children: List.filled(
+                      num, EventSummaryPlaceholder(color: color, tick: tick)),
+                  color: color,
+                )));
   }
 }
 

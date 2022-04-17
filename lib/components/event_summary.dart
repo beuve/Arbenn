@@ -203,29 +203,47 @@ class EventSummary extends StatelessWidget {
     );
   }
 
-  Widget _locationRow() {
-    return Row(
-      children: [
-        Icon(ArbennIcons.location, size: 12, color: color.lighter),
-        const SizedBox(width: 5),
-        Text(
-          data.address.toString(),
-          style: TextStyle(color: color.lighter),
+  Widget _locationRow(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width: width - 200, //beurk
+      child: RichText(
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        text: TextSpan(
+          children: [
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Icon(ArbennIcons.location, size: 12, color: color.lighter),
+            ),
+            TextSpan(
+              text: " ${data.address.toString()}",
+              style: TextStyle(color: color.lighter),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildDataSummary() {
+  Widget _buildDataSummary(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          data.title,
-          maxLines: 2,
-          style: TextStyle(color: color.lighter, fontSize: 15),
-          overflow: TextOverflow.clip,
-          softWrap: false,
+        SizedBox(
+          width: width - 180, //beurk
+          child: Text(
+            data.title,
+            maxLines: 1,
+            style: TextStyle(
+              color: color.lighter,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+          ),
         ),
         const SizedBox(height: 12),
         Tags.static(data.tags,
@@ -235,7 +253,7 @@ class EventSummary extends StatelessWidget {
         const SizedBox(height: 7),
         _dateTimeRow(),
         const SizedBox(height: 7),
-        _locationRow(),
+        _locationRow(context),
       ],
     );
   }
@@ -249,7 +267,6 @@ class EventSummary extends StatelessWidget {
           height: 100,
           placeholderBuilder: (BuildContext context) => TickingBuilder(
                 builder: (context, tick) => Container(
-                  margin: const EdgeInsets.all(15.0),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: Color.lerp(color.light, color.lighter, tick)!,
@@ -288,7 +305,7 @@ class EventSummary extends StatelessWidget {
         child: Row(children: [
           _buildIcon(),
           _buildDivider(),
-          _buildDataSummary(),
+          _buildDataSummary(context),
         ]),
       ),
       onTap: () =>

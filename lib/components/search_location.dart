@@ -2,6 +2,7 @@ import 'package:arbenn/components/inputs.dart';
 import 'package:arbenn/components/overlay.dart';
 import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/data/locations_data.dart';
+import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide Autocomplete;
 import '../data/locations_data.dart';
 import '../utils/colors.dart';
@@ -123,20 +124,33 @@ class AddressSearchResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-        onPressed: onTap,
-        child: Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.all(15),
-          child: Text(
-            infos.toString(),
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: color.darker,
-              fontSize: 15,
-            ),
+      onPressed: onTap,
+      child: Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: RichText(
+          textAlign: TextAlign.left,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 3,
+          text: TextSpan(
+            children: [
+              WidgetSpan(
+                alignment: PlaceholderAlignment.bottom,
+                child:
+                    Icon(ArbennIcons.location, size: 18, color: color.darker),
+              ),
+              TextSpan(
+                text: " ${infos.toString()}",
+                style: TextStyle(
+                  color: color.darker,
+                  fontSize: 20,
+                ),
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -169,6 +183,29 @@ class _SearchAddressState extends State<SearchAddress> {
     super.initState();
   }
 
+  List<Widget> _addressSearchResults(List<Address> addresses) {
+    Address last = addresses.last;
+    List<Widget> result = [];
+    for (var i = 0; i < addresses.length; i++) {
+      result.add(AddressSearchResult(
+          infos: addresses[i],
+          color: widget.color,
+          onTap: () {
+            widget.onFinish(addresses[i]);
+            Navigator.pop(context);
+          }));
+      if (i != addresses.length - 1) {
+        result.add(Divider(
+          thickness: 1,
+          indent: 10,
+          endIndent: 250,
+          color: widget.color.light,
+        ));
+      }
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return FullPageOverlay(
@@ -184,16 +221,7 @@ class _SearchAddressState extends State<SearchAddress> {
                   return ScrollList(
                       color: widget.color,
                       children: snapshot.hasData
-                          ? snapshot.data!
-                              .map((c) => AddressSearchResult(
-                                    infos: c,
-                                    color: widget.color,
-                                    onTap: () {
-                                      widget.onFinish(c);
-                                      Navigator.pop(context);
-                                    },
-                                  ))
-                              .toList()
+                          ? _addressSearchResults(snapshot.data!)
                           : []);
                 })),
         Container(

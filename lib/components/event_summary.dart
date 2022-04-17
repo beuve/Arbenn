@@ -158,81 +158,91 @@ class EventSummary extends StatelessWidget {
     required this.color,
   }) : super(key: key);
 
-  Widget _adminAttendesNumRow() {
-    String maxAttendesText =
-        data.maxAttendes == null ? "" : " / ${data.maxAttendes}";
-    return Row(
-      children: [
-        ProfileMiniature(picture: data.admin.picture, size: 12),
-        const SizedBox(width: 5),
-        Text(
-          data.admin.firstName,
-          style: TextStyle(color: color.lighter),
-        ),
-        const SizedBox(width: 15),
-        Icon(ArbennIcons.userGroup, size: 12, color: color.lighter),
-        const SizedBox(width: 5),
-        Text(
-          '${data.numAttendes}$maxAttendesText',
-          style: TextStyle(color: color.lighter),
-        ),
-      ],
-    );
-  }
-
-  Widget _dateTimeRow() {
-    return Row(
-      children: [
-        Icon(ArbennIcons.calendar, size: 12, color: color.lighter),
-        const SizedBox(width: 5),
-        SizedBox(
-          width: 89,
-          child: Text(
-            '${data.date.day} / ${data.date.month} / ${data.date.year}',
+  Widget _iconRichText(Widget icon, String text,
+      {TextOverflow overflow = TextOverflow.ellipsis,
+      int maxLines = 1,
+      int flex = 2}) {
+    final Widget result = RichText(
+      maxLines: maxLines,
+      overflow: overflow,
+      text: TextSpan(
+        children: [
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: icon,
+          ),
+          TextSpan(
+            text: " $text",
             style: TextStyle(color: color.lighter),
           ),
-        ),
-        const SizedBox(width: 15),
-        Icon(ArbennIcons.clock, size: 12, color: color.lighter),
-        const SizedBox(width: 5),
-        Text(
-          '${data.date.hour.toString().padLeft(2, '0')}:${data.date.minute.toString().padLeft(2, '0')}',
-          style: TextStyle(color: color.lighter),
-        ),
-      ],
+        ],
+      ),
     );
+    if (flex > 0) {
+      return Expanded(flex: flex, child: result);
+    }
+    return result;
   }
 
-  Widget _locationRow(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+  Widget _adminAttendesNumRow(double width) {
+    String maxAttendesText =
+        data.maxAttendes == null ? "" : " / ${data.maxAttendes}";
     return SizedBox(
-      width: width - 200, //beurk
-      child: RichText(
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        text: TextSpan(
-          children: [
-            WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              child: Icon(ArbennIcons.location, size: 12, color: color.lighter),
+      width: width, //beurk
+      child: Row(
+        children: [
+          _iconRichText(
+            ProfileMiniature(
+              picture: data.admin.picture,
+              size: 12,
             ),
-            TextSpan(
-              text: " ${data.address.toString()}",
-              style: TextStyle(color: color.lighter),
-            ),
-          ],
-        ),
+            data.admin.firstName,
+            flex: 3,
+          ),
+          _iconRichText(
+              Icon(ArbennIcons.userGroup, size: 12, color: color.lighter),
+              '${data.numAttendes}$maxAttendesText'),
+        ],
       ),
     );
   }
 
+  Widget _dateTimeRow(double width) {
+    return SizedBox(
+      width: width,
+      child: Row(
+        children: [
+          _iconRichText(
+            Icon(ArbennIcons.calendar, size: 12, color: color.lighter),
+            '${data.date.day} / ${data.date.month} / ${data.date.year}',
+            flex: 3,
+          ),
+          _iconRichText(
+            Icon(ArbennIcons.clock, size: 12, color: color.lighter),
+            '${data.date.hour.toString().padLeft(2, '0')}:${data.date.minute.toString().padLeft(2, '0')}',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _locationRow(BuildContext context, double width) {
+    return SizedBox(
+        width: width, //beurk
+        child: _iconRichText(
+            Icon(ArbennIcons.location, size: 12, color: color.lighter),
+            " ${data.address.toString()}",
+            flex: 0,
+            maxLines: 2));
+  }
+
   Widget _buildDataSummary(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.of(context).size.width - 200;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: width - 180, //beurk
+          width: width + 10, //beurk
           child: Text(
             data.title,
             maxLines: 1,
@@ -246,14 +256,23 @@ class EventSummary extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Tags.static(data.tags,
-            color: color, fontSize: 10, colorTheme: ColorTheme.dark),
+        SizedBox(
+          width: width,
+          child: Tags.static(
+            data.tags,
+            color: color,
+            fontSize: 10,
+            colorTheme: ColorTheme.dark,
+            maxLines: 1,
+            align: TextAlign.start,
+          ),
+        ),
         const SizedBox(height: 2),
-        _adminAttendesNumRow(),
+        _adminAttendesNumRow(width),
         const SizedBox(height: 7),
-        _dateTimeRow(),
+        _dateTimeRow(width),
         const SizedBox(height: 7),
-        _locationRow(context),
+        _locationRow(context, width),
       ],
     );
   }

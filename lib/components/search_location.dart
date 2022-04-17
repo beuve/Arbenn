@@ -184,7 +184,6 @@ class _SearchAddressState extends State<SearchAddress> {
   }
 
   List<Widget> _addressSearchResults(List<Address> addresses) {
-    Address last = addresses.last;
     List<Widget> result = [];
     for (var i = 0; i < addresses.length; i++) {
       result.add(AddressSearchResult(

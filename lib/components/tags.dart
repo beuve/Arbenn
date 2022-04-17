@@ -2,7 +2,6 @@ import 'package:arbenn/components/buttons.dart';
 import 'package:arbenn/components/inputs.dart';
 import 'package:arbenn/components/overlay.dart';
 import 'package:arbenn/utils/colors.dart';
-import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
 import '../data/tags_data.dart';
 
@@ -62,11 +61,15 @@ class Tags extends StatelessWidget {
   final double fontSize;
   final ColorTheme colorTheme;
   final Function()? addAction;
+  final int? maxLines;
+  final TextAlign align;
 
   const Tags({
     Key? key,
     required this.tags,
     required this.color,
+    this.align = TextAlign.center,
+    this.maxLines,
     this.addAction,
     this.colorTheme = ColorTheme.light,
     this.fontSize = 18,
@@ -77,6 +80,8 @@ class Tags extends StatelessWidget {
       bool active = false,
       double fontSize = 18,
       ColorTheme colorTheme = ColorTheme.light,
+      TextAlign align = TextAlign.center,
+      int? maxLines,
       Function()? addAction}) {
     return Tags(
       tags: tags.map((t) => TagWidgetInfos(data: t, isActive: active)).toList(),
@@ -84,56 +89,61 @@ class Tags extends StatelessWidget {
       fontSize: fontSize,
       colorTheme: colorTheme,
       addAction: addAction,
+      maxLines: maxLines,
+      align: align,
     );
   }
 
-  List<Widget> _tagsList(List<TagWidgetInfos> tags) {
+  List<InlineSpan> _tagsList(List<TagWidgetInfos> tags) {
     return tags
-        .map((t) => Tag(
+        .map((t) => WidgetSpan(
+                child: Tag(
               label: t.data.label,
               isActive: t.isActive,
               color: color,
               onPressed: t.onTap,
               fontSize: fontSize,
               colorTheme: colorTheme,
-            ))
+            )))
         .toList();
   }
 
-  Widget _addButton() {
+  InlineSpan _addButton() {
     final Color outlineColor =
         colorTheme == ColorTheme.light ? color.lighter : color.darker;
     final Color backgroundColor =
         colorTheme == ColorTheme.light ? color.darker : color.lighter;
-    return TextButton(
-        child: Container(
-          margin: const EdgeInsets.only(bottom: 6, right: 6),
-          padding: EdgeInsets.symmetric(
-            horizontal: fontSize / 2,
-            vertical: fontSize / 12,
-          ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.all(Radius.circular(fontSize / 4)),
-          ),
-          child: Text("+",
-              style: TextStyle(color: outlineColor, fontSize: fontSize * 1.5)),
-        ),
-        onPressed: addAction);
+    return WidgetSpan(
+        child: TextButton(
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 6, right: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: fontSize / 2,
+                vertical: fontSize / 12,
+              ),
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.all(Radius.circular(fontSize / 4)),
+              ),
+              child: Text("+",
+                  style:
+                      TextStyle(color: outlineColor, fontSize: fontSize * 1.5)),
+            ),
+            onPressed: addAction));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        alignment: WrapAlignment.center,
-        children: [
+    return RichText(
+        textAlign: align,
+        maxLines: maxLines,
+        text: TextSpan(children: [
           ..._tagsList(tags.where((t) => t.isActive).toList()),
           if (addAction != null) _addButton(),
           ..._tagsList(
             tags.where((t) => !t.isActive).toList(),
           )
-        ]);
+        ]));
   }
 }
 

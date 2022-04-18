@@ -96,6 +96,42 @@ class EventDataSummary {
     }
   }
 
+  static Future<List<EventDataSummary>?> ofJsons(
+      List<Map<String, dynamic>> infos) async {
+    final List<TagData>? tagIds = await TagData.loadFromIds(infos
+        .map((e) => e["tags"] as List<dynamic>)
+        .expand((i) => i)
+        .toSet()
+        .toList()
+        .cast<String>());
+    if (tagIds == null) return null;
+    final Map<String, TagData> tagsMap =
+        Map<String, TagData>.fromIterable(tagIds, key: (e) => e.id);
+
+    List<EventDataSummary> eventsSummaries = [];
+    for (var i = 0; i < infos.length; i++) {
+      UserSumarryData admin = UserSumarryData.fromJson(infos[i]["admin"]);
+      await admin.getPicture();
+      final List<TagData> tags =
+          infos[i]["tags"].map<TagData>((t) => tagsMap[t]!).toList();
+      String? url = await getIconUrl(tags[0].id);
+      if (url == null) return null;
+      eventsSummaries.add(EventDataSummary(
+        eventId: infos[i]["eventId"],
+        admin: admin,
+        title: infos[i]["title"],
+        tags: tags,
+        date: DateTime.fromMillisecondsSinceEpoch(
+            infos[i]["date"].millisecondsSinceEpoch),
+        address: Address.ofJson(infos[i]["address"]),
+        maxAttendes: infos[i]["maxAttendes"],
+        numAttendes: infos[i]["numAttendes"],
+        iconUrl: url,
+      ));
+    }
+    return eventsSummaries;
+  }
+
   // Need optimisation with a ofJsons
   static Future<List<EventDataSummary>?> loadFromEventIds(
       List<String> eventIds) async {
@@ -105,18 +141,12 @@ class EventDataSummary {
     List<Map<String, dynamic>> infos = await users
         .where(FieldPath.documentId, whereIn: eventIds)
         .get()
-        .then((doc) =>
-            doc.docs.map((doc) => doc.data() as Map<String, dynamic>).toList());
-    List<EventDataSummary> res = [];
-    for (var i = 0; i < infos.length; i++) {
-      EventDataSummary? eventData = await ofJson(eventIds[i], infos[i]);
-      if (eventData != null) {
-        res.add(eventData);
-      } else {
-        return null;
-      }
-    }
-    return res;
+        .then((doc) => doc.docs.map((doc) {
+              Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+              data["eventId"] = doc.id;
+              return data;
+            }).toList());
+    return ofJsons(infos);
   }
 }
 
@@ -243,7 +273,6 @@ class EventData {
         .set(toJson(), SetOptions(merge: true))
         .then((_) => false)
         .onError((error, stackTrace) => true);
-    print(res);
     return res;
   }
 
@@ -255,9 +284,9 @@ class EventData {
         .child('eventImages')
         .child(eventId)
         .listAll();
-    List<CloudImage> cloudImage = await Future.wait(
+    List<CloudImage> cloudImages = await Future.wait(
         result.items.map((ref) => CloudImage.loadImage(ref)).toList());
-    return cloudImage;
+    return cloudImages;
   }
 
   static Future<void> addAttende(String eventId) async {

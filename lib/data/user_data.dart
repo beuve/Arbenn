@@ -209,10 +209,12 @@ class UserData {
         .where("adminId", isEqualTo: userId)
         .get()
         .then((querySnapshot) async {
-      final List<EventDataSummary?> data = await Future.wait(querySnapshot.docs
-          .map((i) => EventDataSummary.ofJson(i.id, i.data())));
-      if (data.any((element) => element == null)) return null;
-      return data.map((e) => e!).toList();
+      List<Map<String, dynamic>> infos = querySnapshot.docs.map((i) {
+        Map<String, dynamic> data = i.data() as Map<String, dynamic>;
+        data["eventId"] = i.id;
+        return data;
+      }).toList();
+      return EventDataSummary.ofJsons(infos);
     });
   }
 
@@ -224,10 +226,12 @@ class UserData {
         .where("attendesId", arrayContains: userId)
         .snapshots()
         .asyncMap((querySnapshot) async {
-      final List<EventDataSummary?> data = await Future.wait(querySnapshot.docs
-          .map((i) => EventDataSummary.ofJson(i.id, i.data())));
-      if (data.any((element) => element == null)) return null;
-      return data.map((e) => e!).toList();
+      List<Map<String, dynamic>> infos = querySnapshot.docs.map((i) {
+        Map<String, dynamic> data = i.data() as Map<String, dynamic>;
+        data["eventId"] = i.id;
+        return data;
+      }).toList();
+      return EventDataSummary.ofJsons(infos);
     });
   }
 }

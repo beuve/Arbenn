@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:arbenn/data/event_data.dart';
 import 'package:typesense/typesense.dart';
-import 'package:flutter/material.dart';
 
 final host = InternetAddress.loopbackIPv4.address;
 final Configuration typesenseConfiguration = Configuration(

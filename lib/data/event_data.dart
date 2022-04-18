@@ -82,18 +82,6 @@ class EventDataSummary {
     );
   }
 
-  static Future<List<EventDataSummary>?> loadAllEvents() async {
-    return FirebaseFirestore.instance
-        .collection('events')
-        .get()
-        .then((value) async {
-      List<EventDataSummary?> l = await Future.wait(
-          value.docs.map((doc) => ofJson(doc.id, doc.data())));
-      if (l.any((element) => element == null)) return null;
-      return l.map((e) => e!).toList();
-    });
-  }
-
   static Future<EventDataSummary?> loadFromEventId(String eventId) async {
     CollectionReference users = FirebaseFirestore.instance.collection('events');
 

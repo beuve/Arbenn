@@ -40,18 +40,22 @@ class _EventInfos extends StatelessWidget {
       required this.color})
       : super(key: key);
 
-  Widget _iconLabel(Widget icon, String label) {
+  Widget _iconLabel(Widget icon, String label, {double? width}) {
     return Row(
       children: [
         icon,
         const SizedBox(width: 5),
-        Text(
-          label,
-          style: TextStyle(
-            color: color.lighter,
-            fontWeight: FontWeight.bold,
+        SizedBox(
+          width: width,
+          child: Text(
+            label,
+            maxLines: 3,
+            style: TextStyle(
+              color: color.lighter,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -64,14 +68,15 @@ class _EventInfos extends StatelessWidget {
             ProfileMiniature(picture: admin.picture), admin.firstName));
   }
 
-  Widget _location() {
+  Widget _location(double width) {
     return _iconLabel(
         Icon(
           ArbennIcons.location,
           size: 20,
           color: color.lighter,
         ),
-        address.toString());
+        address.toString(),
+        width: width - 25);
   }
 
   Widget _dateTime() {
@@ -102,7 +107,7 @@ class _EventInfos extends StatelessWidget {
     );
   }
 
-  Widget _tags() {
+  Widget _tags(double width) {
     return Row(
       children: [
         Icon(
@@ -111,8 +116,14 @@ class _EventInfos extends StatelessWidget {
           color: color.lighter,
         ),
         const SizedBox(width: 3),
-        Tags.static(tags,
-            color: color, fontSize: 12, colorTheme: ColorTheme.dark)
+        SizedBox(
+            width: width - 23,
+            child: Tags.static(tags,
+                color: color,
+                fontSize: 12,
+                colorTheme: ColorTheme.dark,
+                align: TextAlign.start,
+                maxLines: 1)),
       ],
     );
   }
@@ -159,6 +170,7 @@ class _EventInfos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width - 50;
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -168,12 +180,13 @@ class _EventInfos extends StatelessWidget {
         ),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 35, child: _adminInfos(context)),
-          SizedBox(height: 35, child: _location()),
-          SizedBox(height: 35, child: _dateTime()),
-          SizedBox(height: 35, child: _tags()),
-          SizedBox(height: 35, child: _attendes(context)),
+          SizedBox(height: 35, width: width, child: _adminInfos(context)),
+          SizedBox(height: 35, width: width, child: _location(width)),
+          SizedBox(height: 35, width: width, child: _dateTime()),
+          SizedBox(height: 35, width: width, child: _tags(width)),
+          SizedBox(height: 35, width: width, child: _attendes(context)),
         ],
       ),
     );
@@ -561,23 +574,29 @@ class _EventPageState extends State<EventPage> {
   }
 
   Widget _buildHeader(String title, [EventData? event]) {
-    return Stack(
+    double width = MediaQuery.of(context).size.width - 120;
+    return Row(
       children: [
         Container(
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: BackButton(color: widget.color)),
-        Container(
-            alignment: Alignment.topCenter,
-            margin: const EdgeInsets.only(top: 4),
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Text(
-              title,
-              style: TextStyle(
-                  color: widget.color.darker,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            )),
+        SizedBox(
+            width: width,
+            child: Container(
+                alignment: Alignment.topCenter,
+                margin: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: widget.color.darker,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ))),
         if (event != null && isAdmin(event))
           Container(
             alignment: Alignment.topRight,
@@ -592,7 +611,7 @@ class _EventPageState extends State<EventPage> {
               ),
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
                 child: Icon(
                   ArbennIcons.pencil,
                   size: 20,

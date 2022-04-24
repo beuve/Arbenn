@@ -98,6 +98,7 @@ class EventDataSummary {
 
   static Future<List<EventDataSummary>?> ofJsons(
       List<Map<String, dynamic>> infos) async {
+    if (infos.isEmpty) return [];
     final List<TagData>? tagIds = await TagData.loadFromIds(infos
         .map((e) => e["tags"] as List<dynamic>)
         .expand((i) => i)

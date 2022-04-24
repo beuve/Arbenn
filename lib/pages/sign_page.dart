@@ -334,25 +334,32 @@ class SignPage extends StatelessWidget {
         //bottom: false,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              tileUp(
-                color: Palette.purple,
-                key: signInTile,
-                child: _SignUp(height: 0.7 * constraints.maxHeight),
-                concurrentKeys: [signUpTile],
-                label: "INSCRIPTION",
-              ),
-              tileUp(
-                color: Palette.red,
-                key: signUpTile,
-                background: Palette.purple.lighter,
-                child: _SignIn(height: 0.7 * constraints.maxHeight),
-                concurrentKeys: [signInTile],
-                label: "CONNEXION",
-              ),
-            ],
+          body: Container(
+            decoration: BoxDecoration(
+                color: Palette.red.lighter,
+                image: const DecorationImage(
+                    image: AssetImage("assets/images/background.png"),
+                    fit: BoxFit.cover)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                tileUp(
+                  color: Palette.purple,
+                  key: signInTile,
+                  child: _SignUp(height: 0.7 * constraints.maxHeight),
+                  concurrentKeys: [signUpTile],
+                  label: "INSCRIPTION",
+                ),
+                tileUp(
+                  color: Palette.red,
+                  key: signUpTile,
+                  background: Palette.purple.lighter,
+                  child: _SignIn(height: 0.7 * constraints.maxHeight),
+                  concurrentKeys: [signInTile],
+                  label: "CONNEXION",
+                ),
+              ],
+            ),
           ),
         ),
       );

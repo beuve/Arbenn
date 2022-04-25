@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'ARBENN',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.red,
         textButtonTheme: TextButtonThemeData(
@@ -112,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return EmailValidationPage(onFinish: () => _user!.reload());
     }
     return FutureBuilder<UserData?>(
-      future: getUserData(),
+      future: _userData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.data == null) {

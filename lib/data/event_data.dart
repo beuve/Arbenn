@@ -217,6 +217,8 @@ class EventData {
     List<UserSumarryData> attendes = (infos["attendes"] as List<dynamic>)
         .map((i) => UserSumarryData.fromJson(i))
         .toList();
+    await Future.forEach<UserSumarryData>(
+        attendes, (a) async => a.getPicture());
     List<TagData>? tags =
         await TagData.loadFromIds(infos["tags"].cast<String>() as List<String>);
     if (tags == null) return null;

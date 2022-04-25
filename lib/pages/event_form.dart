@@ -304,11 +304,7 @@ class _EventFormPageState extends State<EventFormPage> {
             ...photos,
             InkWell(
               onTap: () async {
-                List<XFile>? files = await ImagePicker().pickMultiImage(
-                  imageQuality: 60,
-                  maxHeight: 1000,
-                  maxWidth: 1000,
-                );
+                List<XFile>? files = await ImagePicker().pickMultiImage();
                 if (files != null) {
                   setState(() => _localImages =
                       _localImages + files.map((f) => File(f.path)).toList());
@@ -350,7 +346,8 @@ class _EventFormPageState extends State<EventFormPage> {
           error = error ||
               await saveImage(
                       "eventImages/${event.eventId}/${_minImageIndex + i}",
-                      _localImages[i].path)
+                      _localImages[i].path,
+                      sizes: {"": 1000})
                   .then((value) => false)
                   .onError((error, stackTrace) => true);
         }

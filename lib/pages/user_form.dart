@@ -138,9 +138,6 @@ class _UserFormPageState extends State<UserFormPage> {
         onTap: () async {
           XFile? file = await ImagePicker().pickImage(
             source: ImageSource.gallery,
-            imageQuality: 50,
-            maxHeight: 500,
-            maxWidth: 500,
           );
           if (file != null) {
             setState(() => _localProfilePicture = File(file.path));
@@ -310,7 +307,7 @@ class _UserFormPageState extends State<UserFormPage> {
     final String userId = FirebaseAuth.instance.currentUser!.uid;
     UserData? userData = await toUserData(context, userId);
     if (userData == null) return true;
-    bool error = await userData.save(context);
+    bool error = await userData.save();
     if (error) {
       showGenericError();
       return true;

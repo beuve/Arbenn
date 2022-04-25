@@ -32,11 +32,11 @@ class UserSumarryData {
   }
 
   Future<void> getPicture() async {
-    picture = await loadImage(userId);
+    picture = await loadImage(userId + "_tiny");
   }
 
   Future<String?> getPictureUrl() async {
-    return getImageUrl(userId);
+    return getImageUrl(userId + "_tiny");
   }
 
   static UserSumarryData currentUser() {
@@ -164,7 +164,6 @@ class UserData {
 
   static Future<UserData?> loadFromUserId(String userId) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
-    ImageProvider? image = await loadImage(userId);
     Map<String, dynamic>? infos = await users
         .doc(userId)
         .get()
@@ -177,7 +176,7 @@ class UserData {
       if (tags == null) {
         return null;
       }
-      return UserData(
+      UserData res = UserData(
           userId: userId,
           firstName: infos["firstName"],
           lastName: infos["lastName"],
@@ -186,12 +185,13 @@ class UserData {
               infos["birth"].millisecondsSinceEpoch),
           location: City.ofJson(infos["city"]),
           phone: infos["phone"],
-          description: infos["description"],
-          picture: image);
+          description: infos["description"]);
+      await res.loadPicture();
+      return res;
     }
   }
 
-  Future<bool> save(BuildContext context) async {
+  Future<bool> save() async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     bool res = await users
         .doc(userId)

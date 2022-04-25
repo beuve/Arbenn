@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
 
 class CloudImage {
   final firebase_storage.Reference ref;
@@ -17,18 +19,50 @@ class CloudImage {
 }
 
 Future<void> saveProfileImage(String id, String path) async {
-  saveImage('userProfiles/$id', path);
+  saveImage('userProfiles/$id', path,
+      sizes: {"": 500, "_tiny": 50}, quality: 50);
 }
 
-Future<void> saveImage(String cloudPath, String localPath) async {
-  firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-      .ref()
-      .child('images')
-      .child(cloudPath);
-  try {
-    ref.putFile(File(localPath));
-  } on FirebaseException catch (e) {
-    // e.g, e.code == 'canceled'
+Future<bool> saveImage(String cloudPath, String localPath,
+    {Map<String, int>? sizes, int quality = 60}) async {
+  if (sizes == null) {
+    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+        .ref()
+        .child('images')
+        .child(cloudPath);
+    try {
+      img.Image? image = img.decodeImage(File(localPath).readAsBytesSync());
+      if (image == null) return true;
+      ref.putData(Uint8List.fromList(img.encodeJpg(image, quality: quality)),
+          firebase_storage.SettableMetadata(contentType: "image/jpeg"));
+      return false;
+    } on FirebaseException catch (e) {
+      return true;
+    }
+  } else {
+    img.Image? image = img.decodeImage(File(localPath).readAsBytesSync());
+    if (image == null) return true;
+    try {
+      await Future.forEach<MapEntry<String, int>>(sizes.entries, (e) async {
+        bool isWidthMax = image.height < image.width;
+        img.Image resizedImage = img.copyResize(
+          image,
+          width: isWidthMax ? e.value : null,
+          height: isWidthMax ? null : e.value,
+        );
+        firebase_storage.Reference ref = firebase_storage
+            .FirebaseStorage.instance
+            .ref()
+            .child('images')
+            .child(cloudPath + e.key);
+        ref.putData(
+            Uint8List.fromList(img.encodeJpg(resizedImage, quality: quality)),
+            firebase_storage.SettableMetadata(contentType: "image/jpeg"));
+      });
+      return false;
+    } on FirebaseException catch (e) {
+      return true;
+    }
   }
 }
 

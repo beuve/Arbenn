@@ -16,6 +16,7 @@ import '../data/tags_data.dart';
 import '../data/event_data.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:collection/collection.dart';
 
 class EventFormPage extends StatefulWidget {
   final Nuance color;
@@ -103,6 +104,18 @@ class _EventFormPageState extends State<EventFormPage> {
         color: widget.color);
   }
 
+  Future<bool> updateSearch(EventData event) async {
+    if (widget.event == null) return false;
+    Function eq = const DeepCollectionEquality().equals;
+    if (event.title != widget.event!.title ||
+        !eq(event.tags, widget.event!.tags) ||
+        event.date != widget.event!.date ||
+        event.address != widget.event!.address) {
+      return Search().update(event);
+    }
+    return false;
+  }
+
   Future<EventData?> saveEvent() async {
     UserSumarryData admin = widget.event != null
         ? widget.event!.admin
@@ -119,13 +132,12 @@ class _EventFormPageState extends State<EventFormPage> {
         date: _dateController.date!,
         address: _address!,
         admin: admin,
-        icon: Icons.sports_handball,
         description: _descriptionController.text,
         numAttendes: widget.event != null ? widget.event!.numAttendes : 1,
         attendes: widget.event != null ? widget.event!.attendes : [admin],
       );
       bool errorSave = await event.save();
-      bool errorIndex = await Search().update(event);
+      bool errorIndex = await updateSearch(event);
       if (errorSave || errorIndex) {
         showGenericError();
         return null;

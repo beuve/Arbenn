@@ -161,7 +161,6 @@ class EventData {
   String description;
   int numAttendes;
   int? maxAttendes;
-  IconData icon;
   List<UserSumarryData> attendes;
 
   EventData({
@@ -173,7 +172,6 @@ class EventData {
     required this.admin,
     required this.description,
     required this.numAttendes,
-    required this.icon,
     this.maxAttendes,
     this.attendes = const [],
   });
@@ -224,7 +222,6 @@ class EventData {
     if (tags == null) return null;
     return EventData(
       eventId: eventId,
-      icon: Icons.sports_handball,
       admin: admin,
       title: infos["title"],
       tags: tags,
@@ -243,12 +240,12 @@ class EventData {
       "title": title,
       "date": date,
       "description": description,
-      "tags": tags,
-      "address": address,
+      "tags": tags.map((t) => t.id).toList(),
+      "address": address.toJson(),
       "admin": admin.toJson(),
       "adminId": admin.userId,
-      "attendes": attendes,
-      "attendesId": attendes.map((a) => a.userId),
+      "attendes": attendes.map((a) => a.toJson()).toList(),
+      "attendesId": attendes.map((a) => a.userId).toList(),
       "maxAttendes": maxAttendes,
       "numAttendes": numAttendes,
     };

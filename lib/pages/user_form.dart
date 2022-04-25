@@ -118,7 +118,7 @@ class _UserFormPageState extends State<UserFormPage> {
         location: _city!,
         phone: _phoneController.text,
         description: _bioController.text);
-    user.loadPicture();
+    await user.loadPicture();
     return user;
   }
 
@@ -136,8 +136,12 @@ class _UserFormPageState extends State<UserFormPage> {
       ),
       content: GestureDetector(
         onTap: () async {
-          XFile? file =
-              await ImagePicker().pickImage(source: ImageSource.gallery);
+          XFile? file = await ImagePicker().pickImage(
+            source: ImageSource.gallery,
+            imageQuality: 50,
+            maxHeight: 500,
+            maxWidth: 500,
+          );
           if (file != null) {
             setState(() => _localProfilePicture = File(file.path));
           }

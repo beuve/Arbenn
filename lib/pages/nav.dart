@@ -108,11 +108,21 @@ class _NavState extends State<Nav> {
   setRecommendedEvents() {
     final GeoPoint coord = _user.location.coord;
     final List<TagData> tags = _user.tags;
+    String printListString(List<String> l) {
+      String res = "[";
+      for (var i = 0; i < l.length; i++) {
+        if (i > 0) res = res + ",";
+        res = res + l[i];
+      }
+      res = res + "]";
+      return res;
+    }
+
     recommendedEvents = Search().search({
       "q": "*",
       'query_by': 'title',
       'sort_by': 'location(${coord.latitude}, ${coord.longitude}):asc',
-      'filter_by': "tags:=${tags.map((t) => t.id).toString()}",
+      'filter_by': "tags:=${printListString(tags.map((t) => t.id).toList())}",
     });
   }
 

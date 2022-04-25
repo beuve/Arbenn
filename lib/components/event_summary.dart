@@ -286,6 +286,8 @@ class EventSummary extends StatelessWidget {
           height: 100,
           placeholderBuilder: (BuildContext context) => TickingBuilder(
                 builder: (context, tick) => Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: Color.lerp(color.light, color.lighter, tick)!,

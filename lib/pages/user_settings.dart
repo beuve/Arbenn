@@ -8,6 +8,7 @@ import '../utils/colors.dart';
 import '../components/overlay.dart';
 import '../components/buttons.dart';
 import '../data/user_data.dart';
+import 'dart:developer' as developer;
 
 class UserSettings extends StatelessWidget {
   final UserData user;
@@ -134,7 +135,11 @@ class ChangeEmail extends StatelessWidget {
                 context: context,
                 text: "Une erreur inconnue est survenue.",
                 color: color);
-            print(e);
+            developer.log(
+              "Unknown network error",
+              name: "data/event_search Search.create",
+              error: e,
+            );
             return true;
           }
         } catch (e) {
@@ -142,7 +147,11 @@ class ChangeEmail extends StatelessWidget {
               context: context,
               text: "Une erreur inconnue est survenue.",
               color: color);
-          print(e);
+          developer.log(
+            "Internal error",
+            name: "data/event_search Search.create",
+            error: e,
+          );
           return true;
         }
       }
@@ -248,7 +257,11 @@ class ChangePassword extends StatelessWidget {
                 context: context,
                 text: "Une erreur inconnue est survenue.",
                 color: color);
-            print(e);
+            developer.log(
+              "Unknown network error",
+              name: "data/event_search Search.create",
+              error: e,
+            );
             return true;
           }
         } catch (e) {
@@ -256,7 +269,11 @@ class ChangePassword extends StatelessWidget {
               context: context,
               text: "Une erreur inconnue est survenue.",
               color: color);
-          print(e);
+          developer.log(
+            "Internal error",
+            name: "data/event_search Search.create",
+            error: e,
+          );
           return true;
         }
       }

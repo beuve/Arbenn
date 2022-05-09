@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:arbenn/data/event_data.dart';
 import 'package:typesense/typesense.dart';
+import 'dart:developer' as developer;
 
 final host = InternetAddress.loopbackIPv4.address;
 final Configuration typesenseConfiguration = Configuration(
@@ -41,7 +42,11 @@ class Search {
         })
         .then((value) => false)
         .onError((error, stackTrace) {
-          print(error);
+          developer.log(
+            "Upsert error for event : $event",
+            name: "data/event_search Search.upsert",
+            error: error,
+          );
           return true;
         });
   }
@@ -62,7 +67,11 @@ class Search {
         })
         .then((value) => false)
         .onError((error, stackTrace) {
-          print(error);
+          developer.log(
+            "Update error for event : $event",
+            name: "data/event_search Search.update",
+            error: error,
+          );
           return true;
         });
   }
@@ -83,7 +92,11 @@ class Search {
         })
         .then((value) => false)
         .onError((error, stackTrace) {
-          print(error);
+          developer.log(
+            "Create error for event : $event",
+            name: "data/event_search Search.create",
+            error: error,
+          );
           return true;
         });
   }
@@ -103,7 +116,11 @@ class Search {
         .search(query)
         .then(_parseInfos)
         .onError((error, stackTrace) {
-      print(error);
+      developer.log(
+        "Search error for query : $query",
+        name: "data/event_search Search.search",
+        error: error,
+      );
       return null;
     });
   }

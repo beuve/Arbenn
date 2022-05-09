@@ -8,6 +8,7 @@ import '../components/inputs.dart';
 import '../components/buttons.dart';
 import '../utils/colors.dart';
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -154,7 +155,11 @@ class _SignUpState extends State<_SignUp> {
             context: context,
             text: "Une erreur inconnue est survenue.",
             color: widget.color);
-        print(e);
+        developer.log(
+          "Unknown network error",
+          name: "data/event_search Search.create",
+          error: e,
+        );
       }
       return null;
     } catch (e) {
@@ -162,7 +167,11 @@ class _SignUpState extends State<_SignUp> {
           context: context,
           text: "Une erreur inconnue est survenue.",
           color: widget.color);
-      print(e);
+      developer.log(
+        "Internal error",
+        name: "data/event_search Search.create",
+        error: e,
+      );
       return null;
     }
   }
@@ -258,7 +267,11 @@ class _SignIn extends StatelessWidget {
             context: context,
             text: "Une erreur inconnue est survenue.",
             color: color);
-        print(e);
+        developer.log(
+          "Unknown network error",
+          name: "data/event_search Search.create",
+          error: e,
+        );
       }
       return null;
     } catch (e) {
@@ -266,7 +279,11 @@ class _SignIn extends StatelessWidget {
           context: context,
           text: "Une erreur inconnue est survenue.",
           color: color);
-      print(e);
+      developer.log(
+        "Internal error",
+        name: "data/event_search Search.create",
+        error: e,
+      );
       return null;
     }
   }

@@ -1,10 +1,10 @@
-export TYPESENSE_API_KEY=xyz
+export TYPESENSE_API_KEY=mDMeXk5T7gxrGsbPaRZshegrkxgmhBlU
 
 curl -H "X-TYPESENSE-API-KEY: ${TYPESENSE_API_KEY}" \
      -X DELETE \
-    "http://localhost:8108/collections/events"
+    "https://fjv6dx17iac5tz2lp-1.a1.typesense.net:443/collections/events"
 
-curl "http://localhost:8108/collections" \
+curl "https://fjv6dx17iac5tz2lp-1.a1.typesense.net:443/collections" \
       -X POST \
       -H "Content-Type: application/json" \
       -H "X-TYPESENSE-API-KEY: ${TYPESENSE_API_KEY}" -d '{

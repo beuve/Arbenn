@@ -1,6 +1,6 @@
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
+import 'package:arbenn/utils/colors.dart';
 
 class _AppBarContent extends StatelessWidget {
   final Nuance color;

@@ -4,11 +4,11 @@ import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart' hide BackButton;
-import '../utils/colors.dart';
-import '../data/event_data.dart';
-import 'tags.dart';
-import '../pages/event_page.dart';
-import 'user_elements.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/data/event_data.dart';
+import 'package:arbenn/components/tags.dart';
+import 'package:arbenn/pages/event_page.dart';
+import 'package:arbenn/components/user_elements.dart';
 import 'dart:async';
 
 class EventSummaryNoData extends StatelessWidget {
@@ -22,6 +22,7 @@ class EventSummaryNoData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScrollList(
+      color: color,
       children: [
         Container(
           alignment: Alignment.center,
@@ -32,6 +33,7 @@ class EventSummaryNoData extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               color: color.dark),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 ArbennIcons.info,
@@ -45,11 +47,9 @@ class EventSummaryNoData extends StatelessWidget {
                 style: TextStyle(color: color.lighter, fontSize: 20),
               ),
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ),
       ],
-      color: color,
     );
   }
 }
@@ -141,9 +141,9 @@ class EventSummariesPlaceHolders extends StatelessWidget {
         margin: const EdgeInsets.all(5),
         child: TickingBuilder(
             builder: (context, tick) => ScrollList(
+                  color: color,
                   children: List.filled(
                       num, EventSummaryPlaceholder(color: color, tick: tick)),
-                  color: color,
                 )));
   }
 }
@@ -355,9 +355,9 @@ class EventSummaries extends StatelessWidget {
       margin: const EdgeInsets.all(5),
       child: ScrollList(
         onRefresh: onRefresh,
+        color: color,
         children:
             events.map((e) => EventSummary(data: e, color: color)).toList(),
-        color: color,
       ),
     );
   }

@@ -1,8 +1,7 @@
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/tags_data.dart';
-import 'package:flutter/material.dart';
-import 'user_data.dart';
+import 'package:arbenn/data/user_data.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -205,6 +204,7 @@ class EventData {
     };
     CollectionReference users = FirebaseFirestore.instance.collection('events');
     DocumentReference? event =
+        // ignore: unnecessary_cast
         await (users.add(json) as Future<DocumentReference?>)
             .onError((error, stackTrace) => null);
     if (event == null) return null;

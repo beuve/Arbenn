@@ -10,9 +10,8 @@ import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
-import '../data/event_data.dart';
-import '../components/inputs.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/components/inputs.dart';
 
 class SearchPage extends StatefulWidget {
   final Nuance color;

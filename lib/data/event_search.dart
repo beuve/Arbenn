@@ -6,18 +6,16 @@ import 'dart:developer' as developer;
 
 final host = InternetAddress.loopbackIPv4.address;
 final Configuration typesenseConfiguration = Configuration(
-  'xyz',
+  'mDMeXk5T7gxrGsbPaRZshegrkxgmhBlU',
   nodes: {
     Node(
-      Protocol.http, // For Typesense Cloud use https
-      "10.0.2.2", // For Typesense Cloud use xxx.a1.typesense.net
-      port: 8108, // For Typesense Cloud use 443
+      Protocol.https, // For Typesense Cloud use https
+      "fjv6dx17iac5tz2lp-1.a1.typesense.net", // For Typesense Cloud use xxx.a1.typesense.net
+      port: 443, // For Typesense Cloud use 443
     ),
   },
   connectionTimeout: const Duration(seconds: 2),
 );
-
-class SearchQuery {}
 
 class Search {
   late Client client;

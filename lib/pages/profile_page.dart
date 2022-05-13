@@ -7,17 +7,16 @@ import 'package:arbenn/components/user_elements.dart';
 import 'package:arbenn/pages/user_settings.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide BackButton;
-import '../utils/colors.dart';
-import '../components/buttons.dart';
-import '../components/tabs.dart';
-import '../data/user_data.dart';
-import '../components/scroller.dart';
-import '../components/event_summary.dart';
-import '../components/tags.dart';
-import '../data/event_data.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/components/buttons.dart';
+import 'package:arbenn/components/tabs.dart';
+import 'package:arbenn/data/user_data.dart';
+import 'package:arbenn/components/scroller.dart';
+import 'package:arbenn/components/event_summary.dart';
+import 'package:arbenn/components/tags.dart';
+import 'package:arbenn/data/event_data.dart';
 
 class _Tabs extends StatelessWidget {
-  final Nuance color;
   final bool backButton;
   final Function(BuildContext)? onEdit;
   final Widget description;
@@ -26,7 +25,6 @@ class _Tabs extends StatelessWidget {
 
   const _Tabs({
     Key? key,
-    this.color = Palette.blue,
     this.backButton = false,
     this.onEdit,
     required this.description,
@@ -39,7 +37,7 @@ class _Tabs extends StatelessWidget {
       child: Tabs(tabs: [
         TabInfos(content: description, title: "Description"),
         TabInfos(content: events, title: "Evenements"),
-      ], color: color),
+      ], color: Palette.blue),
     );
   }
 
@@ -53,7 +51,7 @@ class _Tabs extends StatelessWidget {
           child: Icon(
             ArbennIcons.vdots,
             size: 24,
-            color: color.darker,
+            color: Palette.blue.darker,
           ),
         ),
       ),
@@ -64,16 +62,16 @@ class _Tabs extends StatelessWidget {
     return Container(
         alignment: Alignment.topLeft,
         padding: const EdgeInsets.symmetric(vertical: 15),
-        child: BackButton(color: color));
+        child: const BackButton(color: Palette.blue));
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: color.main,
+      color: Palette.blue.main,
       child: Container(
         decoration: BoxDecoration(
-            color: color.light,
+            color: Palette.blue.light,
             borderRadius:
                 const BorderRadius.vertical(top: Radius.circular(25))),
         child: Column(
@@ -320,14 +318,12 @@ class _ProfilePagePlaceholder extends StatelessWidget {
   final Nuance color;
   final bool backButton;
   final bool editButton;
-  final Duration duration;
 
   const _ProfilePagePlaceholder({
     Key? key,
     this.color = Palette.blue,
     this.backButton = false,
     this.editButton = true,
-    this.duration = const Duration(seconds: 1),
   }) : super(key: key);
 
   @override

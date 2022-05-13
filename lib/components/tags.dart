@@ -3,7 +3,7 @@ import 'package:arbenn/components/inputs.dart';
 import 'package:arbenn/components/overlay.dart';
 import 'package:arbenn/utils/colors.dart';
 import 'package:flutter/material.dart';
-import '../data/tags_data.dart';
+import 'package:arbenn/data/tags_data.dart';
 
 class Tag extends StatelessWidget {
   final String label;
@@ -30,6 +30,7 @@ class Tag extends StatelessWidget {
     Color backgroundColor =
         colorTheme == ColorTheme.light ? color.darker : color.lighter;
     return TextButton(
+      onPressed: onPressed,
       child: Container(
         margin: const EdgeInsets.only(bottom: 6, right: 6),
         padding: EdgeInsets.symmetric(
@@ -44,13 +45,12 @@ class Tag extends StatelessWidget {
               : Border.all(color: backgroundColor, width: fontSize / 9),
         ),
         child: Text(
-          "#" + label,
+          "#$label",
           style: TextStyle(
               color: isActive ? outlineColor : backgroundColor,
               fontSize: fontSize),
         ),
       ),
-      onPressed: onPressed,
     );
   }
 }
@@ -115,6 +115,7 @@ class Tags extends StatelessWidget {
         colorTheme == ColorTheme.light ? color.darker : color.lighter;
     return WidgetSpan(
         child: TextButton(
+            onPressed: addAction,
             child: Container(
               margin: const EdgeInsets.only(bottom: 6, right: 6),
               padding: EdgeInsets.symmetric(
@@ -128,8 +129,7 @@ class Tags extends StatelessWidget {
               child: Text("+",
                   style:
                       TextStyle(color: outlineColor, fontSize: fontSize * 1.5)),
-            ),
-            onPressed: addAction));
+            )));
   }
 
   @override

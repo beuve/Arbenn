@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide IconButton, BackButton;
-import '../utils/colors.dart';
+import 'package:arbenn/utils/colors.dart';
 
 class TabInfos {
   final String title;

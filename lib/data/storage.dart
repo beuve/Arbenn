@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
+import 'dart:developer' as developer;
 
 class CloudImage {
   final firebase_storage.Reference ref;
@@ -37,6 +38,8 @@ Future<bool> saveImage(String cloudPath, String localPath,
           firebase_storage.SettableMetadata(contentType: "image/jpeg"));
       return false;
     } on FirebaseException catch (e) {
+      developer.log("Error when saving on firebase (no size)",
+          name: "data/storage saveImage", error: e);
       return true;
     }
   } else {
@@ -61,6 +64,9 @@ Future<bool> saveImage(String cloudPath, String localPath,
       });
       return false;
     } on FirebaseException catch (e) {
+      developer.log("Error when saving on firebase (with size)",
+          name: "data/storage saveImage", error: e);
+
       return true;
     }
   }
@@ -77,8 +83,9 @@ Future<ImageProvider?> loadImage(String id) async {
         await ref.getDownloadURL().then((url) => NetworkImage(url));
     return image;
   } on FirebaseException catch (e) {
+    developer.log("Error when loading image from firebase",
+        name: "data/storage loadImage", error: e);
     return null;
-    // e.g, e.code == 'canceled'
   }
 }
 
@@ -90,8 +97,9 @@ Future<String?> getIconUrl(String id) async {
   try {
     return ref.getDownloadURL();
   } on FirebaseException catch (e) {
+    developer.log("Error when querying url from firebase",
+        name: "data/storage getIconUrl", error: e);
     return null;
-    // e.g, e.code == 'canceled'
   }
 }
 
@@ -105,7 +113,8 @@ Future<String?> getImageUrl(String id) async {
     String? url = await ref.getDownloadURL();
     return url;
   } on FirebaseException catch (e) {
+    developer.log("Error when querying url from firebase",
+        name: "data/storage getImageUrl", error: e);
     return null;
-    // e.g, e.code == 'canceled'
   }
 }

@@ -1,9 +1,9 @@
 import 'package:arbenn/components/scroller.dart';
 import 'package:flutter/material.dart';
-import '../data/event_data.dart';
-import '../components/event_summary.dart';
-import '../utils/colors.dart';
-import '../components/tabs.dart';
+import 'package:arbenn/data/event_data.dart';
+import 'package:arbenn/components/event_summary.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/components/tabs.dart';
 
 class CalendarPage extends StatelessWidget {
   final List<EventDataSummary>? futureEvents;
@@ -101,7 +101,7 @@ class CalendarPage extends StatelessWidget {
     }
     return Container(
       margin: const EdgeInsets.all(5),
-      child: ScrollList(children: res, color: color),
+      child: ScrollList(color: color, children: res),
     );
   }
 

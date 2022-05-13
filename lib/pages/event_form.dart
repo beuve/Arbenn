@@ -7,13 +7,13 @@ import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/user_data.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
-import '../components/stepper.dart';
-import '../components/inputs.dart';
-import '../components/scroller.dart';
-import '../components/tags.dart';
-import '../data/tags_data.dart';
-import '../data/event_data.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/components/stepper.dart';
+import 'package:arbenn/components/inputs.dart';
+import 'package:arbenn/components/scroller.dart';
+import 'package:arbenn/components/tags.dart';
+import 'package:arbenn/data/tags_data.dart';
+import 'package:arbenn/data/event_data.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:collection/collection.dart';
@@ -37,7 +37,7 @@ class _EventFormPageState extends State<EventFormPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final DatePickingController _dateController =
-      DatePickingController(needTime: true);
+      DatePickingController(showTime: true);
   final TextEditingController _addressController = TextEditingController();
   final TagSearch _tagSearch = TagSearch();
 
@@ -315,14 +315,14 @@ class _EventFormPageState extends State<EventFormPage> {
                 child: Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: widget.color.main,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
                   child: Icon(
                     ArbennIcons.plus,
                     size: 60,
                     color: widget.color.lighter,
-                  ),
-                  decoration: BoxDecoration(
-                    color: widget.color.main,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
                 ),
               ),

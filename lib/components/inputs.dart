@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
+import 'package:arbenn/utils/colors.dart';
 
 class FormInput extends StatelessWidget {
   final String label;
@@ -110,9 +110,8 @@ class SearchInput extends StatelessWidget {
     );
   }
 }
-
-class DatePicker extends StatelessWidget {
-  final String label;
+class DatePicker extends StatefulWidget {
+final String label;
   final Nuance color;
   final DateTime startDate;
   final DateTime stopDate;
@@ -131,42 +130,48 @@ class DatePicker extends StatelessWidget {
     this.searchDesign = false,
   }) : super(key: key);
 
-  @override
+ @override
+ State<DatePicker>  createState() => _DatePickerState();
+}
+
+class _DatePickerState extends State<DatePicker> {
+    @override
   Widget build(BuildContext context) {
-    if (searchDesign) {
+    if (widget.searchDesign) {
       return SearchInput(
-          label: label,
-          color: color,
+          label: widget.label,
+          color: widget.color,
           readOnly: true,
-          controller: controller.textController,
-          onTap: () {
-            controller.pickDate(context, start: startDate, stop: stopDate);
-          });
+          controller: widget.controller.textController,
+          onTap: () async {
+          await widget.controller.pickDate(context, start: widget.startDate, stop: widget.stopDate);
+          if (!mounted) return;
+          await widget.controller.pickTime(context);
+        });
     }
     return FormInput(
-        label: label,
-        color: color.darker,
+        label: widget.label,
+        color: widget.color.darker,
         readOnly: true,
-        controller: controller.textController,
-        onTap: () {
-          controller.pickDate(context, start: startDate, stop: stopDate);
+        controller: widget.controller.textController,
+        onTap: () async {
+          await widget.controller.pickDate(context, start: widget.startDate, stop: widget.stopDate);
+          if (!mounted) return;
+          await widget.controller.pickTime(context);
         });
   }
 }
 
 class DatePickingController extends ValueNotifier<DateTime?> {
-  final bool needTime;
+  final bool showTime;
 
-  DatePickingController({
-    DateTime? date,
-    this.needTime = false,
-  }) : super(date);
+  DatePickingController({DateTime? date, this.showTime = false}) : super(date);
 
   TextEditingController get textController {
     final TextEditingController controller = TextEditingController(text: text);
     addListener(() {
       if (value != null) {
-        String time = needTime ? "  ${value!.hour}:${value!.minute}" : "";
+        String time = showTime ? "  ${value!.hour}:${value!.minute}" : "";
         controller.text =
             "${value!.day} / ${value!.month} / ${value!.year}$time";
       } else {
@@ -178,7 +183,7 @@ class DatePickingController extends ValueNotifier<DateTime?> {
 
   String? get text {
     if (value != null && value != null) {
-      String time = needTime ? "  ${value!.hour}:${value!.minute}" : "";
+      String time = showTime ? "  ${value!.hour}:${value!.minute}" : "";
       return "${value!.day} / ${value!.month} / ${value!.year}$time";
     }
     return null;
@@ -190,9 +195,7 @@ class DatePickingController extends ValueNotifier<DateTime?> {
     value = newDate;
   }
 
-  Future<void> picTime(
-    BuildContext context,
-  ) async {
+  Future<void> pickTime(BuildContext context) async {
     if (value != null) {
       TimeOfDay? t = await showTimePicker(
         context: context,
@@ -214,9 +217,6 @@ class DatePickingController extends ValueNotifier<DateTime?> {
       lastDate: stop,
     );
     value = newDate;
-    if (needTime && newDate != null) {
-      await picTime(context);
-    }
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 const String host = "api-adresse.data.gouv.fr";
 const String path = "search";
@@ -92,7 +93,8 @@ class Address {
         }
       }).toList();
     } catch (e) {
-      print("error: $e");
+      developer.log("Error when parsing json",
+          name: "data/locations_data Address.fromQuery", error: e);
     }
 
     return result;
@@ -172,7 +174,8 @@ class City {
               ))
           .toList();
     } catch (e) {
-      print("error: $e");
+      developer.log("Error when parsing json",
+          name: "data/locations_data City.fromQuery", error: e);
     }
 
     return result;

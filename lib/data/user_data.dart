@@ -2,7 +2,7 @@ import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/tags_data.dart';
 import 'package:flutter/material.dart';
-import 'event_data.dart';
+import 'package:arbenn/data/event_data.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,11 +32,11 @@ class UserSumarryData {
   }
 
   Future<void> getPicture() async {
-    picture = await loadImage(userId + "_tiny");
+    picture = await loadImage("${userId}_tiny");
   }
 
   Future<String?> getPictureUrl() async {
-    return getImageUrl(userId + "_tiny");
+    return getImageUrl("${userId}_tiny");
   }
 
   static UserSumarryData currentUser() {
@@ -87,38 +87,6 @@ class UserData {
     this.phone,
     this.picture,
   });
-
-  static UserData dummy({
-    String userId = "1",
-    String firstName = "John",
-    String lastName = "Doe",
-    List<TagData>? tags,
-    DateTime? birth,
-    String location = "Saint Sauveur Lendelin",
-    String phone = "0203040506",
-    String description =
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    List<EventData>? events,
-  }) {
-    return UserData(
-        userId: userId,
-        firstName: firstName,
-        lastName: lastName,
-        tags: tags ??
-            [
-              TagData(label: "sport", id: "sport"),
-              TagData(label: "randonnee", id: "hiking")
-            ],
-        birth: DateTime.parse("19951124"),
-        location: City(
-          city: "Saint Sauveur Lendelin",
-          cityCode: "50490",
-          coord: GeoPoint(123, 123),
-        ),
-        description: description,
-        phone: phone,
-        picture: const AssetImage('assets/images/user_placeholder.png'));
-  }
 
   int get age {
     DateTime currentDate = DateTime.now();

@@ -1,6 +1,6 @@
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
+import 'package:arbenn/utils/colors.dart';
 
 class Button extends StatelessWidget {
   final Nuance color;
@@ -22,15 +22,15 @@ class Button extends StatelessWidget {
       onPressed: onPressed,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+        decoration: BoxDecoration(
+          color: theme == ColorTheme.light ? color.darker : color.lighter,
+          borderRadius: const BorderRadius.all(Radius.circular(25)),
+        ),
         child: Text(
           label,
           style: TextStyle(
               color: theme == ColorTheme.light ? color.lighter : color.darker,
               fontSize: 19),
-        ),
-        decoration: BoxDecoration(
-          color: theme == ColorTheme.light ? color.darker : color.lighter,
-          borderRadius: const BorderRadius.all(Radius.circular(25)),
         ),
       ),
     );
@@ -55,14 +55,14 @@ class IconButton extends StatelessWidget {
       onPressed: onPressed,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        decoration: BoxDecoration(
+          color: color.darker,
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
+        ),
         child: Icon(
           icon,
           size: 20,
           color: color.lighter,
-        ),
-        decoration: BoxDecoration(
-          color: color.darker,
-          borderRadius: const BorderRadius.all(Radius.circular(30)),
         ),
       ),
     );
@@ -173,6 +173,8 @@ class SettingButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: color.dark))),
         child: Stack(
           children: [
             Container(
@@ -193,8 +195,6 @@ class SettingButton extends StatelessWidget {
             )
           ],
         ),
-        decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: color.dark))),
       ),
     );
   }
@@ -299,7 +299,6 @@ class _FutureButtonState extends State<FutureButton>
         duration: const Duration(milliseconds: 300),
         padding: EdgeInsets.symmetric(
             horizontal: _state == _ButtonState.waiting ? 50 : 20, vertical: 20),
-        child: content,
         decoration: BoxDecoration(
           color: widget.theme == ColorTheme.light
               ? widget.color.darker
@@ -307,6 +306,7 @@ class _FutureButtonState extends State<FutureButton>
           borderRadius: BorderRadius.all(
               Radius.circular(_state == _ButtonState.waiting ? 25 : 50)),
         ),
+        child: content,
       ),
     );
   }

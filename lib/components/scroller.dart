@@ -121,14 +121,6 @@ class _ScrollListState extends State<ScrollList> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: widget.onRefresh != null
-          ? RefreshIndicator(
-              child: list,
-              onRefresh: widget.onRefresh!,
-              color: widget.color.darker,
-              backgroundColor: widget.color.lighter,
-            )
-          : list,
       decoration: BoxDecoration(
         border: Border(
           top: hasTopHidedInfos()
@@ -139,6 +131,14 @@ class _ScrollListState extends State<ScrollList> {
               : BorderSide.none,
         ),
       ),
+      child: widget.onRefresh != null
+          ? RefreshIndicator(
+              onRefresh: widget.onRefresh!,
+              color: widget.color.darker,
+              backgroundColor: widget.color.lighter,
+              child: list,
+            )
+          : list,
     );
   }
 }
@@ -183,10 +183,6 @@ class _ScrollSingleState extends State<ScrollSingle> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: SingleChildScrollView(
-        child: widget.child,
-        controller: _scrollControl,
-      ),
       decoration: BoxDecoration(
         border: Border(
           top: _scrollState != ScrollState.top
@@ -196,6 +192,10 @@ class _ScrollSingleState extends State<ScrollSingle> {
               ? BorderSide(width: 1, color: widget.shadowColor)
               : BorderSide.none,
         ),
+      ),
+      child: SingleChildScrollView(
+        controller: _scrollControl,
+        child: widget.child,
       ),
     );
   }

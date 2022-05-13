@@ -15,6 +15,7 @@ class TagData {
   TagData({required this.id, required this.label});
 
   static Future<List<TagData>?> loadFromIds(List<String> ids) async {
+    // ignore: unnecessary_cast
     return (FirebaseFirestore.instance
             .collection('tags')
             .where(FieldPath.documentId, whereIn: ids)

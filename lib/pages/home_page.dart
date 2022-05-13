@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../data/event_data.dart';
-import '../components/event_summary.dart';
-import '../utils/colors.dart';
+import 'package:arbenn/data/event_data.dart';
+import 'package:arbenn/components/event_summary.dart';
+import 'package:arbenn/utils/colors.dart';
 
 class HomePage extends StatelessWidget {
   final Nuance color;

@@ -4,16 +4,16 @@ import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide Autocomplete;
-import '../utils/colors.dart';
-import '../components/stepper.dart';
-import '../components/inputs.dart';
-import '../components/scroller.dart';
-import '../components/tags.dart';
-import '../data/tags_data.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/components/stepper.dart';
+import 'package:arbenn/components/inputs.dart';
+import 'package:arbenn/components/scroller.dart';
+import 'package:arbenn/components/tags.dart';
+import 'package:arbenn/data/tags_data.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import '../data/user_data.dart';
-import '../data/storage.dart';
+import 'package:arbenn/data/user_data.dart';
+import 'package:arbenn/data/storage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -150,6 +150,10 @@ class _UserFormPageState extends State<UserFormPage> {
             margin: const EdgeInsets.symmetric(vertical: 8.0),
             width: 230.0,
             height: 230.0,
+            decoration: BoxDecoration(
+              color: widget.color.darker,
+              shape: BoxShape.circle,
+            ),
             child: Stack(children: [
               if (image != null)
                 CircleAvatar(
@@ -177,10 +181,6 @@ class _UserFormPageState extends State<UserFormPage> {
                 ),
               ),
             ]),
-            decoration: BoxDecoration(
-              color: widget.color.darker,
-              shape: BoxShape.circle,
-            ),
           ),
         ),
       ),

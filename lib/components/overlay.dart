@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' hide BackButton;
-import '../utils/colors.dart';
-import '../components/buttons.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/components/buttons.dart';
 
 class FullPageOverlay extends StatelessWidget {
   final Nuance color;

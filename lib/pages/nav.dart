@@ -5,17 +5,17 @@ import 'package:arbenn/data/event_search.dart';
 import 'package:arbenn/data/tags_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
-import '../utils/icons.dart';
-import '../components/buttons.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/utils/icons.dart';
+import 'package:arbenn/components/buttons.dart';
 import 'home_page.dart';
 import 'search_page.dart';
 import 'calendar_page.dart';
 import 'profile_page.dart';
-import '../components/app_bar.dart';
+import 'package:arbenn/components/app_bar.dart';
 import 'event_form.dart';
-import '../data/user_data.dart';
-import '../data/event_data.dart';
+import 'package:arbenn/data/user_data.dart';
+import 'package:arbenn/data/event_data.dart';
 
 class _PageInfos {
   final int num;
@@ -111,10 +111,10 @@ class _NavState extends State<Nav> {
     String printListString(List<String> l) {
       String res = "[";
       for (var i = 0; i < l.length; i++) {
-        if (i > 0) res = res + ",";
+        if (i > 0) res = "$res,";
         res = res + l[i];
       }
-      res = res + "]";
+      res = "$res]";
       return res;
     }
 

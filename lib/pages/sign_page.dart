@@ -3,10 +3,10 @@ import 'package:arbenn/components/page_transitions.dart';
 import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart';
-import '../components/up_expension.dart';
-import '../components/inputs.dart';
-import '../components/buttons.dart';
-import '../utils/colors.dart';
+import 'package:arbenn/components/up_expension.dart';
+import 'package:arbenn/components/inputs.dart';
+import 'package:arbenn/components/buttons.dart';
+import 'package:arbenn/utils/colors.dart';
 import 'dart:async';
 import 'dart:developer' as developer;
 
@@ -25,8 +25,8 @@ class _ForgotPassword extends StatelessWidget {
           text: "Entrez l'email lié à votre compte avant de valider.",
           color: color);
     } else {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: _emailController.text);
+      FirebaseAuth.instance
+          .sendPasswordResetEmail(email: _emailController.text); // need await ?
       Navigator.of(context).pop();
     }
   }
@@ -94,9 +94,8 @@ class _Conditions extends StatelessWidget {
 
 class _SignUp extends StatefulWidget {
   final double height;
-  final Nuance color;
-  const _SignUp({Key? key, required this.height, this.color = Palette.purple})
-      : super(key: key);
+  final Nuance color = Palette.purple;
+  const _SignUp({Key? key, required this.height}) : super(key: key);
 
   @override
   State<_SignUp> createState() => _SignUpState();
@@ -232,13 +231,12 @@ class _SignUpState extends State<_SignUp> {
 }
 
 class _SignIn extends StatelessWidget {
-  final Nuance color;
+  final Nuance color = Palette.red;
   final double height;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
 
-  _SignIn({Key? key, required this.height, this.color = Palette.red})
-      : super(key: key);
+  _SignIn({Key? key, required this.height}) : super(key: key);
 
   Future<UserCredential?> _signIn(BuildContext context) async {
     try {
@@ -312,8 +310,8 @@ class _SignIn extends StatelessWidget {
               margin: const EdgeInsets.only(top: 5, right: 10),
               alignment: Alignment.centerRight,
               child: TextButton(
-                  onPressed: () =>
-                      Navigator.of(context).push(slideIn(_ForgotPassword())),
+                  onPressed: () => Navigator.of(context)
+                      .push(slideIn(_ForgotPassword(color: color))),
                   child: Text(
                     "Mot de pass oublié ?",
                     style: TextStyle(color: color.flash),

@@ -12,13 +12,13 @@ import 'package:arbenn/pages/profile_page.dart';
 import 'package:arbenn/utils/icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide BackButton;
-import '../utils/colors.dart';
-import '../data/event_data.dart';
-import '../components/app_bar.dart';
-import '../components/buttons.dart';
-import '../components/tabs.dart';
-import '../components/tags.dart';
-import '../components/scroller.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/data/event_data.dart';
+import 'package:arbenn/components/app_bar.dart';
+import 'package:arbenn/components/buttons.dart';
+import 'package:arbenn/components/tabs.dart';
+import 'package:arbenn/components/tags.dart';
+import 'package:arbenn/components/scroller.dart';
 
 class _EventInfos extends StatelessWidget {
   final UserSumarryData admin;
@@ -221,15 +221,15 @@ class _ManageParticipate extends StatelessWidget {
     return TextButton(
       onPressed: subscribe,
       child: Container(
-          child: Text("PARTICIPER",
-              style: TextStyle(
-                color: color.lighter,
-              )),
           height: 32,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
           decoration: BoxDecoration(
               color: color.darker,
-              borderRadius: const BorderRadius.all(Radius.circular(5)))),
+              borderRadius: const BorderRadius.all(Radius.circular(5))),
+          child: Text("PARTICIPER",
+              style: TextStyle(
+                color: color.lighter,
+              ))),
     );
   }
 

@@ -3,9 +3,8 @@ import 'package:arbenn/components/overlay.dart';
 import 'package:arbenn/components/scroller.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/utils/icons.dart';
+import 'package:arbenn/utils/colors.dart';
 import 'package:flutter/material.dart' hide Autocomplete;
-import '../data/locations_data.dart';
-import '../utils/colors.dart';
 
 class CitySearchResult extends StatelessWidget {
   final City infos;

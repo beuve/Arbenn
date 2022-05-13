@@ -1,38 +1,9 @@
 import 'package:arbenn/utils/icons.dart';
 import 'package:flutter/material.dart' hide IconButton, BackButton;
-import '../utils/colors.dart';
-import 'buttons.dart';
+import 'package:arbenn/utils/colors.dart';
+import 'package:arbenn/components/buttons.dart';
 
-/// Modified with Arbenn design.
-///
-/// A material stepper widget that displays progress through a sequence of
-/// steps. Steppers are particularly useful in the case of forms where one step
-/// requires the completion of another one, or where multiple steps need to be
-/// completed in order to submit the whole form.
-///
-/// The widget is a flexible wrapper. A parent class should pass [currentStep]
-/// to this widget based on some logic triggered by the three callbacks that it
-/// provides.
-///
-/// {@tool dartpad}
-/// An example the shows how to use the [Stepper], and the [Stepper] UI
-/// appearance.
-///
-/// ** See code in examples/api/lib/material/stepper/stepper.0.dart **
-/// {@end-tool}
-///
-/// See also:
-///
-///  * [Step]
-///  * <https://material.io/archive/guidelines/components/steppers.html>
 class FormStepper extends StatefulWidget {
-  /// Creates a stepper from a list of steps.
-  ///
-  /// This widget is not meant to be rebuilt with a different list of steps
-  /// unless a key is provided in order to distinguish the old stepper from the
-  /// new one.
-  ///
-  /// The [steps] and [color] arguments must not be null.
   const FormStepper({
     Key? key,
     required this.steps,
@@ -46,55 +17,14 @@ class FormStepper extends StatefulWidget {
     this.resizeOnKeyboard,
   }) : super(key: key);
 
-  /// The steps of the stepper whose titles, subtitles, icons always get shown.
-  ///
-  /// The length of [steps] must not change.
   final List<Step> steps;
-
-  /// Nuance of colors to be used in the stepper header.
   final Nuance color;
-
-  /// Function called when the user cancel the stepper (cancel button is located
-  /// on top left of the page).
-  ///
-  /// It is only used for custom behiviors. A value is not needed for the
-  /// stepper to work.
   final VoidCallback? onCancel;
-
-  /// Function called when the user finishes the stepper.
-  ///
-  /// It is only used for custom behiviors. A value is not needed for the
-  /// stepper to work.
   final Future<bool> Function() onFinish;
-
-  /// If true the [body] and the scaffold's floating widgets should size
-  /// themselves to avoid the onscreen keyboard whose height is defined by the
-  /// ambient [MediaQuery]'s [MediaQueryData.viewInsets] bottom property.
-  ///
-  /// For example, if there is an onscreen keyboard displayed above the scaffold,
-  /// the body can be resized to avoid overlapping the keyboard, which prevents
-  /// widgets inside the body from being obscured by the keyboard.
-  ///
-  /// A value is needed for every step (hence the value can vary from one step
-  /// to another).
-  ///
-  /// Defaults to null which means true for all.
   final List<bool>? resizeOnKeyboard;
-
-  /// The callback called when a step is tapped, with its index passed as
-  /// an argument.
   final ValueChanged<int>? onStepTapped;
-
-  /// The callback called when the 'continue' button is tapped.
-  ///
-  /// If null, the 'continue' button will be disabled.
   final ValueChanged<int>? onNext;
-
-  /// The callback called when the 'cancel' button is tapped.
-  ///
-  /// If null, the 'cancel' button will be disabled.
   final ValueChanged<int>? onBack;
-
   final bool pop;
 
   @override
@@ -323,8 +253,8 @@ class _FormStepperState extends State<FormStepper> {
             child: _buildHeader(),
           ),
           body: Container(
-            child: _buildBody(),
             color: widget.color.lighter,
+            child: _buildBody(),
           ),
         ),
       ),

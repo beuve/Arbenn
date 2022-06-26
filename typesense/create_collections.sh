@@ -1,4 +1,4 @@
-export TYPESENSE_API_KEY=mDMeXk5T7gxrGsbPaRZshegrkxgmhBlU
+export TYPESENSE_API_KEY=xyz
 
 curl -H "X-TYPESENSE-API-KEY: ${TYPESENSE_API_KEY}" \
      -X DELETE \

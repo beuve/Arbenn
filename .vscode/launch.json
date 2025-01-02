@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Production",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=SERVER_HOST=${env:SERVER_HOST}",
+        "--dart-define=SERVER_PORT=${env:SERVER_PORT}",
+        "--dart-define=TYPESENSE_HOST=${env:TYPESENSE_HOST}",
+        "--dart-define=TYPESENSE_PORT=${env:TYPESENSE_PORT}",
+        "--dart-define=TYPESENSE_PASS=${env:TYPESENSE_PASS}",
+      ]
+    },
+    {
+      "name": "Development",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=SERVER_HOST=192.168.10.69",
+        "--dart-define=SERVER_PORT=8080",
+        "--dart-define=TYPESENSE_HOST=192.168.10.69",
+        "--dart-define=TYPESENSE_PORT=8108",
+        "--dart-define=TYPESENSE_PASS=xyz",
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+name: arbenn
+description: "Mobile app to make new friends"
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.1
+  typesense: ^0.4.0
+  image: ^4.1.7
+  provider: ^6.1.2
+  image_picker: ^1.0.7
+  collection: ^1.18.0
+  flutter_svg: ^2.0.10+1
+  akar_icons_flutter: ^1.1.21
+  dbcrypt: ^2.0.0
+  
+  flutter_secure_storage: ^9.0.0
+  flutter_localizations: 
+    sdk: flutter
+  intl: any
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+
+flutter:
+  generate: true
+  uses-material-design: true
+  assets:
+      - assets/images/

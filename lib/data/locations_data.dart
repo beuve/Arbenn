@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'package:arbenn/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:developer' as developer;
 
-const String host = "127.0.0.1";
+const String host = Constants.serverHost;
 const String path = "search";
 
 class Address {
@@ -25,8 +26,8 @@ class Address {
   static Future<List<Address>> fromQuery(String query, [limit = 15]) async {
     Uri uri = Uri(
       scheme: "http",
-      port: 7878,
-      host: host,
+      port: int.parse(Constants.addressServerPort),
+      host: Constants.addressServerHost,
       path: path,
       queryParameters: {
         "limit": [limit.toString()],
@@ -155,8 +156,9 @@ class City {
 
   static Future<List<City>> fromQuery(String query, [int limit = 15]) async {
     Uri uri = Uri(
-      scheme: "https",
-      host: host,
+      scheme: "http",
+      port: int.parse(Constants.addressServerPort),
+      host: Constants.addressServerHost,
       path: path,
       queryParameters: {
         "limit": [limit.toString()],

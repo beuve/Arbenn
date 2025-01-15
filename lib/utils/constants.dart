@@ -9,6 +9,16 @@ abstract class Constants {
     defaultValue: '8080',
   );
 
+  static const String addressServerHost = String.fromEnvironment(
+    'ADDRESS_SERVER_HOST',
+    defaultValue: '127.0.0.1',
+  );
+
+  static const String addressServerPort = String.fromEnvironment(
+    'ADDRESS_SERVER_PORT',
+    defaultValue: '7878',
+  );
+
   static const String typesenseHost = String.fromEnvironment(
     'TYPESENSE_HOST',
     defaultValue: '127.0.0.1',

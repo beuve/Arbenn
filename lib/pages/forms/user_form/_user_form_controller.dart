@@ -17,7 +17,7 @@ class UserFormController {
   final CityInputController city = CityInputController();
   final TextEditingController bio = TextEditingController();
   final TagSearch tagSearch = TagSearch();
-  late ImageProvider? profilePicture;
+  ImageProvider? profilePicture;
   File? localProfilePicture;
 
   void updateFromUserData(UserData infos, Function() onTap) {

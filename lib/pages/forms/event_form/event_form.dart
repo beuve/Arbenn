@@ -9,6 +9,7 @@ import 'package:arbenn/data/event/event_data.dart';
 import 'dart:io';
 import 'package:arbenn/data/user/authentication.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -41,12 +42,17 @@ class _EventFormPageState extends State<EventFormPage> {
         controller: _controller,
         onDeleteImage: () => setState(() => _controller.localImage = null),
         onAddImage: () async {
-          Future<XFile?> ffile = ImagePicker().pickImage(
-            source: ImageSource.gallery,
-          );
-          XFile? file = await ffile;
-          if (file != null) {
-            setState(() => _controller.localImage = File(file.path));
+          var status = Permission.photos;
+          if (await status.isPermanentlyDenied) {
+            await openAppSettings();
+          } else {
+            Future<XFile?> ffile = ImagePicker().pickImage(
+              source: ImageSource.gallery,
+            );
+            XFile? file = await ffile;
+            if (file != null) {
+              setState(() => _controller.localImage = File(file.path));
+            }
           }
         },
       ),

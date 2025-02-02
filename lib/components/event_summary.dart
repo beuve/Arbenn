@@ -328,12 +328,6 @@ class EventSummary extends StatelessWidget {
                 color: Colors.black,
                 border: Border.all(color: Colors.black12),
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: data.colors,
-                  tileMode: TileMode.mirror,
-                ),
                 image: image == null
                     ? null
                     : DecorationImage(

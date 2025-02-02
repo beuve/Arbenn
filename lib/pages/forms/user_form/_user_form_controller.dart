@@ -35,31 +35,31 @@ class UserFormController {
 
   UserData? toUserData(BuildContext context, int userId) {
     if (firstName.text == "") {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez entrer votre prénom.",
       );
       return null;
     } else if (lastName.text == "") {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez entrer votre nom de famille.",
       );
       return null;
     } else if (birthDate.date == null) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez entrer votre date de naissance.",
       );
       return null;
     } else if (city.city == null) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez entrer votre ville de residence.",
       );
       return null;
     } else if (tagSearch.tags == []) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez entrer au moins un centre d'intérêt.",
       );
@@ -90,7 +90,7 @@ class UserFormController {
       ).then((_) => ()).onError(
         (error, stackTrace) {
           if (context.mounted) {
-            showSnackBar(
+            showErrorSnackBar(
               context: context,
               text: "La photo n'a pas pu être sauvegardée",
             );

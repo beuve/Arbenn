@@ -30,7 +30,7 @@ class _SignInPageState extends State<SignInPage> {
     }).then(
       (creds) {
         if (creds == null && context.mounted) {
-          showSnackBar(
+          showErrorSnackBar(
             context: context,
             text: "Le mail et le mot de passe ne correspondent pas.",
           );
@@ -44,7 +44,7 @@ class _SignInPageState extends State<SignInPage> {
     ).onError(
       (error, stackTrace) {
         if (context.mounted) {
-          showSnackBar(
+          showErrorSnackBar(
             context: context,
             text: "Une erreur inconnue est survenue.",
           );

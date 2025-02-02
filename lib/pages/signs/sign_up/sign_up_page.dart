@@ -30,13 +30,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _signUp() async {
     if (passController.text != confirmPassController.text) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: 'Les mots de passe ne sont pas identiques.',
       );
       return;
     } else if (!_isChecked) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text:
             "Veuillez accepter les conditions d'utilisations et la politique de confidientialité.",
@@ -52,7 +52,7 @@ class _SignUpPageState extends State<SignUpPage> {
     }).then(
       (userCredential) {
         if (userCredential == null) {
-          showSnackBar(
+          showErrorSnackBar(
             context: context,
             text: "Une erreur s'est produite.",
           );

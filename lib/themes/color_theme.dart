@@ -10,4 +10,7 @@ final colorTheme = ColorScheme.fromSeed(
   outline: Colors.grey,
   secondary: Colors.grey[200],
   onSecondary: Colors.grey[400],
+  error: const Color.fromARGB(255, 193, 21, 59),
+  onErrorContainer: const Color.fromARGB(255, 157, 19, 49),
+  onError: const Color.fromARGB(255, 255, 205, 216),
 );

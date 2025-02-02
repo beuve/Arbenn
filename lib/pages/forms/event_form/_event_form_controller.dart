@@ -31,25 +31,25 @@ class EventFormController {
 
   bool checkEvent(BuildContext context) {
     if (title.text == "") {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez choisir un titre pour votre événement.",
       );
       return true;
     } else if (tagSearch.tags == []) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez sélectionner au moins un tag.",
       );
       return true;
     } else if (date.date == null) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez sélectionner une date pour votre événement.",
       );
       return true;
     } else if (address.address == null) {
-      showSnackBar(
+      showErrorSnackBar(
         context: context,
         text: "Veillez sélectionner une addresse pour votre événement.",
       );
@@ -95,7 +95,7 @@ class EventFormController {
           .then(
         (value) {
           if (value && context.mounted) {
-            showSnackBar(
+            showErrorSnackBar(
               context: context,
               text: "An error occured 1",
             );
@@ -120,7 +120,7 @@ class EventFormController {
       );
       if (event == null) {
         if (context.mounted) {
-          showSnackBar(
+          showErrorSnackBar(
             context: context,
             text: "An error occured 2",
           );
@@ -130,7 +130,7 @@ class EventFormController {
         bool errorIndex = await Search().create(event);
         if (errorIndex) {
           if (context.mounted) {
-            showSnackBar(
+            showErrorSnackBar(
               context: context,
               text: "An error occured 3",
             );

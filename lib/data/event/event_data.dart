@@ -119,7 +119,6 @@ class EventDataSummary {
 
 class EventData {
   final int eventId;
-  final List<Color> colors;
   String title;
   List<TagData> tags;
   DateTime date;
@@ -139,7 +138,6 @@ class EventData {
     required this.admin,
     required this.description,
     required this.numAttendes,
-    required this.colors,
     this.maxAttendes,
     this.attendes = const [],
   });
@@ -159,7 +157,6 @@ class EventData {
     required Credentials creds,
     int? maxAttendes,
   }) async {
-    final colors = [Colors.black];
     Map<String, dynamic> body = {
       'eventid': -1, //Placeholder
       'street': address.street ?? '',
@@ -177,11 +174,6 @@ class EventData {
       'infos': description,
       'tags': tags.map((t) => t.id).toList(),
       'attendes': [],
-      'colors': colors
-          .map(
-            (c) => c.value,
-          )
-          .join(","),
     };
 
     String? infos = await Api.post("/e/createEvent", body: body, creds: creds);
@@ -200,7 +192,6 @@ class EventData {
       maxAttendes: maxAttendes,
       attendes: [admin],
       numAttendes: 1,
-      colors: colors,
     );
   }
 
@@ -235,10 +226,6 @@ class EventData {
         lon: e['lon'],
         lat: e['lat'],
       ),
-      colors: (e['colors'] as String)
-          .split(",")
-          .map((h) => Color(int.parse(h)))
-          .toList(),
       maxAttendes: e['max_attendes'],
       numAttendes: attendes.length,
       description: e['infos'],
@@ -264,11 +251,6 @@ class EventData {
       "max_attendes": maxAttendes,
       "tags": tags.map((t) => t.id).toList(),
       "attendes": [],
-      "colors": colors
-          .map(
-            (c) => c.value,
-          )
-          .join(","),
     };
   }
 

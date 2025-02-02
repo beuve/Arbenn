@@ -18,12 +18,6 @@ class EventPageHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black,
         border: Border.all(color: Colors.black12),
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: event.colors,
-          tileMode: TileMode.mirror,
-        ),
         image: imageUrl == null
             ? null
             : DecorationImage(

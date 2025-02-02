@@ -16,7 +16,6 @@ class EventDataSummary {
   final UserSumarryData admin;
   final int numAttendes;
   final int? maxAttendes;
-  final List<Color> colors;
 
   const EventDataSummary({
     required this.eventId,
@@ -26,7 +25,6 @@ class EventDataSummary {
     required this.address,
     required this.admin,
     required this.numAttendes,
-    required this.colors,
     this.maxAttendes,
   });
 
@@ -52,10 +50,6 @@ class EventDataSummary {
         lon: e['lon'],
         lat: e['lat'],
       ),
-      colors: (e['colors'] as String)
-          .split(",")
-          .map((h) => Color(int.parse(h)))
-          .toList(),
       maxAttendes: e['max_attendes'],
       numAttendes: e['num_attendes'],
     );
@@ -71,7 +65,6 @@ class EventDataSummary {
       address: ev.address,
       admin: admin,
       numAttendes: ev.numAttendes,
-      colors: colors,
     );
   }
 

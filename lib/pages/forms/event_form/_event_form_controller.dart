@@ -79,7 +79,6 @@ class EventFormController {
     if (event != null) {
       EventData res = EventData(
         eventId: event.eventId,
-        colors: event.colors,
         title: title.text,
         tags:
             tagSearch.tags.where((t) => t.isActive).map((t) => t.data).toList(),

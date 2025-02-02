@@ -74,7 +74,10 @@ class _EventPageState extends State<EventPage> {
       child: Stack(
         alignment: AlignmentDirectional.topCenter,
         children: [
-          EventPageHeader(event: _currentEvent),
+          EventPageHeader(
+            event: _currentEvent,
+            imageUrl: widget.imageUrl,
+          ),
           Scaffold(
             backgroundColor: Colors.transparent,
             body: SingleChildScrollView(

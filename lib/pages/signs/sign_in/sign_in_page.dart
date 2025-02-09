@@ -1,12 +1,11 @@
-import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/pages/signs/components/_greetings.dart';
 import 'package:arbenn/pages/signs/sign_in/_inputs.dart';
 import 'package:arbenn/pages/signs/sign_in/_switch_to_sign_in.dart';
 import 'package:arbenn/data/user/authentication.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
-import 'dart:developer' as developer;
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatefulWidget {
@@ -24,39 +23,12 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> _signIn(BuildContext context) async {
     await Credentials.signInWithEmailAndPassword(
             email: emailController.text, password: passController.text)
-        .then((creds) async {
-      await creds?.saveTokenLocally();
-      return creds;
-    }).then(
-      (creds) {
-        if (creds == null && context.mounted) {
-          showErrorSnackBar(
-            context: context,
-            text: "Le mail et le mot de passe ne correspondent pas.",
-          );
-          return;
-        }
-        if (context.mounted) {
-          Provider.of<CredentialsNotifier>(context, listen: false).value =
-              creds;
-        }
-      },
-    ).onError(
-      (error, stackTrace) {
-        if (context.mounted) {
-          showErrorSnackBar(
-            context: context,
-            text: "Une erreur inconnue est survenue.",
-          );
-        }
-        developer.log(
-          "Internal error",
-          name: "data/event_search Search.create",
-          error: error,
-        );
-        return;
-      },
-    );
+        .futureIter((creds) => creds.saveTokenLocally())
+        .futureIter((creds) async {
+      if (context.mounted) {
+        Provider.of<CredentialsNotifier>(context, listen: false).value = creds;
+      }
+    }).showError(context);
   }
 
   @override
@@ -90,9 +62,7 @@ class _SignInPageState extends State<SignInPage> {
                 Expanded(flex: 3, child: Container()),
                 ElevatedButton(
                   child: const Text("VALIDER"),
-                  onPressed: () async {
-                    await _signIn(context);
-                  },
+                  onPressed: () => _signIn(context),
                 ),
                 const SizedBox(height: 30),
                 SwitchToSignUpButton(switchPage: widget.switchPage),

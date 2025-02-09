@@ -4,6 +4,7 @@ import 'package:akar_icons_flutter/akar_icons_flutter.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/pages/forms/event_form/event_form.dart';
 import 'package:arbenn/pages/event/future_event_page.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:arbenn/utils/page_transitions.dart';
 import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/scroller.dart';
@@ -320,7 +321,7 @@ class EventSummary extends StatelessWidget {
         builder: (context, snapshot) {
           String? image;
           if (snapshot.hasData && snapshot.data != null) {
-            image = snapshot.data!;
+            image = snapshot.data!.toOption();
           }
           return GestureDetector(
             child: Container(
@@ -352,7 +353,8 @@ class EventSummary extends StatelessWidget {
               Navigator.of(context).push(slideIn(FutureEventPage(
                 eventSummary: data,
                 currentUser: currentUser,
-                event: EventData.loadFromEventId(data.eventId, creds: creds),
+                event: EventData.loadFromEventId(data.eventId, creds: creds)
+                    .toOption(),
                 onEdit: () => onEditEvent(context),
               )));
             },
@@ -362,7 +364,7 @@ class EventSummary extends StatelessWidget {
 }
 
 class FutureOptionEventSummaryView extends StatelessWidget {
-  final Future<List<EventDataSummary>?> events;
+  final Future<Result<List<EventDataSummary>>> events;
   final int numPlaceholders;
   final Future<void> Function()? onRefresh;
   final Widget? header;
@@ -389,15 +391,16 @@ class FutureOptionEventSummaryView extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: header!),
           Expanded(
-            child: FutureBuilder<List<EventDataSummary>?>(
+            child: FutureBuilder<Result<List<EventDataSummary>>>(
               future: events,
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data == null) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isErr()) {
                     return _EventSummaryErrorView(
                       onRefresh: onRefresh,
                     );
-                  } else if (emptyText != null && snapshot.data!.isEmpty) {
+                  } else if (emptyText != null &&
+                      snapshot.data!.unwrap().isEmpty) {
                     return _EventSummaryNoDataView(
                       text: emptyText!,
                       onRefresh: onRefresh,
@@ -406,7 +409,9 @@ class FutureOptionEventSummaryView extends StatelessWidget {
                   return ScrollList(
                     onRefresh: onRefresh,
                     children: [
-                      ...snapshot.data!.map((e) => EventSummary(data: e))
+                      ...snapshot.data!
+                          .unwrap()
+                          .map((e) => EventSummary(data: e))
                     ],
                   );
                 }
@@ -422,11 +427,11 @@ class FutureOptionEventSummaryView extends StatelessWidget {
   }
 }
 
-class FutureOptionEventSummary extends StatelessWidget {
-  final Future<List<EventDataSummary>?> events;
+class FutureResultEventSummary extends StatelessWidget {
+  final Future<Result<List<EventDataSummary>>> events;
   final int numPlaceholders;
 
-  const FutureOptionEventSummary({
+  const FutureResultEventSummary({
     super.key,
     required this.events,
     this.numPlaceholders = 1,
@@ -434,16 +439,18 @@ class FutureOptionEventSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<EventDataSummary>?>(
+    return FutureBuilder<Result<List<EventDataSummary>>>(
       future: events,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.data == null) {
+        if (snapshot.hasData) {
+          if (snapshot.data!.isErr()) {
             return const Column(children: []);
           }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [...snapshot.data!.map((e) => EventSummary(data: e))],
+            children: [
+              ...snapshot.data!.unwrap().map((e) => EventSummary(data: e))
+            ],
           );
         }
         return TickingBuilder(

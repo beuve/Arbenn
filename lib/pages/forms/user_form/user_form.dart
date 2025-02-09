@@ -5,6 +5,7 @@ import 'package:arbenn/pages/forms/components/_tag_selection_step.dart';
 import 'package:arbenn/pages/forms/user_form/_first_step.dart';
 import 'package:arbenn/pages/forms/user_form/_user_form_controller.dart';
 import 'package:arbenn/data/user/authentication.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart' hide Autocomplete, Step;
 import 'package:arbenn/components/stepper.dart';
 import 'package:arbenn/data/user/user_data.dart';
@@ -76,13 +77,9 @@ class _UserFormPageState extends State<UserFormPage> {
       headerHeight: 95,
       resizeOnKeyboard: const [true, true, false],
       onFinish: () async {
-        return _controller.save(context).then((userData) {
-          if (userData != null) {
-            widget.onFinish(userData);
-            return false;
-          }
-          return true;
-        });
+        return _controller
+            .save(context)
+            .map((userData) => widget.onFinish(userData));
       },
       close: widget.pop ? (context) => Navigator.pop(context) : null,
       steps: [

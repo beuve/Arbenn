@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:arbenn/data/api.dart';
+import 'package:arbenn/utils/errors/exceptions.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -53,47 +55,51 @@ class Credentials {
     await storage.delete(key: "auth_arbenn");
   }
 
-  static Future<Credentials?> signInWithEmailAndPassword(
+  static Future<Result<Credentials>> signInWithEmailAndPassword(
       {required String email, required String password}) async {
-    String? salt = await Api.unsafeGet("/a/getSalt/$email");
-    if (salt == null) {
-      return null;
+    if (email == "" || password == "") {
+      return const Err(ArbennException(
+          "[Credentials::signInWithEmailAndPassword] either email or password empty",
+          userMessage: "Provide both an email and a password"));
     }
-    String hash = DBCrypt().hashpw(password, salt);
-    var body = {"email": email, "password_hash": hash, "salt": salt};
-    String? token = await Api.unsafePost("/a/getToken", body: body);
-    if (token != null) {
-      Map<String, dynamic> infos = jsonDecode(token);
-      return Credentials(
-          userId: infos["userid"],
-          token: infos["token"],
-          verified: infos["verified"],
-          hasData: infos["has_data"]);
-    } else {
-      return null;
-    }
+    Result<String> salt = await Api.unsafeGet("/a/getSalt/$email");
+
+    return Api.unsafeGet("/a/getSalt/$email")
+        .map((salt) => {
+              "email": email,
+              "password_hash": DBCrypt().hashpw(password, salt),
+              "salt": salt
+            })
+        .futureBind((body) => Api.unsafePost("/a/getToken", body: body))
+        .map((token) => jsonDecode(token) as Map<String, dynamic>)
+        .map(
+          (json) => Credentials(
+            userId: json["userid"],
+            token: json["token"],
+            verified: json["verified"],
+            hasData: json["has_data"],
+          ),
+        );
   }
 
-  static Future<Credentials?> createUserWithEmailAndPassword(
+  static Future<Result<Credentials>> createUserWithEmailAndPassword(
       {required String email, required String password}) async {
     String salt = DBCrypt().gensalt();
     String hash = DBCrypt().hashpw(password, salt);
     var body = {"email": email, "password_hash": hash, "salt": salt};
-    String? token = await Api.unsafePost("/a/createCredentials", body: body);
-    if (token != null) {
-      Map<String, dynamic> infos = jsonDecode(token);
-      return Credentials(
-          userId: infos["userid"],
-          token: infos["token"],
-          verified: true,
-          hasData: false);
-    } else {
-      return null;
-    }
+    return Api.unsafePost("/a/createCredentials", body: body)
+        .map((token) => jsonDecode(token) as Map<String, dynamic>)
+        .map(
+          (infos) => Credentials(
+              userId: infos["userid"],
+              token: infos["token"],
+              verified: true,
+              hasData: false),
+        );
   }
 
   Future<bool> emailIsVerified() async {
-    String? _ = await Api.get("/u/checkVerified", creds: this);
+    var _ = await Api.get("/u/checkVerified", creds: this);
     return true;
   }
 }

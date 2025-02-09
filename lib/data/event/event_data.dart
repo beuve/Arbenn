@@ -4,6 +4,7 @@ import 'package:arbenn/data/api.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/tags_data.dart';
 import 'package:arbenn/data/user/user_data.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:arbenn/data/user/authentication.dart';
 
@@ -68,52 +69,42 @@ class EventDataSummary {
     );
   }
 
-  static Future<EventDataSummary?> loadFromEventId(int eventId,
+  static Future<Result<EventDataSummary>> loadFromEventId(int eventId,
       {required Credentials creds}) async {
-    String? infos =
-        await Api.get("/e/getEventSumarryData/$eventId", creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    Map<String, dynamic> json = jsonDecode(infos);
-    return ofJson(json, creds: creds);
+    return Api.get("/e/getEventSumarryData/$eventId", creds: creds)
+        .map((infos) => jsonDecode(infos))
+        .futureMap((json) => ofJson(json, creds: creds));
   }
 
-  static Future<List<EventDataSummary>?> loadFromEventIds(List<int> eventIds,
+  static Future<Result<List<EventDataSummary>>> loadFromEventIds(
+      List<int> eventIds,
       {required Credentials creds}) async {
     final ids = eventIds.join("-");
-    String? infos = await Api.get("/e/getEventsSumarryData/$ids", creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    List<dynamic> json = jsonDecode(infos);
-    return Future.wait(json.map((e) => ofJson(e, creds: creds)))
-        .then((l) => l.toList());
+    return Api.get("/e/getEventsSumarryData/$ids", creds: creds)
+        .map((infos) => jsonDecode(infos))
+        .futureMap(
+            (json) => Future.wait(json.map((e) => ofJson(e, creds: creds))))
+        .map((l) => l.toList() as List<EventDataSummary>);
   }
 
-  static Future<List<EventDataSummary>?> loadAttendesEvents(int userId,
+  static Future<Result<List<EventDataSummary>>> loadAttendesEvents(int userId,
       {required Credentials creds}) async {
-    String? infos =
-        await Api.get("/e/getAttendedEventsSumarryData/$userId", creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    List<dynamic> json = jsonDecode(infos);
-    return Future.wait(json.map((e) => ofJson(e, creds: creds)))
-        .then((l) => l.toList());
+    return Api.get("/e/getAttendedEventsSumarryData/$userId", creds: creds)
+        .map((infos) => jsonDecode(infos))
+        .futureMap(
+            (json) => Future.wait(json.map((e) => ofJson(e, creds: creds))))
+        .map((l) => l.toList() as List<EventDataSummary>);
   }
 
-  static Future<List<EventDataSummary>?> loadFutureAttendesEvents(int userId,
+  static Future<Result<List<EventDataSummary>>> loadFutureAttendesEvents(
+      int userId,
       {required Credentials creds}) async {
-    String? infos = await Api.get(
-        "/e/getFutureAttendedEventsSumarryData/$userId",
-        creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    List<dynamic> json = jsonDecode(infos);
-    return Future.wait(json.map((e) => ofJson(e, creds: creds)))
-        .then((l) => l.toList());
+    return Api.get("/e/getFutureAttendedEventsSumarryData/$userId",
+            creds: creds)
+        .map((infos) => jsonDecode(infos))
+        .futureMap(
+            (json) => Future.wait(json.map((e) => ofJson(e, creds: creds))))
+        .map((l) => l.toList() as List<EventDataSummary>);
   }
 }
 
@@ -147,7 +138,7 @@ class EventData {
     return toJson().toString();
   }
 
-  static Future<EventData?> saveNew({
+  static Future<Result<EventData>> saveNew({
     required String title,
     required List<TagData> tags,
     required DateTime date,
@@ -176,26 +167,22 @@ class EventData {
       'attendes': [],
     };
 
-    String? infos = await Api.post("/e/createEvent", body: body, creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    int eventId = int.parse(infos);
-    return EventData(
-      eventId: eventId,
-      title: title,
-      address: address,
-      tags: tags,
-      date: date,
-      admin: admin,
-      description: description,
-      maxAttendes: maxAttendes,
-      attendes: [admin],
-      numAttendes: 1,
-    );
+    return Api.post("/e/createEvent", body: body, creds: creds)
+        .map((eventId) => EventData(
+              eventId: int.parse(eventId),
+              title: title,
+              address: address,
+              tags: tags,
+              date: date,
+              admin: admin,
+              description: description,
+              maxAttendes: maxAttendes,
+              attendes: [admin],
+              numAttendes: 1,
+            ));
   }
 
-  static Future<EventData?> ofJson(Map<String, dynamic> e,
+  static Future<Result<EventData>> ofJson(Map<String, dynamic> e,
       {required Credentials creds}) async {
     UserSumarryData admin =
         UserSumarryData(userId: e['adminid'], firstName: e['first_name']);
@@ -212,7 +199,7 @@ class EventData {
     List<TagData> tags = (e['tags'] as List<dynamic>).map((t) {
       return TagData(id: t["id"], label: t["name"]);
     }).toList();
-    return EventData(
+    return Ok(EventData(
       eventId: e['eventid'],
       admin: admin,
       title: e['title'],
@@ -230,7 +217,7 @@ class EventData {
       numAttendes: attendes.length,
       description: e['infos'],
       attendes: attendes,
-    );
+    ));
   }
 
   Map<String, dynamic> toJson() {
@@ -254,24 +241,16 @@ class EventData {
     };
   }
 
-  static Future<EventData?> loadFromEventId(int eventId,
+  static Future<Result<EventData>> loadFromEventId(int eventId,
       {required Credentials creds}) async {
-    String? infos = await Api.get("/e/getEventData/$eventId", creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    Map<String, dynamic> json = jsonDecode(infos);
-    return ofJson(json, creds: creds);
+    return Api.get("/e/getEventData/$eventId", creds: creds)
+        .map((infos) => jsonDecode(infos))
+        .futureBind((json) => ofJson(json, creds: creds));
   }
 
-  Future<bool> save({required Credentials creds}) async {
-    String? infos = await Api.post("/e/setEventData/$eventId",
-        body: toJson(), creds: creds);
-    if (infos == null) {
-      return true;
-    } else {
-      return false;
-    }
+  Future<Result<()>> save({required Credentials creds}) async {
+    return Api.post("/e/setEventData/$eventId", body: toJson(), creds: creds)
+        .map((infos) => ()); // Discard the result
   }
 
   Future<String?> getImageUrl() async {
@@ -298,23 +277,24 @@ class EventData {
 }
 
 class AttendeEventsNotifier extends ChangeNotifier {
-  late Future<List<EventDataSummary>?> _evs;
+  late Future<Result<List<EventDataSummary>>> _evs;
 
   AttendeEventsNotifier(int userId, {required Credentials creds}) {
+    // Is it the good thing to do?
     _evs = EventDataSummary.loadAttendesEvents(userId, creds: creds);
   }
 
-  Future<List<EventDataSummary>?> get events => _evs;
+  Future<Result<List<EventDataSummary>>> get events => _evs;
 
-  set value(Future<List<EventDataSummary>?> newEvents) {
+  set value(Future<Result<List<EventDataSummary>>> newEvents) {
     _evs = newEvents;
     notifyListeners();
   }
 
-  Future<List<EventDataSummary>?> get value => _evs;
+  Future<Result<List<EventDataSummary>>> get value => _evs;
 
   void add(EventDataSummary newEvent) {
-    _evs = _evs.then((evs) => [newEvent, ...?evs]);
+    _evs = _evs.map((evs) => [newEvent, ...evs]);
   }
 
   void reload(int userId, {required Credentials creds}) {
@@ -323,8 +303,8 @@ class AttendeEventsNotifier extends ChangeNotifier {
 
   void setEvent(EventData eventData) {
     _evs = _evs.then((evs) async {
-      if (evs != null) {
-        Future.wait(evs.map((ev) async {
+      if (evs.isOk()) {
+        Future.wait(evs.unwrap().map((ev) async {
           if (ev.eventId == eventData.eventId) {
             return ev.updateFromEventData(eventData);
           } else {
@@ -332,7 +312,7 @@ class AttendeEventsNotifier extends ChangeNotifier {
           }
         }).toList());
       }
-      return null;
+      return Err((evs as Err).error);
     });
     notifyListeners();
   }

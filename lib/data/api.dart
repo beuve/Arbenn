@@ -3,42 +3,58 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:arbenn/utils/constants.dart';
+import 'package:arbenn/utils/errors/exceptions.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:http/http.dart' as http;
 import 'package:arbenn/data/user/authentication.dart';
 
 class Api {
   static const root = "${Constants.serverHost}:${Constants.serverPort}";
 
-  static Future<String?> unsafeGet(String path) async {
+  static Result<String> handleResponse(http.Response response) {
+    if (response.statusCode != 200) {
+      return Err(ArbennException(
+          "${response.statusCode}: ${response.reasonPhrase}",
+          userMessage: "An error occured, verify your internet connection!"));
+    }
+    return Ok(response.body);
+  }
+
+  static Future<Result<String>> unsafeGet(String path) async {
     var url = Uri.http(root, path);
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
-    var response = await http.get(url, headers: headers);
-    if (response.statusCode != 200) {
-      return null;
-    }
-    return response.body;
+    return http
+        .get(url, headers: headers)
+        .then((response) => Ok(response) as Result<http.Response>)
+        .onError((error, stack) => Err(ArbennException(
+            "[Api::unsafeGet] $error",
+            userMessage: "An error occured, verify your internet connection!")))
+        .bind(handleResponse);
   }
 
-  static Future<String?> unsafePost(String path,
+  static Future<Result<String>> unsafePost(String path,
       {required dynamic body}) async {
     var url = Uri.http(root, path);
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
-    var response =
-        await http.post(url, headers: headers, body: json.encode(body));
-    if (response.statusCode != 200) {
-      return null;
-    }
-    return response.body;
+
+    return http
+        .post(url, headers: headers, body: json.encode(body))
+        .then((response) => Ok(response) as Result<http.Response>)
+        .onError((error, stack) => Err(ArbennException(
+            "[Api::unsafeGet] $error",
+            userMessage: "An error occured, verify your internet connection!")))
+        .bind(handleResponse);
   }
 
-  static Future<String?> get(String path, {required Credentials creds}) async {
+  static Future<Result<String>> get(String path,
+      {required Credentials creds}) async {
     var url = Uri.http(root, path);
     var headers = {
       'Content-Type': 'application/json',
@@ -46,14 +62,16 @@ class Api {
       'Authorization':
           'Bearer {"userid": ${creds.userId}, "token": "${creds.token}"}'
     };
-    var response = await http.get(url, headers: headers);
-    if (response.statusCode != 200) {
-      return null;
-    }
-    return response.body;
+    return http
+        .get(url, headers: headers)
+        .then((response) => Ok(response) as Result<http.Response>)
+        .onError((error, stack) => Err(ArbennException(
+            "[Api::unsafeGet] $error",
+            userMessage: "An error occured, verify your internet connection!")))
+        .bind(handleResponse);
   }
 
-  static Future<String?> post(String path,
+  static Future<Result<String>> post(String path,
       {required Credentials creds, required dynamic body}) async {
     var url = Uri.http(root, path);
     var headers = {
@@ -62,15 +80,16 @@ class Api {
       'Authorization':
           'Bearer {"userid": ${creds.userId}, "token": "${creds.token}"}'
     };
-    var response =
-        await http.post(url, headers: headers, body: json.encode(body));
-    if (response.statusCode != 200) {
-      return null;
-    }
-    return response.body;
+    return http
+        .post(url, headers: headers, body: json.encode(body))
+        .then((response) => Ok(response) as Result<http.Response>)
+        .onError((error, stack) => Err(ArbennException(
+            "[Api::unsafeGet] $error",
+            userMessage: "An error occured, verify your internet connection!")))
+        .bind(handleResponse);
   }
 
-  static Future<String?> postImage(String path,
+  static Future<Result<String>> postImage(String path,
       {required Credentials creds, required Uint8List image}) async {
     var url = Uri.http(root, path);
     var request = http.MultipartRequest(
@@ -95,7 +114,7 @@ class Api {
     request.headers.addAll(headers);
     var res = await request.send();
     http.Response response = await http.Response.fromStream(res);
-    return response.body;
+    return Ok(response.body);
   }
 
   static Future<String?> getImage(String path,

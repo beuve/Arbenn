@@ -4,6 +4,7 @@ import 'package:arbenn/data/api.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/tags_data.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:arbenn/data/user/authentication.dart';
 
@@ -25,22 +26,19 @@ class UserSumarryData {
   }
 
   Future<void> getPicture({required Credentials creds}) async {
-    pictureUrl = await getProfileUrl("$userId", "tiny", creds: creds);
+    pictureUrl =
+        await getProfileUrl("$userId", "tiny", creds: creds).toOption();
   }
 
-  Future<String?> getPictureUrl({required Credentials creds}) async {
+  Future<Result<String>> getPictureUrl({required Credentials creds}) async {
     return getProfileUrl("$userId", "tiny", creds: creds);
   }
 
-  static Future<UserSumarryData?> loadFromUserId(int userId,
+  static Future<Result<UserSumarryData>> loadFromUserId(int userId,
       {required Credentials creds}) async {
-    String? infos =
-        await Api.get("/u/getUserSumarryData/$userId", creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    Map<String, dynamic> json = jsonDecode(infos);
-    return ofJson(json);
+    return Api.get("/u/getUserSumarryData/$userId", creds: creds)
+        .map((infos) => jsonDecode(infos))
+        .map((json) => ofJson(json));
   }
 }
 
@@ -97,12 +95,12 @@ class UserData {
     return toJson().toString();
   }
 
-  Future<String?> getPictureUrl({required Credentials creds}) async {
+  Future<Result<String>> getPictureUrl({required Credentials creds}) async {
     return getProfileUrl("$userId", "regular", creds: creds);
   }
 
   Future<void> loadPicture({required Credentials creds}) async {
-    pictureUrl = await getPictureUrl(creds: creds);
+    pictureUrl = await getPictureUrl(creds: creds).toOption();
   }
 
   Map<String, dynamic> toJson() {
@@ -121,11 +119,11 @@ class UserData {
     };
   }
 
-  static Future<UserData?> ofJson(Map<String, dynamic> u,
+  static Future<Result<UserData>> ofJson(Map<String, dynamic> u,
       {required Credentials creds}) async {
-    List<TagData> tags = (u['tags'] as List<dynamic>).map((t) {
-      return TagData(id: t["id"], label: t["name"]);
-    }).toList();
+    List<TagData> tags = (u['tags'] as List<dynamic>)
+        .map((t) => TagData(id: t["id"], label: t["name"]))
+        .toList();
     UserData res = UserData(
         userId: u['userid'],
         firstName: u['first_name'],
@@ -136,21 +134,19 @@ class UserData {
         phone: u['phone'],
         description: u['bio']);
     await res.loadPicture(creds: creds);
-    return res;
+    return Ok(res);
   }
 
-  static Future<UserData?> loadFromUserId(int userId,
+  static Future<Result<UserData>> loadFromUserId(int userId,
       {required Credentials creds}) async {
-    String? infos = await Api.get("/u/getUserData/$userId", creds: creds);
-    if (infos == null) {
-      return null;
-    }
-    Map<String, dynamic> json = jsonDecode(infos);
-    return ofJson(json, creds: creds);
+    return Api.get("/u/getUserData/$userId", creds: creds)
+        .map((infos) => jsonDecode(infos))
+        .futureBind((json) => ofJson(json, creds: creds));
   }
 
-  Future<void> save({required Credentials creds}) async {
-    await Api.post("/u/setUserData", creds: creds, body: toJson());
+  Future<Result<UserData>> save({required Credentials creds}) async {
+    return Api.post("/u/setUserData", creds: creds, body: toJson())
+        .map((_) => this);
   }
 }
 

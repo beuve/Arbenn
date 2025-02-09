@@ -1,5 +1,6 @@
 import 'package:akar_icons_flutter/akar_icons_flutter.dart';
 import 'package:arbenn/components/overlay.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:arbenn/components/buttons.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -26,7 +27,7 @@ class FormStepper extends StatefulWidget {
   final String title;
   final String subtitle;
   final VoidCallback? onCancel;
-  final Future<bool> Function() onFinish;
+  final Future<Result<()>> Function() onFinish;
   final List<bool>? resizeOnKeyboard;
   final ValueChanged<int>? onStepTapped;
   final ValueChanged<int>? onNext;

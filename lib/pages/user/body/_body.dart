@@ -3,11 +3,12 @@ import 'package:arbenn/data/user/user_data.dart';
 import 'package:arbenn/pages/user/body/_attended_events.dart';
 import 'package:arbenn/pages/user/body/_interests.dart';
 import 'package:arbenn/pages/user/body/_user_infos.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePageBody extends StatelessWidget {
   final UserData user;
-  final Future<List<EventDataSummary>?> events;
+  final Future<Result<List<EventDataSummary>>> events;
   final Function(UserData)? onEdit;
 
   const ProfilePageBody({

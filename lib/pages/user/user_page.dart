@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:arbenn/components/buttons.dart';
 import 'package:arbenn/pages/user/_header.dart';
 import 'package:arbenn/pages/user/body/_body.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:arbenn/utils/page_transitions.dart';
 import 'package:arbenn/pages/settings/user_settings.dart';
 import 'package:flutter/material.dart' hide BackButton;
@@ -12,7 +13,7 @@ class ProfilePage extends StatefulWidget {
   final UserData user;
   final bool backButton;
   final Function(UserData)? onEditUser;
-  final Future<List<EventDataSummary>?> events;
+  final Future<Result<List<EventDataSummary>>> events;
 
   const ProfilePage({
     super.key,

@@ -1,4 +1,5 @@
 import 'package:arbenn/components/inputs.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:arbenn/components/overlay.dart';
 import 'package:arbenn/components/buttons.dart';
@@ -9,7 +10,7 @@ class SettingPage extends StatelessWidget {
   final List<TextEditingController> controlers;
   final List<String> labels;
   final List<IconData> icons;
-  final Future<bool> Function() onConfirm;
+  final Future<Result<()>> Function() onConfirm;
 
   const SettingPage(
       {super.key,

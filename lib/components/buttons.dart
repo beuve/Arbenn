@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:akar_icons_flutter/akar_icons_flutter.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 
 class BackButton extends StatelessWidget {
@@ -234,7 +235,7 @@ class SettingButton extends StatelessWidget {
 
 class FutureButton extends StatefulWidget {
   final String label;
-  final Future<bool> Function() onPressed;
+  final Future<Result<()>> Function() onPressed;
   final void Function()? onEnd;
 
   const FutureButton({
@@ -264,8 +265,8 @@ class _FutureButtonState extends State<FutureButton>
     setState(() {
       _state = _ButtonState.running;
     });
-    final hasError = await widget.onPressed();
-    if (hasError) {
+    final res = await widget.onPressed();
+    if (res.isErr()) {
       setState(() {
         _state = _ButtonState.error;
       });
@@ -278,7 +279,7 @@ class _FutureButtonState extends State<FutureButton>
     if (widget.onEnd != null) {
       widget.onEnd!();
     }
-    if (hasError) {
+    if (res.isErr()) {
       setState(() {
         _state = _ButtonState.waiting;
       });

@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:arbenn/components/inputs.dart';
-import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/data/event/event_data.dart';
 import 'package:arbenn/data/event/event_search.dart';
 import 'package:arbenn/data/tags_data.dart';
 import 'package:arbenn/data/user/user_data.dart';
 import 'package:arbenn/data/user/authentication.dart';
+import 'package:arbenn/utils/errors/exceptions.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
@@ -29,37 +30,33 @@ class EventFormController {
     cloudImageUrl = await event.getImageUrl();
   }
 
-  bool checkEvent(BuildContext context) {
+  Result<()> checkEvent(BuildContext context) {
     if (title.text == "") {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez choisir un titre pour votre événement.",
-      );
-      return true;
+      return const Err(ArbennException("[EventForm] Missing title",
+          userMessage: "Veillez choisir un titre pour votre événement.",
+          kind: ErrorKind.userInput));
     } else if (tagSearch.tags == []) {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez sélectionner au moins un tag.",
-      );
-      return true;
+      return const Err(ArbennException("[EventForm] Missing tags",
+          userMessage: "Veillez sélectionner au moins un tag.",
+          kind: ErrorKind.userInput));
     } else if (date.date == null) {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez sélectionner une date pour votre événement.",
-      );
-      return true;
+      return const Err(ArbennException("[EventForm] Missing date",
+          userMessage: "Veillez sélectionner une date pour votre événement.",
+          kind: ErrorKind.userInput));
     } else if (address.address == null) {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez sélectionner une addresse pour votre événement.",
-      );
-      return true;
+      return const Err(ArbennException("[EventForm] Missing address",
+          userMessage:
+              "Veillez sélectionner une addresse pour votre événement.",
+          kind: ErrorKind.userInput));
     }
-    return false;
+    return const Ok(());
   }
 
-  Future<bool> updateSearch(EventData? oldEvent, EventData event) async {
-    if (oldEvent == null) return false;
+  Future<Result<()>> updateSearch(EventData? oldEvent, EventData event) async {
+    if (oldEvent == null) {
+      return const Err(ArbennException(
+          "[EventForm] Can't update search without previous event"));
+    }
     Function eq = const DeepCollectionEquality().equals;
     if (event.title != oldEvent.title ||
         !eq(event.tags, oldEvent.tags) ||
@@ -67,15 +64,16 @@ class EventFormController {
         event.address != oldEvent.address) {
       return Search().update(oldEvent);
     }
-    return false;
+    return const Ok(());
   }
 
-  Future<EventData?> saveEvent(
+  Future<Result<EventData>> saveEvent(
       BuildContext context, UserData currentUser, EventData? event) async {
     final creds =
         Provider.of<CredentialsNotifier>(context, listen: false).value!;
     UserSumarryData admin = event != null ? event.admin : currentUser.summary();
-    if (checkEvent(context)) return null;
+    Result<()> check = checkEvent(context);
+    if (check.isErr()) return Err((check as Err).error);
     if (event != null) {
       EventData res = EventData(
         eventId: event.eventId,
@@ -89,26 +87,12 @@ class EventFormController {
         numAttendes: event.numAttendes,
         attendes: event.attendes,
       );
-      bool error = await event
+      return event
           .save(creds: creds)
-          .then((value) async => value || await updateSearch(event, res))
-          .then(
-        (value) {
-          if (value && context.mounted) {
-            showErrorSnackBar(
-              context: context,
-              text: "An error occured 1",
-            );
-          }
-          return value;
-        },
-      );
-      if (error) {
-        return null;
-      }
-      return res;
+          .futureBind((_) => updateSearch(event, res))
+          .map((_) => res);
     } else {
-      EventData? event = await EventData.saveNew(
+      return EventData.saveNew(
         title: title.text,
         tags:
             tagSearch.tags.where((t) => t.isActive).map((t) => t.data).toList(),
@@ -117,28 +101,10 @@ class EventFormController {
         admin: admin,
         description: description.text,
         creds: creds,
-      );
-      if (event == null) {
-        if (context.mounted) {
-          showErrorSnackBar(
-            context: context,
-            text: "An error occured 2",
-          );
-        }
-        return null;
-      } else {
-        bool errorIndex = await Search().create(event);
-        if (errorIndex) {
-          if (context.mounted) {
-            showErrorSnackBar(
-              context: context,
-              text: "An error occured 3",
-            );
-          }
-          return null;
-        }
+      ).futureMap((event) async {
+        await Search().create(event);
         return event;
-      }
+      });
     }
   }
 }

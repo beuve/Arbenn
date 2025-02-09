@@ -2,37 +2,39 @@ import 'dart:typed_data';
 
 import 'package:arbenn/data/api.dart';
 import 'package:arbenn/data/user/authentication.dart';
+import 'package:arbenn/utils/errors/exceptions.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'dart:io';
 
-Future<void> saveProfileImage(
+Future<Result<()>> saveProfileImage(
   String path, {
   required Credentials creds,
 }) async {
-  saveImage('/s/setUserProfile', path,
+  return saveImage('/s/setUserProfile', path,
       sizes: {"/regular": 1000, "/tiny": 50}, quality: 50, creds: creds);
 }
 
-Future<void> saveEventImage(
+Future<Result<()>> saveEventImage(
   int eventid,
   String path, {
   required Credentials creds,
 }) async {
-  saveImage('/s/setEventImage/$eventid', path, creds: creds);
+  return saveImage('/s/setEventImage/$eventid', path, creds: creds);
 }
 
-Future<bool> deleteImage({
+Future<Result<()>> deleteImage({
   required Credentials creds,
 }) async {
   await Api.get(
     '/s/deleteUserProfile',
     creds: creds,
   );
-  return false;
+  return const Ok(());
 }
 
-Future<bool> saveImage(
+Future<Result<()>> saveImage(
   String path,
   String localPath, {
   required Credentials creds,
@@ -40,14 +42,16 @@ Future<bool> saveImage(
   int quality = 60,
 }) async {
   img.Image? image = img.decodeImage(File(localPath).readAsBytesSync());
-  if (image == null) return true;
+  if (image == null) {
+    return const Err(ArbennException("[Storage] Couldn't save image"));
+  }
   if (sizes == null) {
     await Api.postImage(
       path,
       creds: creds,
       image: Uint8List.fromList(img.encodeJpg(image, quality: quality)),
     );
-    return false;
+    return const Ok(());
   } else {
     await Future.forEach<MapEntry<String, int>>(sizes.entries, (e) async {
       bool isWidthMax = image.height < image.width;
@@ -63,7 +67,7 @@ Future<bool> saveImage(
             Uint8List.fromList(img.encodeJpg(resizedImage, quality: quality)),
       );
     });
-    return false;
+    return const Ok(());
   }
 }
 
@@ -71,14 +75,12 @@ Future<ImageProvider?> loadImage(String bucket, String id) async {
   return null;
 }
 
-Future<String?> getEventImageUrl(int eventid,
+Future<Result<String>> getEventImageUrl(int eventid,
     {required Credentials creds}) async {
-  final res = await Api.get("/s/getEventImageUrl/$eventid", creds: creds);
-  return res;
+  return Api.get("/s/getEventImageUrl/$eventid", creds: creds);
 }
 
-Future<String?> getProfileUrl(String userid, String size,
+Future<Result<String>> getProfileUrl(String userid, String size,
     {required Credentials creds}) async {
-  final res = await Api.get("/s/getProfileUrl/$userid/$size", creds: creds);
-  return res;
+  return Api.get("/s/getProfileUrl/$userid/$size", creds: creds);
 }

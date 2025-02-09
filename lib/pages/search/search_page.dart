@@ -2,6 +2,7 @@ import 'package:arbenn/components/event_summary.dart';
 import 'package:arbenn/components/location_search/address_search/address_search.dart';
 import 'package:arbenn/pages/search/_search_area.dart';
 import 'package:arbenn/pages/search/_show_settings.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:arbenn/utils/page_transitions.dart';
 import 'package:arbenn/components/tags.dart';
 import 'package:arbenn/data/event/event_data.dart';
@@ -25,7 +26,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage>
     with SingleTickerProviderStateMixin {
-  late Future<List<EventDataSummary>?> _events;
+  late Future<Result<List<EventDataSummary>>> _events;
   late List<TagData> _tags;
   late AnimationController expandController;
   late Animation<double> animation;
@@ -38,7 +39,7 @@ class _SearchPageState extends State<SearchPage>
 
   @override
   void initState() {
-    _events = Future.value([]);
+    _events = Future.value(const Ok([]));
     _tags = [];
     _address = null;
     _locked = false;

@@ -3,6 +3,7 @@ import 'package:arbenn/data/event/event_data.dart';
 import 'package:arbenn/data/user/user_data.dart';
 import 'package:arbenn/pages/event/_utils.dart';
 import 'package:arbenn/pages/user/future_profile_page.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:arbenn/utils/page_transitions.dart';
 import 'package:arbenn/data/user/authentication.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,8 @@ class Attende extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context).push(slideIn(FutureProfilePage(
           backButton: true,
-          user: UserData.loadFromUserId(user.userId, creds: creds)))),
+          user:
+              UserData.loadFromUserId(user.userId, creds: creds).toOption()))),
       child: Container(
         margin: const EdgeInsets.only(top: 20),
         child: Row(

@@ -1,5 +1,6 @@
 import 'package:akar_icons_flutter/akar_icons_flutter.dart';
 import 'package:arbenn/pages/settings/components/_setting_page.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -15,8 +16,8 @@ class _ChangeEmailState extends State<ChangeEmail> {
 
   final TextEditingController _newEmailController = TextEditingController();
 
-  Future<bool> onConfirm(BuildContext context) async {
-    return false;
+  Future<Result<()>> onConfirm(BuildContext context) async {
+    return const Ok(());
   }
 
   @override

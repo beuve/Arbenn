@@ -1,5 +1,6 @@
 import 'package:arbenn/pages/calendar/components/_calendar_segmented_button.dart';
 import 'package:arbenn/pages/calendar/components/_calendar_title.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:arbenn/data/event/event_data.dart';
 import 'package:arbenn/components/event_summary.dart';
@@ -25,10 +26,10 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Consumer<AttendeEventsNotifier>(builder: (context, events, _) {
       final e = _showPastEvent
-          ? events.value.then(
-              (e) => e?.where((e) => e.date.isBefore(DateTime.now())).toList())
-          : events.value.then(
-              (e) => e?.where((e) => e.date.isAfter(DateTime.now())).toList());
+          ? events.value.map(
+              (e) => e.where((e) => e.date.isBefore(DateTime.now())).toList())
+          : events.value.map(
+              (e) => e.where((e) => e.date.isAfter(DateTime.now())).toList());
       return FutureOptionEventSummaryView(
         events: e,
         numPlaceholders: 1,

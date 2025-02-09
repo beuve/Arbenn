@@ -3,6 +3,7 @@ import 'package:arbenn/pages/signs/components/_greetings.dart';
 import 'package:arbenn/pages/signs/sign_up/_inputs.dart';
 import 'package:arbenn/pages/signs/sign_up/_switch_to_sign_in.dart';
 import 'package:arbenn/data/user/authentication.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
@@ -43,26 +44,14 @@ class _SignUpPageState extends State<SignUpPage> {
       );
       return;
     }
-    return Credentials.createUserWithEmailAndPassword(
+    Credentials.createUserWithEmailAndPassword(
       email: emailController.text,
       password: passController.text,
-    ).then((creds) async {
-      await creds?.saveTokenLocally();
-      return creds;
-    }).then(
-      (userCredential) {
-        if (userCredential == null) {
-          showErrorSnackBar(
-            context: context,
-            text: "Une erreur s'est produite.",
-          );
-          return null;
-        }
-        userCredential.sendEmailVerification();
-        Provider.of<CredentialsNotifier>(context, listen: false).value =
-            userCredential;
-      },
-    );
+    )
+        .futureIter((creds) => creds.saveTokenLocally())
+        .futureIter((creds) => creds.sendEmailVerification())
+        .map((creds) => Provider.of<CredentialsNotifier>(context, listen: false)
+            .value = creds);
   }
 
   @override

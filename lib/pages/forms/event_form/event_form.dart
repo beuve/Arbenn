@@ -3,6 +3,7 @@ import 'package:arbenn/data/user/user_data.dart';
 import 'package:arbenn/pages/forms/event_form/_event_form_controller.dart';
 import 'package:arbenn/pages/forms/event_form/_first_step.dart';
 import 'package:arbenn/pages/forms/components/_tag_selection_step.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart' hide Step;
 import 'package:arbenn/components/stepper.dart';
 import 'package:arbenn/data/event/event_data.dart';
@@ -71,12 +72,13 @@ class _EventFormPageState extends State<EventFormPage> {
     );
   }
 
-  Future<bool> onFinish(BuildContext context) async {
+  Future<Result<()>> onFinish(BuildContext context) async {
     final creds =
         Provider.of<CredentialsNotifier>(context, listen: false).value!;
-    EventData? event =
+    Result<EventData> result_event =
         await _controller.saveEvent(context, widget.admin, widget.event);
-    if (event == null) return true;
+    if (result_event.isErr()) return Err((result_event as Err).error);
+    EventData event = result_event.unwrap();
     if (_controller.localImage != null) {
       await saveEventImage(event.eventId, _controller.localImage!.path,
           creds: creds);
@@ -85,7 +87,7 @@ class _EventFormPageState extends State<EventFormPage> {
     if (context.mounted) {
       Navigator.pop(context, event);
     }
-    return false;
+    return const Ok(());
   }
 
   @override

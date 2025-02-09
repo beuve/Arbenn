@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:arbenn/data/event/event_data.dart';
 import 'package:arbenn/utils/constants.dart';
+import 'package:arbenn/utils/errors/exceptions.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:typesense/typesense.dart';
 import 'dart:developer' as developer;
 import 'package:arbenn/data/user/authentication.dart';
@@ -51,7 +53,7 @@ class Search {
         });
   }
 
-  Future<bool> update(EventData event) {
+  Future<Result<()>> update(EventData event) {
     return client
         .collection("events")
         .documents
@@ -65,15 +67,9 @@ class Search {
           "date": event.date.millisecondsSinceEpoch,
           "tags": event.tags.map((t) => t.id.toString()).toList(),
         })
-        .then((value) => false)
-        .onError((error, stackTrace) {
-          developer.log(
-            "Update error for event : $event",
-            name: "data/event_search Search.update",
-            error: error,
-          );
-          return true;
-        });
+        .then((value) => const Ok(()) as Result<()>)
+        .onError((error, stackTrace) =>
+            Err(ArbennException("[Search] Update error for event : $event")));
   }
 
   Future<bool> create(EventData event) {
@@ -101,7 +97,8 @@ class Search {
         });
   }
 
-  static Future<List<EventDataSummary>?> _parseInfos(Map<String, dynamic> infos,
+  static Future<Result<List<EventDataSummary>>> _parseInfos(
+      Map<String, dynamic> infos,
       {required Credentials creds}) {
     List<String> ids = (infos["hits"] as List<dynamic>)
         .map((eventInfos) => eventInfos["document"]["id"] as String)
@@ -111,7 +108,7 @@ class Search {
         creds: creds);
   }
 
-  Future<List<EventDataSummary>?> search(Map<String, dynamic> query,
+  Future<Result<List<EventDataSummary>>> search(Map<String, dynamic> query,
       {required Credentials creds}) {
     return client
         .collection("events")
@@ -124,7 +121,7 @@ class Search {
         name: "data/event_search Search.search",
         error: error,
       );
-      return null;
+      return Err(ArbennException("Search error for query : $query"));
     });
   }
 }

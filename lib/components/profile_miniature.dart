@@ -1,5 +1,6 @@
 import 'package:arbenn/data/user/user_data.dart';
 import 'package:arbenn/data/user/authentication.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 
 Image getNetImage(String? url, double size) {
@@ -36,7 +37,7 @@ class ProfileMiniature extends StatefulWidget {
   static Widget fromUserId(int userId,
       {required Credentials creds, double size = 20}) {
     return FutureBuilder<UserSumarryData?>(
-      future: UserSumarryData.loadFromUserId(userId, creds: creds),
+      future: UserSumarryData.loadFromUserId(userId, creds: creds).toOption(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ProfileMiniature(

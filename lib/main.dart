@@ -15,6 +15,7 @@ import 'package:arbenn/pages/signs/email_validation_page.dart';
 import 'package:arbenn/pages/signs/sign_page.dart';
 import 'package:arbenn/pages/forms/user_form/user_form.dart';
 import 'package:arbenn/themes/themes.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +32,7 @@ void main() async {
     const SystemUiOverlayStyle(systemNavigationBarColor: Colors.white),
   );
   Credentials? creds = await Credentials.hasStoredToken();
-  //await Credentials.deleteLocalToken();
+  await Credentials.deleteLocalToken();
   runApp(ChangeNotifierProvider(
     create: (context) => CredentialsNotifier(creds: creds),
     child: MaterialApp(
@@ -106,30 +107,33 @@ class App extends StatelessWidget {
 
   const App({super.key, required this.creds});
 
-  Widget _route(BuildContext context, AsyncSnapshot<UserData?> snapshot) {
-    if (snapshot.hasData && snapshot.data != null) {
+  Widget _route(
+      BuildContext context, AsyncSnapshot<Result<UserData>> snapshot) {
+    if (snapshot.hasData && snapshot.data!.isOk()) {
       return MultiProvider(
         providers: [
           ChangeNotifierProvider(
-              create: (context) => UserDataNotifier(snapshot.data!)),
+              create: (context) => UserDataNotifier(snapshot.data!.unwrap())),
           ChangeNotifierProvider(
-              create: (context) =>
-                  AttendeEventsNotifier(snapshot.data!.userId, creds: creds)),
+              create: (context) => AttendeEventsNotifier(
+                  snapshot.data!.unwrap().userId,
+                  creds: creds)),
         ],
         child: const Nav(),
       );
     } else if (snapshot.hasError ||
-        (snapshot.hasData && snapshot.data == null)) {
-      return const Text("Error");
+        (snapshot.hasData && snapshot.data!.isErr())) {
+      return const Text("Error in App");
     }
     return const Loading();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<UserData?>(
+    return FutureBuilder<Result<UserData>>(
       future: UserData.loadFromUserId(creds.userId, creds: creds),
-      builder: (BuildContext context, AsyncSnapshot<UserData?> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<Result<UserData>> snapshot) {
         return _route(context, snapshot);
       },
     );

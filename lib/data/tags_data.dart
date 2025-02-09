@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:arbenn/data/api.dart';
+import 'package:arbenn/utils/errors/result.dart';
 
 class TagWidgetInfos {
   final TagData data;
@@ -21,14 +22,17 @@ class TagSearch {
   List<TagWidgetInfos> tags = [];
   List<TagData> searchResult = [];
 
-  Future<void> newSearch(String query, Function() onTap) async {
-    String? infos = await Api.unsafeGet("/t/search/$query%");
-    if (infos == null) {
-      return;
+  Future<Result<()>> newSearch(String query, Function() onTap) async {
+    Result<List<dynamic>> tagsInfos = await Api.unsafeGet("/t/search/$query%")
+        .map((infos) => jsonDecode(infos));
+    if (tagsInfos.isErr()) {
+      // Not to elegant imho
+      return tagsInfos.map((_) => ());
     }
-    List<dynamic> l = jsonDecode(infos);
-    List<TagData> searchResult =
-        l.map((r) => TagData(id: r['tagid'], label: r['label'])).toList();
+    List<TagData> searchResult = tagsInfos
+        .unwrap()
+        .map((r) => TagData(id: r['tagid'], label: r['label']))
+        .toList();
     tags.removeWhere((element) => !element.isActive);
     for (var i = 0; i < searchResult.length; i++) {
       if (!tags.any((element) => element.data.id == searchResult[i].id)) {
@@ -42,6 +46,7 @@ class TagSearch {
         );
       }
     }
+    return const Ok(());
   }
 
   setSelectedTags(List<TagData> newTags, Function() onTap) {

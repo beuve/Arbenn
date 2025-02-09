@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:arbenn/components/inputs.dart';
-import 'package:arbenn/components/snack_bar.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/tags_data.dart';
 import 'package:arbenn/data/user/user_data.dart';
 import 'package:arbenn/data/user/authentication.dart';
+import 'package:arbenn/utils/errors/exceptions.dart';
+import 'package:arbenn/utils/errors/result.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,37 +34,27 @@ class UserFormController {
     }
   }
 
-  UserData? toUserData(BuildContext context, int userId) {
+  Result<UserData> toUserData(BuildContext context, int userId) {
     if (firstName.text == "") {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez entrer votre prénom.",
-      );
-      return null;
+      return const Err(ArbennException("[UserForm] Missing first name",
+          userMessage: "Veillez entrer votre prénom.",
+          kind: ErrorKind.userInput));
     } else if (lastName.text == "") {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez entrer votre nom de famille.",
-      );
-      return null;
+      return const Err(ArbennException("[UserForm] Missing last name",
+          userMessage: "Veillez entrer votre nom de famille.",
+          kind: ErrorKind.userInput));
     } else if (birthDate.date == null) {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez entrer votre date de naissance.",
-      );
-      return null;
+      return const Err(ArbennException("[UserForm] Missing birth date",
+          userMessage: "Veillez entrer votre date de naissance.",
+          kind: ErrorKind.userInput));
     } else if (city.city == null) {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez entrer votre ville de residence.",
-      );
-      return null;
+      return const Err(ArbennException("[UserForm] Missing city",
+          userMessage: "Veillez entrer votre ville de residence.",
+          kind: ErrorKind.userInput));
     } else if (tagSearch.tags == []) {
-      showErrorSnackBar(
-        context: context,
-        text: "Veillez entrer au moins un centre d'intérêt.",
-      );
-      return null;
+      return const Err(ArbennException("[UserForm] Missing tags",
+          userMessage: "Veillez entrer au moins un centre d'intérêt.",
+          kind: ErrorKind.userInput));
     }
     final UserData user = UserData(
         userId: userId,
@@ -74,32 +65,16 @@ class UserFormController {
         location: city.city!,
         phone: phone.text,
         description: bio.text);
-    return user;
+    return Ok(user);
   }
 
-  Future<UserData?> save(BuildContext context) async {
+  Future<Result<UserData>> save(BuildContext context) {
     final creds =
         Provider.of<CredentialsNotifier>(context, listen: false).value!;
-    UserData? userData = toUserData(context, creds.userId);
-    if (userData == null) return null;
-    await userData.save(creds: creds);
-    if (localProfilePicture != null) {
-      await saveProfileImage(
-        localProfilePicture!.path,
-        creds: creds,
-      ).then((_) => ()).onError(
-        (error, stackTrace) {
-          if (context.mounted) {
-            showErrorSnackBar(
-              context: context,
-              text: "La photo n'a pas pu être sauvegardée",
-            );
-          }
-          return ();
-        },
-      );
-    }
-    await userData.loadPicture(creds: creds);
-    return userData;
+    return toUserData(context, creds.userId)
+        .futureBind((userData) => userData.save(creds: creds))
+        .futureIter((_) => saveProfileImage(localProfilePicture!.path,
+            creds: creds)) // Check for errors
+        .futureIter((userData) => userData.loadPicture(creds: creds));
   }
 }

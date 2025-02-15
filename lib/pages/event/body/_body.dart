@@ -14,6 +14,7 @@ class EventPageBody extends StatelessWidget {
   final Function() addAttende;
   final Function() removeAttende;
   final Function(EventData) setEvent;
+  final bool showTitle;
 
   const EventPageBody({
     super.key,
@@ -22,23 +23,13 @@ class EventPageBody extends StatelessWidget {
     required this.addAttende,
     required this.removeAttende,
     required this.setEvent,
+    this.showTitle = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 300),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(
-        vertical: 20,
-        horizontal: 15,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -46,6 +37,7 @@ class EventPageBody extends StatelessWidget {
             event: event,
             currentUser: currentUser,
             setEvent: setEvent,
+            showTitle: showTitle,
           ),
           if (event.description != '') ...[
             const SizedBox(height: 30),

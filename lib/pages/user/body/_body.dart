@@ -19,18 +19,8 @@ class ProfilePageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double paddingTop = MediaQuery.of(context).padding.top;
     return Container(
-      margin: EdgeInsets.only(top: 230 + paddingTop),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
       padding: const EdgeInsets.symmetric(
-        vertical: 20,
         horizontal: 15,
       ),
       child: Column(

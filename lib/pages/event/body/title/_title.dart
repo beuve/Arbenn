@@ -12,12 +12,14 @@ class EventPageTitle extends StatelessWidget {
   final EventData event;
   final UserData currentUser;
   final Function(EventData) setEvent;
+  final bool showTitle;
 
   const EventPageTitle({
     super.key,
     required this.event,
     required this.currentUser,
     required this.setEvent,
+    required this.showTitle,
   });
 
   @override
@@ -49,16 +51,21 @@ class EventPageTitle extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: width - 90, // Avoid collision with edit button
-              child: Text(
-                event.title,
-                style: const TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
+            if (showTitle)
+              SizedBox(
+                width: width - 90, // Avoid collision with edit button
+                child: Text(
+                  event.title,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
+            if (!showTitle)
+              const SizedBox(
+                height: 15,
+              ),
             const SizedBox(height: 4),
             DateAndAttendes(event: event),
             const SizedBox(height: 10),

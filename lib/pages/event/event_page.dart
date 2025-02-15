@@ -1,6 +1,5 @@
-import 'package:arbenn/components/buttons.dart';
+import 'package:arbenn/components/overlay.dart';
 import 'package:arbenn/pages/event/body/_body.dart';
-import 'package:arbenn/pages/event/_header.dart';
 import 'package:arbenn/data/user/user_data.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:arbenn/data/event/event_data.dart';
@@ -27,22 +26,11 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   late EventData _currentEvent;
-  late ScrollController _scroll;
-  late bool _showBackButton;
   ImageProvider? image;
 
   @override
   void initState() {
     _currentEvent = widget.event;
-    _scroll = ScrollController();
-    _showBackButton = true;
-    _scroll.addListener(() {
-      if (_scroll.offset > 170) {
-        setState(() => _showBackButton = false);
-      } else if (_scroll.offset < 160) {
-        setState(() => _showBackButton = true);
-      }
-    });
     super.initState();
   }
 
@@ -69,39 +57,29 @@ class _EventPageState extends State<EventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.white,
-      child: Stack(
-        alignment: AlignmentDirectional.topCenter,
-        children: [
-          EventPageHeader(
-            event: _currentEvent,
-            imageUrl: widget.imageUrl,
-          ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              controller: _scroll,
-              physics: const ClampingScrollPhysics(),
-              child: EventPageBody(
-                event: _currentEvent,
-                currentUser: widget.currentUser,
-                addAttende: addAttende,
-                removeAttende: removeAttende,
-                setEvent: setEvent,
-              ),
-            ),
-          ),
-          if (_showBackButton)
-            SafeArea(
-              child: Container(
-                alignment: Alignment.topLeft,
-                margin: const EdgeInsets.only(left: 10),
-                child: const GlassBackButton(),
-              ),
-            ),
-        ],
-      ),
-    );
+    if (widget.imageUrl != null) {
+      return FullPageOverlayWithImage(
+        imageUrl: widget.imageUrl!,
+        body: EventPageBody(
+          event: _currentEvent,
+          currentUser: widget.currentUser,
+          addAttende: addAttende,
+          removeAttende: removeAttende,
+          setEvent: setEvent,
+        ),
+      );
+    } else {
+      return FullPageOverlay(
+        title: _currentEvent.title,
+        body: EventPageBody(
+          event: _currentEvent,
+          showTitle: false,
+          currentUser: widget.currentUser,
+          addAttende: addAttende,
+          removeAttende: removeAttende,
+          setEvent: setEvent,
+        ),
+      );
+    }
   }
 }

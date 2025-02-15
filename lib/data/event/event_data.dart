@@ -4,6 +4,7 @@ import 'package:arbenn/data/api.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/tags_data.dart';
 import 'package:arbenn/data/user/user_data.dart';
+import 'package:arbenn/themes/arbenn_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:arbenn/data/user/authentication.dart';
 
@@ -34,7 +35,8 @@ class EventDataSummary {
         UserSumarryData(userId: e['adminid'], firstName: e['first_name']);
     await admin.getPicture(creds: creds);
     List<TagData> tags = (e['tags'] as List<dynamic>).map((t) {
-      return TagData(id: t["id"], label: t["name"]);
+      return TagData(
+          id: t["id"], label: t["name"], nuances: Nuances.get(t["color"]));
     }).toList();
     final event = EventDataSummary(
       eventId: e["eventid"],
@@ -210,7 +212,8 @@ class EventData {
           }).toList());
     await Future.wait(attendes.map((u) async => u.getPicture(creds: creds)));
     List<TagData> tags = (e['tags'] as List<dynamic>).map((t) {
-      return TagData(id: t["id"], label: t["name"]);
+      return TagData(
+          id: t["id"], label: t["name"], nuances: Nuances.get(t["color"]));
     }).toList();
     return EventData(
       eventId: e['eventid'],

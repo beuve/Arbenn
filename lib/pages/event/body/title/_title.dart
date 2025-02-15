@@ -69,7 +69,7 @@ class EventPageTitle extends StatelessWidget {
             const SizedBox(height: 4),
             DateAndAttendes(event: event),
             const SizedBox(height: 10),
-            StaticTags(event.tags.map((t) => t.label).toList())
+            StaticTags(event.tags)
           ],
         ),
       ],

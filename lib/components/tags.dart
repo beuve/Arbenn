@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:arbenn/data/tags_data.dart';
 
 class StaticTag extends StatelessWidget {
-  final String label;
+  final TagData data;
   final double fontSize;
 
   const StaticTag(
-    this.label, {
+    this.data, {
     this.fontSize = 10,
     super.key,
   });
@@ -19,14 +19,14 @@ class StaticTag extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color: Colors.blue[50],
+        color: data.nuances.lighter,
       ),
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
       child: Row(
         children: [
           Text(
-            label,
-            style: TextStyle(color: Colors.blue[900], fontSize: fontSize),
+            data.label,
+            style: TextStyle(color: data.nuances.darker, fontSize: fontSize),
           ),
         ],
       ),
@@ -35,7 +35,7 @@ class StaticTag extends StatelessWidget {
 }
 
 class StaticTags extends StatelessWidget {
-  final List<String> labels;
+  final List<TagData> labels;
   final double fontSize;
 
   const StaticTags(

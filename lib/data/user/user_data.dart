@@ -4,6 +4,7 @@ import 'package:arbenn/data/api.dart';
 import 'package:arbenn/data/locations_data.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/data/tags_data.dart';
+import 'package:arbenn/themes/arbenn_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:arbenn/data/user/authentication.dart';
 
@@ -124,7 +125,8 @@ class UserData {
   static Future<UserData?> ofJson(Map<String, dynamic> u,
       {required Credentials creds}) async {
     List<TagData> tags = (u['tags'] as List<dynamic>).map((t) {
-      return TagData(id: t["id"], label: t["name"]);
+      return TagData(
+          id: t["id"], label: t["name"], nuances: Nuances.get(t["color"]));
     }).toList();
     UserData res = UserData(
         userId: u['userid'],

@@ -120,7 +120,7 @@ class App extends StatelessWidget {
       );
     } else if (snapshot.hasError ||
         (snapshot.hasData && snapshot.data == null)) {
-      return const Text("Error");
+      return const Text("Error hahahaha");
     }
     return const Loading();
   }

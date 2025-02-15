@@ -22,11 +22,7 @@ class ProfilePageInterests extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         StaticTags(
-          user.tags
-              .map(
-                (t) => t.label,
-              )
-              .toList(),
+          user.tags,
           fontSize: 13,
         ),
       ],

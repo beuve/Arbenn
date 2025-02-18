@@ -5,12 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:arbenn/data/tags_data.dart';
 
 class StaticTag extends StatelessWidget {
-  final String label;
+  final TagData data;
   final double fontSize;
+  final bool background;
+  final bool outline;
 
   const StaticTag(
-    this.label, {
+    this.data, {
     this.fontSize = 10,
+    this.background = true,
+    this.outline = false,
+    super.key,
+  });
+
+  const StaticTag.outlined(
+    this.data, {
+    this.fontSize = 10,
+    this.background = false,
+    this.outline = true,
     super.key,
   });
 
@@ -19,14 +31,16 @@ class StaticTag extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color: Colors.blue[50],
+        border:
+            outline ? Border.all(color: data.nuances.darker, width: 0.5) : null,
+        color: background ? data.nuances.lighter : null,
       ),
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
       child: Row(
         children: [
           Text(
-            label,
-            style: TextStyle(color: Colors.blue[900], fontSize: fontSize),
+            data.label,
+            style: TextStyle(color: data.nuances.darker, fontSize: fontSize),
           ),
         ],
       ),
@@ -35,7 +49,7 @@ class StaticTag extends StatelessWidget {
 }
 
 class StaticTags extends StatelessWidget {
-  final List<String> labels;
+  final List<TagData> labels;
   final double fontSize;
 
   const StaticTags(

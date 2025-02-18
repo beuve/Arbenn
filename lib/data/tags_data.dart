@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:arbenn/data/api.dart';
+import 'package:arbenn/themes/arbenn_colors.dart';
 
 class TagWidgetInfos {
   final TagData data;
@@ -13,8 +14,9 @@ class TagWidgetInfos {
 class TagData {
   final String label;
   final int id;
+  final Nuances nuances;
 
-  TagData({required this.id, required this.label});
+  TagData({required this.id, required this.label, required this.nuances});
 }
 
 class TagSearch {
@@ -27,8 +29,12 @@ class TagSearch {
       return;
     }
     List<dynamic> l = jsonDecode(infos);
-    List<TagData> searchResult =
-        l.map((r) => TagData(id: r['tagid'], label: r['label'])).toList();
+    List<TagData> searchResult = l
+        .map((r) => TagData(
+            id: r['tagid'],
+            label: r['label'],
+            nuances: Nuances.get(r['color'])))
+        .toList();
     tags.removeWhere((element) => !element.isActive);
     for (var i = 0; i < searchResult.length; i++) {
       if (!tags.any((element) => element.data.id == searchResult[i].id)) {

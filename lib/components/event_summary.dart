@@ -4,6 +4,7 @@ import 'package:akar_icons_flutter/akar_icons_flutter.dart';
 import 'package:arbenn/data/storage.dart';
 import 'package:arbenn/pages/forms/event_form/event_form.dart';
 import 'package:arbenn/pages/event/future_event_page.dart';
+import 'package:arbenn/themes/arbenn_colors.dart';
 import 'package:arbenn/utils/page_transitions.dart';
 import 'package:arbenn/components/placeholders.dart';
 import 'package:arbenn/components/scroller.dart';
@@ -188,176 +189,165 @@ class EventSummary extends StatelessWidget {
         .reload(currentUser.userId, creds: creds);
   }
 
-  Widget _buildTopRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        StaticGlassTag(data.tags[0].label),
-        if (data.maxAttendes != null) ...[
-          const SizedBox(width: 10),
-          StaticGlassTag(
-            " ${data.numAttendes}/${data.maxAttendes}",
-            icon: AkarIcons.person,
-          )
-        ]
-      ],
-    );
-  }
-
-  Widget _location() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(
-          AkarIcons.location,
-          color: Colors.white,
-          size: 14,
-        ),
-        const SizedBox(width: 5),
-        Text(
-          data.address.city,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _date() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Icon(
-          AkarIcons.calendar,
-          color: Colors.white,
-          size: 14,
-        ),
-        const SizedBox(width: 5),
-        Text(
-          "${data.date.day} ${monthFromInt(data.date.month)} · ${data.date.hour}:${data.date.minute}",
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _user() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ProfileMiniature(
-          pictureUrl: data.admin.pictureUrl,
-          size: 12,
-        ),
-        const SizedBox(width: 5),
-        Text(data.admin.firstName,
-            style: const TextStyle(color: Colors.white, fontSize: 14))
-      ],
-    );
-  }
-
-  Widget _buildInfosRow() {
-    return SizedBox(
-      width: double.infinity,
-      child: Wrap(
-        spacing: 15,
-        direction: Axis.horizontal,
+  Widget ownerEvent(Nuances nuances) {
+    return Text.rich(
+      TextSpan(
+        style: TextStyle(color: nuances.darker),
         children: [
-          _location(),
-          _date(),
-          _user(),
+          WidgetSpan(
+            child: ProfileMiniature(
+              pictureUrl: data.admin.pictureUrl,
+              size: 15,
+            ),
+          ),
+          TextSpan(text: " ${data.admin.firstName}")
         ],
       ),
     );
   }
 
-  Widget _buildBottomInfos() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: 10.0,
-          sigmaY: 10.0,
-        ),
-        child: Container(
-          color: Colors.black.withAlpha(40),
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                data.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
+  Widget attendes(Nuances nuances) {
+    final String maxAttendes =
+        (data.maxAttendes == null) ? "" : " / ${data.maxAttendes}";
+    return Container(
+        padding: const EdgeInsets.only(top: 5, right: 5),
+        width: 50,
+        height: 60,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 15,
+              alignment: Alignment.center,
+              child: Icon(
+                AkarIcons.person,
+                size: 10,
+                color: nuances.darker,
               ),
-              const SizedBox(height: 5),
-              _buildInfosRow()
-            ],
-          ),
-        ),
+            ),
+            Text(" ${data.numAttendes}$maxAttendes",
+                style: TextStyle(
+                  color: nuances.darker,
+                  fontSize: 10,
+                ))
+          ],
+        ));
+  }
+
+  Widget title(Nuances nuances) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: RichText(
+        maxLines: 2,
+        text: TextSpan(
+            style: TextStyle(
+                color: nuances.darker,
+                fontSize: 20,
+                height: 1.3,
+                fontWeight: FontWeight.bold),
+            children: [
+              TextSpan(text: "${data.title.trim()} "),
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: FittedBox(child: StaticTag.outlined(data.tags.first)),
+              )
+            ]),
       ),
     );
   }
 
+  Widget dateEvent(Nuances nuances) {
+    return Text.rich(
+      TextSpan(
+        style: TextStyle(color: nuances.darker),
+        children: [
+          WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Icon(
+                AkarIcons.calendar,
+                color: nuances.darker,
+                size: 15,
+              )),
+          dateToString(data.date)
+        ],
+      ),
+    );
+  }
+
+  Widget locationEvent(Nuances nuances) {
+    return Text.rich(
+      TextSpan(
+        style: TextStyle(color: nuances.darker),
+        children: [
+          WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Icon(
+                AkarIcons.location,
+                color: nuances.darker,
+                size: 15,
+              )),
+          TextSpan(
+              text: " ${data.address.city}",
+              style: const TextStyle(fontWeight: FontWeight.w500))
+        ],
+      ),
+    );
+  }
+
+  Widget top(Nuances nuances) {
+    return SizedBox(
+        height: 60,
+        child: Row(
+            children: [Expanded(child: title(nuances)), attendes(nuances)]));
+  }
+
+  Widget bottom(Nuances nuances) {
+    return Container(
+        height: 50,
+        width: double.infinity,
+        padding: const EdgeInsets.all(10),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(14)),
+        ),
+        child: Row(children: [
+          locationEvent(nuances),
+          Expanded(child: Container()),
+          dateEvent(nuances),
+          Expanded(child: Container()),
+          ownerEvent(nuances)
+        ]));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final nuances = data.tags.first.nuances;
+    final currentUser =
+        Provider.of<UserDataNotifier>(context, listen: false).value;
     final creds =
         Provider.of<CredentialsNotifier>(context, listen: false).value!;
-    final currentUser =
-        context.select((UserDataNotifier currentUser) => currentUser.value);
-    return FutureBuilder(
-        future: getEventImageUrl(data.eventId, creds: creds),
-        builder: (context, snapshot) {
-          String? image;
-          if (snapshot.hasData && snapshot.data != null) {
-            image = snapshot.data!;
-          }
-          return GestureDetector(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black,
-                border: Border.all(color: Colors.black12),
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                image: image == null
-                    ? null
-                    : DecorationImage(
-                        colorFilter: const ColorFilter.mode(
-                          Color(0x30000000),
-                          BlendMode.darken,
-                        ),
-                        image: NetworkImage(image),
-                        fit: BoxFit.cover,
-                      ),
-              ),
-              height: 250,
-              margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-              padding: const EdgeInsets.all(14),
-              child: Column(children: [
-                _buildTopRow(),
-                const Expanded(child: Text("")),
-                _buildBottomInfos(),
-              ]),
-            ),
-            onTap: () {
-              Navigator.of(context).push(slideIn(FutureEventPage(
-                eventSummary: data,
-                currentUser: currentUser,
-                event: EventData.loadFromEventId(data.eventId, creds: creds),
-                onEdit: () => onEditEvent(context),
-              )));
-            },
-          );
-        });
+    return GestureDetector(
+      child: Container(
+          height: 115,
+          margin: const EdgeInsets.only(bottom: 30),
+          padding: const EdgeInsets.only(bottom: 5, right: 5, left: 5),
+          decoration: BoxDecoration(
+            color: nuances.main,
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+          ),
+          child: Column(
+            children: [top(nuances), bottom(nuances)],
+          )),
+      onTap: () {
+        Navigator.of(context).push(slideIn(FutureEventPage(
+          eventSummary: data,
+          currentUser: currentUser,
+          event: EventData.loadFromEventId(data.eventId, creds: creds),
+          onEdit: () => onEditEvent(context),
+        )));
+      },
+    );
   }
 }
 

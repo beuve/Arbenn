@@ -60,7 +60,7 @@ void showSettings(
                   ),
                 ]),
                 const SizedBox(height: 10),
-                StaticTags(tags.map((t) => t.label).toList()),
+                StaticTags(tags),
                 const SizedBox(height: 30),
                 Text(
                   AppLocalizations.of(context)!.location,

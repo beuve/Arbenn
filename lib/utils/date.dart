@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 String monthFromInt(int m) {
   switch (m) {
     case DateTime.january:
@@ -44,4 +46,15 @@ String weekDayFromInt(int d) {
     default:
       return "Dimanche";
   }
+}
+
+InlineSpan dateToString(DateTime date) {
+  final hour = date.hour < 10 ? "0${date.hour}" : date.hour;
+  final minute = date.minute < 10 ? "0${date.minute}" : date.minute;
+  return TextSpan(children: [
+    TextSpan(
+        text: " ${date.day} ${monthFromInt(date.month)}",
+        style: const TextStyle(fontWeight: FontWeight.w500)),
+    TextSpan(text: " · $hour:$minute")
+  ]);
 }

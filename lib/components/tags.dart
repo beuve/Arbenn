@@ -7,10 +7,22 @@ import 'package:arbenn/data/tags_data.dart';
 class StaticTag extends StatelessWidget {
   final TagData data;
   final double fontSize;
+  final bool background;
+  final bool outline;
 
   const StaticTag(
     this.data, {
     this.fontSize = 10,
+    this.background = true,
+    this.outline = false,
+    super.key,
+  });
+
+  const StaticTag.outlined(
+    this.data, {
+    this.fontSize = 10,
+    this.background = false,
+    this.outline = true,
     super.key,
   });
 
@@ -19,9 +31,11 @@ class StaticTag extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(4),
-        color: data.nuances.lighter,
+        border:
+            outline ? Border.all(color: data.nuances.darker, width: 0.5) : null,
+        color: background ? data.nuances.lighter : null,
       ),
-      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
       child: Row(
         children: [
           Text(

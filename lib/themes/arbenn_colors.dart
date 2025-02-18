@@ -47,7 +47,7 @@ class Nuances {
 
   static const Nuances green = Nuances(
     main: Color(0xFFC1E99E),
-    darker: Color(0xFF7C9B70),
+    darker: Color(0xFF2B4B17),
     dark: Color(0xFF9BC784),
     lighter: Color(0xFFE6FFD0),
     light: Color(0xFFD4F6B6),

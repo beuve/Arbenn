@@ -21,8 +21,8 @@ class DateAndAttendes extends StatelessWidget {
           color: Colors.black45,
         ),
         const SizedBox(width: 5),
-        Text(
-          "${event.date.day} ${monthFromInt(event.date.month)} · ${event.date.hour}:${event.date.minute}",
+        Text.rich(
+          dateToString(event.date),
           style: const TextStyle(fontSize: 14, color: Colors.black45),
         ),
         if (event.maxAttendes != null)
